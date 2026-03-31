@@ -57,6 +57,7 @@ created: 2026-03-31
 - [ ] `tests/graph/test_workflow.py` — replace LangGraph-era assertions on `resume_command`, `resuming`, and checkpointer semantics with engine-step assertions
 - [ ] `tests/integration/test_hitl_resume.py` — assert approval and rejection advance persisted workflow steps directly instead of replaying a paused payload
 - [ ] `tests/api/test_routes.py` — assert the HTTP layer uses `workflow_engine` and exposes no `thread_id`
+- [ ] `tests/integration/test_broker_prestage.py` — assert the approve path consumes returned `handoff` data and persists broker artifacts after restart
 
 ---
 
