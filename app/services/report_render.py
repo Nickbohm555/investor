@@ -9,9 +9,13 @@ from app.schemas.workflow import RecommendationEmail
 
 
 def build_report_environment(template_dir: str | Path | None = None) -> Environment:
-    loader_root = Path(template_dir) if template_dir is not None else Path("app/templates/reports")
+    loader = (
+        FileSystemLoader("app/templates/reports")
+        if template_dir is None
+        else FileSystemLoader(str(Path(template_dir)))
+    )
     return Environment(
-        loader=FileSystemLoader(str(loader_root)),
+        loader=loader,
         autoescape=select_autoescape(["html", "xml"]),
         undefined=StrictUndefined,
     )
