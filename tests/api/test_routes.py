@@ -182,11 +182,10 @@ def test_unknown_run_approval_returns_404(tmp_path, monkeypatch):
     assert response.json() == {"detail": "Run not found"}
 
 
-def test_duplicate_approval_returns_409_and_keeps_single_event(tmp_path, monkeypatch):
-    app = _build_app(tmp_path, monkeypatch)
-    client = TestClient(app)
-    trigger_response = client.post("/runs/trigger")
-    run_id = trigger_response.json()["run_id"]
+def test_duplicate_approval_returns_409_and_keeps_single_event(persisted_run):
+    app = persisted_run["app"]
+    client = persisted_run["client"]
+    run_id = persisted_run["run_id"]
     token = sign_approval_token(
         run_id=run_id,
         decision="approve",
@@ -207,11 +206,10 @@ def test_duplicate_approval_returns_409_and_keeps_single_event(tmp_path, monkeyp
     assert len(approval_events) == 1
 
 
-def test_stale_approval_returns_409(tmp_path, monkeypatch):
-    app = _build_app(tmp_path, monkeypatch)
-    client = TestClient(app)
-    trigger_response = client.post("/runs/trigger")
-    run_id = trigger_response.json()["run_id"]
+def test_stale_approval_returns_409(persisted_run):
+    app = persisted_run["app"]
+    client = persisted_run["client"]
+    run_id = persisted_run["run_id"]
     reject_token = sign_approval_token(
         run_id=run_id,
         decision="reject",
