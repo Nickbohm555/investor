@@ -14,7 +14,7 @@ This roadmap turns the current investor prototype into an env-ready local app by
 - [x] **Phase 2: Quiver Research And Ranking** - Build the broad-signal research surface, detailed prompts, and ranking outputs (completed 2026-03-31)
 - [x] **Phase 3: Scheduling And Email Delivery** - Make the daily trigger, real sender path, and approval email content operational (completed 2026-03-31)
 - [x] **Phase 4: HITL And Broker Prestage** - Resume approved runs durably and create safe Alpaca draft-order artifacts (completed 2026-03-31)
-- [ ] **Phase 5: Operational Readiness** - Validate envs, add dry-run tooling, and close the “fill vars and run” gap
+- [x] **Phase 5: Operational Readiness** - Validate envs, add dry-run tooling, and close the “fill vars and run” gap (completed 2026-03-31)
 
 ## Phase Details
 
@@ -92,8 +92,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Add startup readiness gating and a deterministic dry-run command
-- [ ] 05-02-PLAN.md — Lock docs and env templates to the final operator workflow
+- [x] 05-01-PLAN.md — Add startup readiness gating and a deterministic dry-run command
+- [x] 05-02-PLAN.md — Lock docs and env templates to the final operator workflow
 
 ## Progress
 
@@ -106,4 +106,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 2. Quiver Research And Ranking | 3/3 | Complete | 2026-03-31 |
 | 3. Scheduling And Email Delivery | 3/3 | Complete | 2026-03-31 |
 | 4. HITL And Broker Prestage | 3/3 | Complete | 2026-03-31 |
-| 5. Operational Readiness | 1/2 | In progress | - |
+| 5. Operational Readiness | 2/2 | Complete | 2026-03-31 |

@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Phase 05 plan 01 complete; continue to plan 02
-last_updated: "2026-03-31T16:07:30Z"
+status: phase_complete
+stopped_at: Phase 05 complete
+last_updated: "2026-03-31T16:16:00Z"
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 14
-  completed_plans: 13
+  completed_plans: 14
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** The system must produce trustworthy daily recommendations on schedule and carry approved ideas into a safe broker-review path without brittle manual steps.
-**Current focus:** Phase 05 — operational-readiness
+**Current focus:** Phase 05 complete — operational-readiness
 
 ## Current Position
 
-Phase: 05 (operational-readiness) — EXECUTING
-Plan: 2 of 2
+Phase: 05 (operational-readiness) — COMPLETE
+Plan: Complete
 
 ## Performance Metrics
 
@@ -82,6 +82,7 @@ Plan: 2 of 2
 - [Phase 04]: Persist broker draft artifacts with deterministic `client_order_id = {run_id}-{recommendation_id}-{broker_mode}` and policy snapshots. — This preserves auditability, dedupe, and future broker-confirmation seams.
 - [Phase 04]: Default the shared test harness to local mail and Alpaca doubles. — This keeps restart-safe approval and broker-prestage coverage deterministic and network-free.
 - [Phase 05]: Normal runtime composition uses env-backed research and Quiver configuration, while tests and the dry-run harness inject their doubles explicitly. — This removes hidden production fallbacks without losing deterministic verification seams.
+- [Phase 05]: Operator docs are now locked by automated drift tests and document the dry run as the canonical local workflow proof. — This keeps README and `.env.example` aligned with the implemented runtime surface.
 
 ### Pending Todos
 
@@ -93,6 +94,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31T15:25:11Z
-Stopped at: Phase 04 complete; ready to plan Phase 05
+Last session: 2026-03-31T16:16:00Z
+Stopped at: Phase 05 complete
 Resume file: None
