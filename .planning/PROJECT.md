@@ -15,13 +15,12 @@ The system must produce trustworthy daily recommendations on schedule and carry 
 - ✓ Local FastAPI service exposes health, trigger, and approval callback routes — existing codebase
 - ✓ Deterministic recommendation filtering, signed approval-token helpers, and a structured handoff payload exist — existing codebase
 - ✓ Quiver and Alpaca adapters are present with unit coverage for basic request/response mapping — existing codebase
+- ✓ Durable Postgres-backed run state and restart-safe approval flow validated in Phase 1
+- ✓ Broad Quiver research, evidence-rich ranking, and watchlist/no-action branching validated in Phase 2
+- ✓ Repo-managed cron scheduling, duplicate-safe daily execution, SMTP memo delivery, and configured public approval links validated in Phase 3
 
 ### Active
 
-- [ ] Replace the in-memory workflow with a durable Postgres-backed run state and restart-safe approval flow
-- [ ] Add repo-managed local cron setup for scheduled daily execution and idempotent run protection
-- [ ] Expand Quiver tools and prompts into a broad multi-signal research system with detailed evidence and ranking
-- [ ] Deliver production-ready email composition and sending through a provider abstraction with SMTP implemented first
 - [ ] Implement a working HITL approval path that pre-stages Alpaca broker orders for final confirmation, not direct execution
 - [ ] Make the app operationally ready so the remaining setup step is filling environment variables and running the documented install/start commands
 - [ ] Produce a detailed system diagram that captures the runtime flow, external services, and operator touchpoints
@@ -35,7 +34,7 @@ The system must produce trustworthy daily recommendations on schedule and carry 
 
 ## Context
 
-The current repository already contains a narrow Python/FastAPI prototype, a codebase map in `.planning/codebase/`, and a product design spec in `docs/specs/2026-03-30-investor-design.md`. The prototype proves some service boundaries, but the main gaps are durability, realistic email delivery, detailed Quiver research coverage, and a broker-safe approval-to-prestage path. The desired end state is not a demo. It is a local-first app that is ready to run once final secrets and environment variables are supplied.
+The current repository now has durable workflow state, broad Quiver research and ranking, repo-managed cron scheduling, SMTP-backed memo delivery, and signed public approval links in place. The main remaining product gaps are broker-safe approval-to-prestage behavior, final operational hardening, and a durable system diagram. The desired end state is not a demo. It is a local-first app that is ready to run once final secrets and environment variables are supplied.
 
 The operating model is intentionally hybrid. Broad discovery and synthesis come from agentic research over Quiver and broker context, while scheduling, risk rules, persistence, approvals, and order-prestage logic remain deterministic and auditable in code. If evidence is weak or conflicting, the system should send a no-action or watchlist email rather than forcing trade candidates.
 
@@ -53,10 +52,10 @@ The operating model is intentionally hybrid. Broad discovery and synthesis come 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | Keep the project local-first | Matches current repo, personal-operator workflow, and fastest path to usable software | — Pending |
-| Use repo-managed cron instead of an internal scheduler | Simpler operations and fits the requirement for local installable scheduling | — Pending |
-| Use email provider abstraction with SMTP implemented first | Keeps local/dev simple while preserving a path to API-based senders | — Pending |
-| Use broad Quiver signal coverage with ranking and pruning | Research quality depends on discovery across multiple weak signals, not a single deep feed | — Pending |
-| Send no-action or watchlist emails when evidence is weak | Avoids forcing low-confidence candidates into the HITL or broker flow | — Pending |
+| Use repo-managed cron instead of an internal scheduler | Simpler operations and fits the requirement for local installable scheduling | Validated in Phase 3 |
+| Use email provider abstraction with SMTP implemented first | Keeps local/dev simple while preserving a path to API-based senders | Validated in Phase 3 |
+| Use broad Quiver signal coverage with ranking and pruning | Research quality depends on discovery across multiple weak signals, not a single deep feed | Validated in Phase 2 |
+| Send no-action or watchlist emails when evidence is weak | Avoids forcing low-confidence candidates into the HITL or broker flow | Validated in Phase 2 |
 | Approval should pre-stage Alpaca orders rather than execute them | Preserves a strong human safety checkpoint before any broker action becomes final | — Pending |
 
 ## Evolution
@@ -77,4 +76,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-31 after initialization*
+*Last updated: 2026-03-31 after Phase 3 completion*
