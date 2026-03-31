@@ -15,7 +15,7 @@ This roadmap turns the current investor prototype into an env-ready local app by
 - [x] **Phase 3: Scheduling And Email Delivery** - Make the daily trigger, real sender path, and approval email content operational (completed 2026-03-31)
 - [x] **Phase 4: HITL And Broker Prestage** - Resume approved runs durably and create safe Alpaca draft-order artifacts (completed 2026-03-31)
 - [x] **Phase 5: Operational Readiness** - Validate envs, add dry-run tooling, and close the “fill vars and run” gap (completed 2026-03-31)
-- [ ] **Phase 6: Replace LangGraph With A Custom Workflow Engine** - Remove graph/checkpointer semantics and own workflow persistence, approval, and transitions directly
+- [x] **Phase 6: Replace LangGraph With A Custom Workflow Engine** - Remove graph/checkpointer semantics and own workflow persistence, approval, and transitions directly (completed 2026-03-31)
 - [ ] **Phase 7: Build A Loop-Based Quiver Agent** - Replace one-shot research generation with an iterative tool-using Quiver agent
 - [ ] **Phase 8: Upgrade Outputs To Strategic Insight Reports** - Turn daily output into decision-quality insight reports with change-aware rationale
 
@@ -109,10 +109,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 06-01-PLAN.md — Establish the final workflow-engine API and merge the existing Alembic branch split
-- [ ] 06-02-PLAN.md — Remove `thread_id`, add the Phase 6 schema migration, and implement the persisted engine core
-- [ ] 06-03-PLAN.md — Wire trigger and approval execution onto the persisted workflow engine with restart-safe integration coverage
-- [ ] 06-04-PLAN.md — Remove LangGraph dependencies, env surface, and operator docs language
+- [x] 06-01-PLAN.md — Establish the final workflow-engine API and merge the existing Alembic branch split
+- [x] 06-02-PLAN.md — Remove `thread_id`, add the Phase 6 schema migration, and implement the persisted engine core
+- [x] 06-03-PLAN.md — Wire trigger and approval execution onto the persisted workflow engine with restart-safe integration coverage
+- [x] 06-04-PLAN.md — Remove LangGraph dependencies, env surface, and operator docs language
 
 ### Phase 7: Build A Loop-Based Quiver Agent
 **Goal**: Research runs as a bounded loop-and-tools agent that decides what Quiver evidence to inspect next instead of relying on a single prompt pass.  Look at the how-to-build-a-agent in go in ../ folder for inspiration for how to build agents. 
@@ -156,6 +156,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 3. Scheduling And Email Delivery | 3/3 | Complete | 2026-03-31 |
 | 4. HITL And Broker Prestage | 3/3 | Complete | 2026-03-31 |
 | 5. Operational Readiness | 2/2 | Complete | 2026-03-31 |
-| 6. Replace LangGraph With A Custom Workflow Engine | 0/0 | Not Started | |
+| 6. Replace LangGraph With A Custom Workflow Engine | 4/4 | Complete | 2026-03-31 |
 | 7. Build A Loop-Based Quiver Agent | 0/3 | Not Started | |
 | 8. Upgrade Outputs To Strategic Insight Reports | 0/0 | Not Started | |
