@@ -58,6 +58,16 @@ def test_health_route_returns_ok():
     assert response.json() == {"status": "ok"}
 
 
+def test_health_route_returns_ok_after_readiness_passes(tmp_path, monkeypatch):
+    app = _build_app(tmp_path, monkeypatch)
+    client = TestClient(app)
+
+    response = client.get("/health")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
 def test_manual_trigger_starts_a_run(tmp_path, monkeypatch):
     client = TestClient(_build_app(tmp_path, monkeypatch))
 
