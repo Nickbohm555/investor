@@ -101,41 +101,47 @@ Plans:
 ### Phase 6: Replace LangGraph With A Custom Workflow Engine
 **Goal**: The app owns workflow execution, approval handling, and restart-safe step transitions without LangGraph, checkpointers, or resume semantics
 **Depends on**: Phase 5
-**Requirements**: TBD
+**Requirements**: SC-01, SC-02, SC-03
 **Success Criteria** (what must be TRUE):
 1. Runtime orchestration no longer depends on LangGraph naming, configuration, or checkpointer concepts
 2. Approval and rejection execute through app-owned persisted workflow steps instead of replaying a paused state payload
 3. Restart-safe trigger, approval, and broker-prestage flows remain covered by tests after the cutover
-**Plans**: 0 plans
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD (run `$gsd-plan-phase 6` to break down)
+- [ ] 06-01-PLAN.md — Establish the app-owned workflow engine contract and merge the existing Alembic branch split
+- [ ] 06-02-PLAN.md — Cut trigger and approval execution over to persisted app-owned workflow steps
+- [ ] 06-03-PLAN.md — Remove LangGraph dependencies, env surface, and operator docs language
 
 ### Phase 7: Build A Loop-Based Quiver Agent
 **Goal**: Research runs as a bounded loop-and-tools agent that decides what Quiver evidence to inspect next instead of relying on a single prompt pass.  Look at the how-to-build-a-agent in go in ../ folder for inspiration for how to build agents. 
 **Depends on**: Phase 6
-**Requirements**: TBD
+**Requirements**: AGENT-01, AGENT-02, AGENT-03
 **Success Criteria** (what must be TRUE):
 1. The agent can make multiple Quiver tool calls in one run with explicit stop conditions and budget limits
 2. Research traces show why the agent chose additional investigation steps for a ticker or thesis
 3. Final recommendations still satisfy the structured candidate, watchlist, or no-action contract
-**Plans**: 0 plans
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD (run `$gsd-plan-phase 7` to break down)
+- [ ] 07-01-PLAN.md — Define loop-agent contracts, prompts, and tool-capable LLM seams
+- [ ] 07-02-PLAN.md — Implement the bounded Quiver loop and persist trace-aware workflow state
+- [ ] 07-03-PLAN.md — Wire loop-agent settings, readiness checks, and dry-run operational regression coverage
 
 ### Phase 8: Upgrade Outputs To Strategic Insight Reports
 **Goal**: Operator-facing output explains what changed, why it matters, and what action or follow-up research is warranted
 **Depends on**: Phase 7
-**Requirements**: TBD
+**Requirements**: REP-01, REP-02, REP-03
 **Success Criteria** (what must be TRUE):
 1. Reports explain signal changes, thesis updates, or uncertainty instead of only listing ranked tickers
 2. The operator can distinguish immediate actions, defer cases, and items needing more research from the delivered report
 3. Email or report output remains deterministic enough to test and review locally
-**Plans**: 0 plans
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD (run `$gsd-plan-phase 8` to break down)
+- [ ] 08-01-PLAN.md — Define the strategic report contract, comparison rules, and deterministic bucket builder
+- [ ] 08-02-PLAN.md — Add Jinja2-backed report rendering and route email composition through templates
+- [ ] 08-03-PLAN.md — Wire baseline-aware strategic reports into workflow execution and persisted run state
 
 ## Progress
 
@@ -150,5 +156,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 4. HITL And Broker Prestage | 3/3 | Complete | 2026-03-31 |
 | 5. Operational Readiness | 2/2 | Complete | 2026-03-31 |
 | 6. Replace LangGraph With A Custom Workflow Engine | 0/0 | Not Started | |
-| 7. Build A Loop-Based Quiver Agent | 0/0 | Not Started | |
+| 7. Build A Loop-Based Quiver Agent | 0/3 | Not Started | |
 | 8. Upgrade Outputs To Strategic Insight Reports | 0/0 | Not Started | |
