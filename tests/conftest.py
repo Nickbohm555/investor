@@ -41,6 +41,19 @@ class MailProviderSpy:
         )
 
 
+class StubAlpacaClient:
+    def __init__(self) -> None:
+        self._account = {"buying_power": "1000.00", "trading_blocked": False}
+        self._asset = {"symbol": "NVDA", "tradable": True, "fractionable": True}
+
+    def get_account(self) -> dict:
+        return self._account
+
+    def get_asset(self, symbol: str) -> dict:
+        assert symbol == "NVDA"
+        return self._asset
+
+
 @pytest.fixture
 def client() -> TestClient:
     return TestClient(create_app())
@@ -54,6 +67,7 @@ def app_factory(tmp_path, monkeypatch):
         checkpointer_url: Optional[str] = None,
         approval_token_ttl_seconds: int = 900,
         mail_provider=None,
+        alpaca_client_factory=None,
     ):
         resolved_database_url = database_url or f"sqlite+pysqlite:///{tmp_path / 'investor.db'}"
         monkeypatch.setenv("INVESTOR_DATABASE_URL", resolved_database_url)
@@ -67,12 +81,11 @@ def app_factory(tmp_path, monkeypatch):
             monkeypatch.setenv("INVESTOR_LANGGRAPH_CHECKPOINTER_URL", checkpointer_url)
         session_factory = get_session_factory(resolved_database_url)
         Base.metadata.create_all(bind=session_factory.kw["bind"])
-        app = create_app(session_factory=session_factory)
-        # session_factory override keeps the shared in-memory SQLite harness stable in tests.
-        app.state.session_factory = session_factory
-        if mail_provider is not None:
-            app.state.mail_provider = mail_provider
-            app.state.runtime.mail_provider = mail_provider
+        app = create_app(
+            session_factory=session_factory,
+            mail_provider=mail_provider or MailProviderSpy(),
+            alpaca_client_factory=alpaca_client_factory or (lambda broker_mode: StubAlpacaClient()),
+        )
         return app
 
     return factory

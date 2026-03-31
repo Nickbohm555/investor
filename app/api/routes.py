@@ -17,6 +17,7 @@ from app.services.approvals import (
     apply_review_decision,
     configure_approval_service,
 )
+from app.services.broker_policy import BrokerPolicyError
 from app.services.scheduling import create_or_get_scheduled_run
 from app.services.tokens import ExpiredApprovalTokenError, InvalidApprovalTokenError
 from app.services.tokens import verify_approval_token
@@ -173,6 +174,8 @@ def review_token(token: str, request: Request) -> dict:
                 session_factory=request.app.state.session_factory,
                 runtime=request.app.state.runtime,
                 research_node=request.app.state.research_node,
+                prestage_service=request.app.state.broker_prestage_service.prestage_approved_recommendations,
+                broker_mode=request.app.state.settings.broker_mode,
             )
         )
         result = apply_review_decision(payload, token_id=payload.token_id)
@@ -184,6 +187,8 @@ def review_token(token: str, request: Request) -> dict:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except StaleApprovalError as exc:
         raise HTTPException(status_code=410, detail=str(exc)) from exc
+    except BrokerPolicyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except (DuplicateApprovalError, RunNotAwaitingReviewError) as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
 

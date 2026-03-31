@@ -69,13 +69,14 @@ def test_approval_resumes_same_thread(app_factory, tmp_path):
         session_factory=second_app.state.session_factory,
         runtime=second_app.state.runtime,
         research_node=second_app.state.research_node,
+        prestage_service=lambda run_id, recommendation_ids, broker_mode: [],
     )
     result = service.apply_review_decision(payload, token_id=payload.token_id)
 
     assert stored_before is not None
     assert stored_before.status == "awaiting_review"
     assert result["thread_id"] == stored_before.thread_id
-    assert result["status"] == "completed"
+    assert result["status"] == "broker_prestaged"
 
     with Session(second_app.state.session_factory.kw["bind"]) as session:
         stored_after = session.get(RunRecord, run_id)
@@ -91,7 +92,7 @@ def test_approval_resumes_same_thread(app_factory, tmp_path):
     assert [transition.to_status for transition in transitions] == [
         "awaiting_review",
         "resuming",
-        "completed",
+        "broker_prestaged",
     ]
 
 
@@ -133,11 +134,12 @@ def test_duplicate_approval_returns_explicit_error(app_factory, tmp_path):
         session_factory=second_app.state.session_factory,
         runtime=second_app.state.runtime,
         research_node=second_app.state.research_node,
+        prestage_service=lambda run_id, recommendation_ids, broker_mode: [],
     )
 
     first = service.apply_review_decision(payload, token_id=payload.token_id)
 
-    assert first["status"] == "completed"
+    assert first["status"] == "broker_prestaged"
 
     with pytest.raises(DuplicateApprovalError):
         service.apply_review_decision(payload, token_id=payload.token_id)

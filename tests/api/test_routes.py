@@ -22,11 +22,22 @@ class MailProviderSpy:
         )
 
 
+class StubAlpacaClient:
+    def get_account(self) -> dict:
+        return {"buying_power": "1000.00", "trading_blocked": False}
+
+    def get_asset(self, symbol: str) -> dict:
+        assert symbol == "NVDA"
+        return {"symbol": "NVDA", "tradable": True, "fractionable": True}
+
+
 def _build_app(tmp_path, monkeypatch):
     database_url = f"sqlite+pysqlite:///{tmp_path / 'investor.db'}"
     monkeypatch.setenv("INVESTOR_DATABASE_URL", database_url)
-    app = create_app()
-    app.state.mail_provider = MailProviderSpy()
+    app = create_app(
+        mail_provider=MailProviderSpy(),
+        alpaca_client_factory=lambda broker_mode: StubAlpacaClient(),
+    )
     return app
 
 
@@ -73,13 +84,10 @@ def test_manual_trigger_persists_public_approval_links(tmp_path, monkeypatch):
     assert approval_prefix in stored.state_payload["email_body"]
 
 
-def test_approval_callback_resumes_a_paused_run():
-    app = create_app()
-    app.state.mail_provider = MailProviderSpy()
-    client = TestClient(app)
-
-    trigger_response = client.post("/runs/trigger")
-    run_id = trigger_response.json()["run_id"]
+def test_approval_callback_resumes_a_paused_run(persisted_run):
+    app = persisted_run["app"]
+    client = persisted_run["client"]
+    run_id = persisted_run["run_id"]
     token = sign_approval_token(
         run_id=run_id,
         decision="approve",
@@ -90,7 +98,7 @@ def test_approval_callback_resumes_a_paused_run():
     response = client.get(f"/approval/{token}")
 
     assert response.status_code == 200
-    assert response.json()["status"] == "completed"
+    assert response.json() == {"status": "broker_prestaged", "run_id": run_id}
 
 
 def test_trigger_persists_run_and_approval_reuses_same_thread(tmp_path, monkeypatch):
@@ -123,7 +131,7 @@ def test_trigger_persists_run_and_approval_reuses_same_thread(tmp_path, monkeypa
     approval_response = client.get(f"/approval/{token}")
 
     assert approval_response.status_code == 200
-    assert approval_response.json()["status"] == "completed"
+    assert approval_response.json()["status"] == "broker_prestaged"
 
     with Session(app.state.session_factory.kw["bind"]) as session:
         updated = session.get(RunRecord, run_id)
@@ -131,7 +139,7 @@ def test_trigger_persists_run_and_approval_reuses_same_thread(tmp_path, monkeypa
 
     assert updated is not None
     assert updated.thread_id == stored.thread_id
-    assert updated.status == "completed"
+    assert updated.status == "broker_prestaged"
     assert len(approval_events) == 1
     assert approval_events[0].decision == "approve"
     approval_prefix = f"{app.state.settings.external_base_url}/approval/"

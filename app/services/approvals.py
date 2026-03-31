@@ -13,7 +13,8 @@ AWAITING_REVIEW_STATUS = "awaiting_review"
 RESUMING_STATUS = "resuming"
 COMPLETED_STATUS = "completed"
 REJECTED_STATUS = "rejected"
-TERMINAL_STATUSES = {COMPLETED_STATUS, REJECTED_STATUS}
+BROKER_PRESTAGED_STATUS = "broker_prestaged"
+TERMINAL_STATUSES = {COMPLETED_STATUS, REJECTED_STATUS, BROKER_PRESTAGED_STATUS}
 
 
 class RunNotAwaitingReviewError(ValueError):
@@ -38,6 +39,7 @@ class ApprovalService:
     runtime: object
     research_node: object
     prestage_service: Optional[Callable[..., object]] = None
+    broker_mode: str = "paper"
 
     def apply_review_decision(self, payload: ApprovalTokenPayload, token_id: str) -> dict:
         with self.session_factory.begin() as session:
@@ -51,6 +53,9 @@ class ApprovalService:
                 raise StaleApprovalError("Approval already processed")
             if run.status != AWAITING_REVIEW_STATUS:
                 raise RunNotAwaitingReviewError("Run is not awaiting review")
+            recommendation_rows = repository.list_recommendations(run.run_id)
+            recommendation_ids = [row.id for row in recommendation_rows]
+            thread_id = run.thread_id
 
             repository.record_approval_event(
                 run_id=run.run_id,
@@ -76,30 +81,46 @@ class ApprovalService:
                 reason="Approval callback accepted the run",
             )
             state_payload = dict(run.state_payload or {})
-            state_payload["thread_id"] = run.thread_id
+            state_payload["thread_id"] = thread_id
             state_payload["recommendations"] = [
                 item
                 if isinstance(item, CandidateRecommendation)
                 else CandidateRecommendation.model_validate(item)
                 for item in state_payload.get("recommendations", [])
             ]
-            result = self.runtime.resume_run(
-                state_payload,
-                decision=payload.decision,
-                research_node=self.research_node,
+
+        result = self.runtime.resume_run(
+            state_payload,
+            decision=payload.decision,
+            research_node=self.research_node,
+        )
+        final_status = result["status"]
+        if self.prestage_service is not None:
+            self.prestage_service(
+                run_id=payload.run_id,
+                recommendation_ids=recommendation_ids,
+                broker_mode=self.broker_mode,
             )
+            final_status = BROKER_PRESTAGED_STATUS
+
+        with self.session_factory.begin() as session:
+            repository = RunsRepository(session)
+            run = repository.get_run(payload.run_id)
+            if run is None:
+                raise MissingRunError("Run not found")
             repository.transition_run(
                 run,
-                to_status=result["status"],
-                current_step="completed" if result["status"] == COMPLETED_STATUS else result["status"],
+                to_status=final_status,
+                current_step=final_status,
                 approval_status="approve",
                 reason="Persisted workflow resumed from approval decision",
             )
-            return {
-                "run_id": run.run_id,
-                "thread_id": run.thread_id,
-                "status": result["status"],
-            }
+
+        return {
+            "run_id": payload.run_id,
+            "thread_id": thread_id,
+            "status": final_status,
+        }
 
 
 _default_service: ApprovalService | None = None

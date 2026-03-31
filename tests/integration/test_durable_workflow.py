@@ -49,7 +49,7 @@ def test_durable_workflow_survives_app_restart(app_factory, tmp_path):
     duplicate_response = second_client.get(f"/approval/{token}")
 
     assert approval_response.status_code == 200
-    assert approval_response.json() == {"status": "completed", "run_id": run_id}
+    assert approval_response.json() == {"status": "broker_prestaged", "run_id": run_id}
     assert duplicate_response.status_code == 409
     assert duplicate_response.json() == {"detail": "Approval already recorded"}
 
@@ -60,11 +60,11 @@ def test_durable_workflow_survives_app_restart(app_factory, tmp_path):
         transitions = session.query(StateTransitionRecord).filter_by(run_id=run_id).all()
 
     assert run is not None
-    assert run.status == "completed"
+    assert run.status == "broker_prestaged"
     assert len(recommendations) >= 1
     assert len(approval_events) == 1
     assert {transition.to_status for transition in transitions} >= {
-        "awaiting_human_review",
-        "approved",
-        "completed",
+        "awaiting_review",
+        "resuming",
+        "broker_prestaged",
     }
