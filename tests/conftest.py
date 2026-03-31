@@ -14,6 +14,13 @@ os.environ.setdefault("INVESTOR_DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("INVESTOR_SCHEDULED_TRIGGER_TOKEN", "test-scheduled-token")
 os.environ.setdefault("INVESTOR_SCHEDULE_TRIGGER_URL", "http://127.0.0.1:8000/runs/trigger/scheduled")
 os.environ.setdefault("INVESTOR_CRON_LOG_PATH", "logs/cron/daily-trigger.log")
+os.environ.setdefault("INVESTOR_SMTP_HOST", "smtp.example.com")
+os.environ.setdefault("INVESTOR_SMTP_PORT", "587")
+os.environ.setdefault("INVESTOR_SMTP_USERNAME", "investor-user")
+os.environ.setdefault("INVESTOR_SMTP_PASSWORD", "change-me")
+os.environ.setdefault("INVESTOR_SMTP_FROM_EMAIL", "investor@example.com")
+os.environ.setdefault("INVESTOR_DAILY_MEMO_TO_EMAIL", "operator@example.com")
+os.environ.setdefault("INVESTOR_EXTERNAL_BASE_URL", "https://investor.example.com")
 
 
 @pytest.fixture
@@ -28,6 +35,7 @@ def app_factory(tmp_path, monkeypatch):
         database_url: Optional[str] = None,
         checkpointer_url: Optional[str] = None,
         approval_token_ttl_seconds: int = 900,
+        mail_provider=None,
     ):
         resolved_database_url = database_url or f"sqlite+pysqlite:///{tmp_path / 'investor.db'}"
         monkeypatch.setenv("INVESTOR_DATABASE_URL", resolved_database_url)
@@ -44,6 +52,8 @@ def app_factory(tmp_path, monkeypatch):
         app = create_app(session_factory=session_factory)
         # session_factory override keeps the shared in-memory SQLite harness stable in tests.
         app.state.session_factory = session_factory
+        if mail_provider is not None:
+            app.state.mail_provider = mail_provider
         return app
 
     return factory

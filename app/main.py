@@ -7,6 +7,7 @@ from app.config import get_settings
 from app.db.models import Base
 from app.db.session import get_session_factory
 from app.graph.runtime import InvestorRuntime
+from app.services.mail_provider import SmtpMailProvider
 from app.services.run_service import RunService
 
 
@@ -48,12 +49,14 @@ def create_app(
     run_service = RunService(session_factory)
     runtime = runtime or InvestorRuntime(settings=settings)
     research_node = research_node or ResearchNode(llm=StaticLLM())
+    mail_provider = SmtpMailProvider(settings)
     app = FastAPI(title=settings.app_name)
     app.state.settings = settings
     app.state.session_factory = session_factory
     app.state.run_service = run_service
     app.state.runtime = runtime
     app.state.research_node = research_node
+    app.state.mail_provider = mail_provider
     app.state.quiver_transport = quiver_transport if quiver_transport is not None else _static_quiver_transport()
     app.include_router(router)
 

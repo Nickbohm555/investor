@@ -8,6 +8,13 @@ class Settings(BaseSettings):
     app_env: str = "development"
     app_secret: str = "change-me"
     database_url: str = "sqlite+pysqlite:///./investor.db"
+    smtp_host: str = "smtp.example.com"
+    smtp_port: int = 587
+    smtp_username: str = "investor-user"
+    smtp_password: str = "change-me"
+    smtp_from_email: str = "investor@example.com"
+    daily_memo_to_email: str = "operator@example.com"
+    external_base_url: str = "https://investor.example.com"
     schedule_cron_expression: str = "30 8 * * 1-5"
     schedule_trigger_url: str = "http://127.0.0.1:8000/runs/trigger/scheduled"
     scheduled_trigger_token: str = "change-me-scheduled-trigger"
