@@ -7,11 +7,14 @@ from app.config import Settings
 from app.db.models import (
     ApprovalEventRecord,
     Base,
+    BrokerArtifactRecord,
     RecommendationRecord,
     RunRecord,
     StateTransitionRecord,
 )
 from app.db.session import get_session_factory
+from app.repositories.broker_artifacts import BrokerArtifactsRepository
+from app.schemas.broker import BrokerMode, BrokerPolicySnapshot, OrderProposal
 from app.schemas.workflow import Recommendation
 from app.services.run_service import RunService
 
@@ -57,12 +60,15 @@ def test_related_runtime_tables_reference_runs_and_audit_fields():
     recommendation_columns = RecommendationRecord.__table__.columns
     approval_columns = ApprovalEventRecord.__table__.columns
     transition_columns = StateTransitionRecord.__table__.columns
+    broker_columns = BrokerArtifactRecord.__table__.columns
 
     assert not recommendation_columns["created_at"].nullable
     assert approval_columns["token_id"].unique is True
     assert not approval_columns["occurred_at"].nullable
     assert not transition_columns["occurred_at"].nullable
     assert transition_columns["reason"].nullable
+    assert broker_columns["client_order_id"].unique is True
+    assert not broker_columns["policy_snapshot_json"].nullable
 
 
 def test_initial_migration_creates_expected_runtime_columns():
@@ -78,6 +84,9 @@ def test_initial_migration_creates_expected_runtime_columns():
     transition_columns = {
         column["name"] for column in inspector.get_columns("state_transitions")
     }
+    broker_columns = {
+        column["name"] for column in inspector.get_columns("broker_artifacts")
+    }
 
     assert {
         "thread_id",
@@ -89,6 +98,13 @@ def test_initial_migration_creates_expected_runtime_columns():
     assert {"created_at"}.issubset(recommendation_columns)
     assert {"token_id", "occurred_at"}.issubset(approval_columns)
     assert {"occurred_at", "reason"}.issubset(transition_columns)
+    assert {
+        "run_id",
+        "recommendation_id",
+        "broker_mode",
+        "client_order_id",
+        "policy_snapshot_json",
+    }.issubset(broker_columns)
 
 
 def test_settings_expose_runtime_persistence_configuration():
@@ -148,7 +164,7 @@ def test_store_recommendations_and_transition_share_same_run():
     )
     service.mark_status(
         "run-123",
-        to_status="awaiting_human_review",
+        to_status="awaiting_review",
         current_step="approval",
         reason="Recommendations ready for operator review",
     )
@@ -159,13 +175,13 @@ def test_store_recommendations_and_transition_share_same_run():
         stored = session.get(RunRecord, "run-123")
 
     assert stored is not None
-    assert stored.status == "awaiting_human_review"
+    assert stored.status == "awaiting_review"
     assert stored.current_step == "approval"
     assert len(recommendations) == 1
     assert recommendations[0].ticker == "NVDA"
     assert len(transitions) == 1
     assert transitions[0].from_status == "triggered"
-    assert transitions[0].to_status == "awaiting_human_review"
+    assert transitions[0].to_status == "awaiting_review"
 
 
 def test_record_approval_event_rejects_duplicate_token_ids():
@@ -175,7 +191,7 @@ def test_record_approval_event_rejects_duplicate_token_ids():
     service.create_pending_run(
         run_id="run-123",
         thread_id="thread-123",
-        status="awaiting_human_review",
+        status="awaiting_review",
         current_step="approval",
         trigger_source="manual",
     )
@@ -211,7 +227,7 @@ def test_run_service_persists_completed_lifecycle_with_approval_event_and_transi
     )
     service.mark_status(
         "run-123",
-        to_status="awaiting_human_review",
+        to_status="awaiting_review",
         current_step="approval",
         reason="Recommendations ready for operator review",
     )
@@ -247,7 +263,117 @@ def test_run_service_persists_completed_lifecycle_with_approval_event_and_transi
     assert len(recommendations) == 1
     assert len(approval_events) == 1
     assert [transition.to_status for transition in transitions] == [
-        "awaiting_human_review",
+        "awaiting_review",
         "approved",
         "completed",
     ]
+
+
+def test_broker_artifact_persists_run_recommendation_and_policy_snapshot():
+    session_factory = get_session_factory("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(session_factory.kw["bind"])
+    service = RunService(session_factory)
+    service.create_pending_run(
+        run_id="run-123",
+        thread_id="thread-123",
+        status="awaiting_review",
+        current_step="approval",
+        trigger_source="manual",
+    )
+    recommendation = service.store_recommendations(
+        "run-123",
+        [
+            Recommendation(
+                ticker="NVDA",
+                action="buy",
+                conviction_score=0.82,
+                rationale="Durable infrastructure demand remains strong.",
+            )
+        ],
+    )[0]
+
+    proposal = OrderProposal(
+        run_id="run-123",
+        recommendation_id=recommendation.id,
+        broker_mode=BrokerMode.paper,
+        symbol="NVDA",
+        side="buy",
+        order_type="market",
+        time_in_force="day",
+        qty=None,
+        notional="250.00",
+        client_order_id="run-123-1-paper",
+    )
+    snapshot = BrokerPolicySnapshot(
+        broker_mode=BrokerMode.paper,
+        account_buying_power="1000.00",
+        asset_tradable=True,
+        asset_fractionable=True,
+        order_shape={"side": "buy", "order_type": "market", "time_in_force": "day"},
+    )
+
+    with session_factory.begin() as session:
+        repository = BrokerArtifactsRepository(session)
+        artifact = repository.create_artifact(proposal, snapshot)
+
+    with session_factory() as session:
+        stored = session.query(BrokerArtifactRecord).filter_by(client_order_id="run-123-1-paper").one()
+
+    assert artifact.run_id == "run-123"
+    assert stored.recommendation_id == recommendation.id
+    assert stored.broker_mode == "paper"
+    assert stored.policy_snapshot_json["broker_mode"] == "paper"
+    assert stored.client_order_id == "run-123-1-paper"
+
+
+def test_broker_artifact_client_order_id_must_be_unique():
+    session_factory = get_session_factory("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(session_factory.kw["bind"])
+    service = RunService(session_factory)
+    service.create_pending_run(
+        run_id="run-123",
+        thread_id="thread-123",
+        status="awaiting_review",
+        current_step="approval",
+        trigger_source="manual",
+    )
+    recommendation = service.store_recommendations(
+        "run-123",
+        [
+            Recommendation(
+                ticker="NVDA",
+                action="buy",
+                conviction_score=0.82,
+                rationale="Durable infrastructure demand remains strong.",
+            )
+        ],
+    )[0]
+
+    proposal = OrderProposal(
+        run_id="run-123",
+        recommendation_id=recommendation.id,
+        broker_mode=BrokerMode.paper,
+        symbol="NVDA",
+        side="buy",
+        order_type="market",
+        time_in_force="day",
+        qty=None,
+        notional="250.00",
+        client_order_id="run-123-1-paper",
+    )
+    snapshot = BrokerPolicySnapshot(
+        broker_mode=BrokerMode.paper,
+        account_buying_power="1000.00",
+        asset_tradable=True,
+        asset_fractionable=True,
+        order_shape={"side": "buy", "order_type": "market", "time_in_force": "day"},
+    )
+
+    with session_factory.begin() as session:
+        repository = BrokerArtifactsRepository(session)
+        repository.create_artifact(proposal, snapshot)
+
+    with pytest.raises(IntegrityError):
+        with session_factory.begin() as session:
+            repository = BrokerArtifactsRepository(session)
+            repository.create_artifact(proposal, snapshot)

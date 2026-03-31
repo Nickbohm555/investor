@@ -16,7 +16,7 @@ class RunRecord(Base):
     run_id: Mapped[str] = mapped_column(String(64), primary_key=True)
     thread_id: Mapped[str] = mapped_column(String(128), unique=True, nullable=False)
     status: Mapped[str] = mapped_column(String(32), nullable=False)
-    trigger_source: Mapped[str] = mapped_column(String(16), nullable=False, default="manual")
+    trigger_source: Mapped[str] = mapped_column(String(32), nullable=False, default="manual")
     schedule_key: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
     replay_of_run_id: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     approval_status: Mapped[str] = mapped_column(
@@ -58,3 +58,22 @@ class StateTransitionRecord(Base):
     to_status: Mapped[str] = mapped_column(String(32), nullable=False)
     reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     occurred_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+
+
+class BrokerArtifactRecord(Base):
+    __tablename__ = "broker_artifacts"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    run_id: Mapped[str] = mapped_column(ForeignKey("runs.run_id"), nullable=False)
+    recommendation_id: Mapped[int] = mapped_column(ForeignKey("recommendations.id"), nullable=False)
+    broker_mode: Mapped[str] = mapped_column(String(16), nullable=False)
+    symbol: Mapped[str] = mapped_column(String(16), nullable=False)
+    side: Mapped[str] = mapped_column(String(16), nullable=False)
+    order_type: Mapped[str] = mapped_column(String(16), nullable=False)
+    time_in_force: Mapped[str] = mapped_column(String(16), nullable=False)
+    qty: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
+    notional: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
+    client_order_id: Mapped[str] = mapped_column(String(128), nullable=False, unique=True)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="draft_ready")
+    policy_snapshot_json: Mapped[dict] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
