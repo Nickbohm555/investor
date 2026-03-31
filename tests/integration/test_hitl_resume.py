@@ -38,7 +38,6 @@ def _create_run_and_payload(app_factory, tmp_path):
         checkpointer_url=checkpointer_url,
         mail_provider=MailProviderSpy(),
     )
-    first_app.state.runtime.mail_provider = first_app.state.mail_provider
     first_client = TestClient(first_app)
     trigger_response = first_client.post("/runs/trigger")
 
@@ -55,11 +54,10 @@ def _create_run_and_payload(app_factory, tmp_path):
         checkpointer_url=checkpointer_url,
         mail_provider=MailProviderSpy(),
     )
-    second_app.state.runtime.mail_provider = second_app.state.mail_provider
     return first_app, second_app, run_id, payload
 
 
-def test_approval_resumes_same_thread(app_factory, tmp_path):
+def test_approval_advances_persisted_workflow_step(app_factory, tmp_path):
     first_app, second_app, run_id, payload = _create_run_and_payload(app_factory, tmp_path)
 
     with Session(second_app.state.session_factory.kw["bind"]) as session:
@@ -67,7 +65,7 @@ def test_approval_resumes_same_thread(app_factory, tmp_path):
 
     service = ApprovalService(
         session_factory=second_app.state.session_factory,
-        runtime=second_app.state.runtime,
+        workflow_engine=second_app.state.workflow_engine,
         research_node=second_app.state.research_node,
         prestage_service=lambda run_id, recommendation_ids, broker_mode: [],
     )
@@ -75,7 +73,6 @@ def test_approval_resumes_same_thread(app_factory, tmp_path):
 
     assert stored_before is not None
     assert stored_before.status == "awaiting_review"
-    assert result["thread_id"] == stored_before.thread_id
     assert result["status"] == "broker_prestaged"
 
     with Session(second_app.state.session_factory.kw["bind"]) as session:
@@ -88,10 +85,8 @@ def test_approval_resumes_same_thread(app_factory, tmp_path):
         )
 
     assert stored_after is not None
-    assert stored_after.thread_id == stored_before.thread_id
     assert [transition.to_status for transition in transitions] == [
         "awaiting_review",
-        "resuming",
         "broker_prestaged",
     ]
 
@@ -107,7 +102,7 @@ def test_reject_finalizes_without_broker_side_effects(app_factory, tmp_path):
 
     service = ApprovalService(
         session_factory=second_app.state.session_factory,
-        runtime=second_app.state.runtime,
+        workflow_engine=second_app.state.workflow_engine,
         research_node=second_app.state.research_node,
         prestage_service=lambda run_id, recommendation_ids, broker_mode: broker_calls.append(
             (run_id, tuple(recommendation_ids), broker_mode)
@@ -132,7 +127,7 @@ def test_duplicate_approval_returns_explicit_error(app_factory, tmp_path):
     _, second_app, run_id, payload = _create_run_and_payload(app_factory, tmp_path)
     service = ApprovalService(
         session_factory=second_app.state.session_factory,
-        runtime=second_app.state.runtime,
+        workflow_engine=second_app.state.workflow_engine,
         research_node=second_app.state.research_node,
         prestage_service=lambda run_id, recommendation_ids, broker_mode: [],
     )
@@ -157,7 +152,7 @@ def test_stale_or_missing_run_returns_explicit_error(app_factory, tmp_path):
     _, second_app, run_id, _ = _create_run_and_payload(app_factory, tmp_path)
     service = ApprovalService(
         session_factory=second_app.state.session_factory,
-        runtime=second_app.state.runtime,
+        workflow_engine=second_app.state.workflow_engine,
         research_node=second_app.state.research_node,
     )
 
@@ -190,7 +185,8 @@ def test_stale_or_missing_run_returns_explicit_error(app_factory, tmp_path):
     with Session(second_app.state.session_factory.kw["bind"]) as session:
         run = session.get(RunRecord, run_id)
         assert run is not None
-        run.status = "resuming"
+        run.status = "triggered"
+        run.current_step = "research"
         session.commit()
 
     with pytest.raises(RunNotAwaitingReviewError):

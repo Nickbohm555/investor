@@ -160,8 +160,8 @@ def test_trigger_persists_run_and_approval_reuses_same_thread(tmp_path, monkeypa
         recommendations = session.query(RecommendationRecord).filter_by(run_id=run_id).all()
 
     assert stored is not None
-    assert stored.thread_id
     assert stored.status == "awaiting_review"
+    assert stored.current_step == "awaiting_review"
     assert recommendations
     assert not hasattr(app.state, "workflow_store")
     assert isinstance(stored.state_payload["evidence_bundles"], list)
@@ -183,12 +183,42 @@ def test_trigger_persists_run_and_approval_reuses_same_thread(tmp_path, monkeypa
         approval_events = session.query(ApprovalEventRecord).filter_by(run_id=run_id).all()
 
     assert updated is not None
-    assert updated.thread_id == stored.thread_id
     assert updated.status == "broker_prestaged"
     assert len(approval_events) == 1
     assert approval_events[0].decision == "approve"
     approval_prefix = f"{app.state.settings.external_base_url}/approval/"
     assert approval_prefix in stored.state_payload["email_body"]
+
+
+def test_archived_pre_phase6_run_returns_410(tmp_path, monkeypatch):
+    app = _build_app(tmp_path, monkeypatch)
+    client = TestClient(app)
+
+    with Session(app.state.session_factory.kw["bind"]) as session:
+        archived_run = RunRecord(
+            run_id="archived-run",
+            status="archived_pre_phase6",
+            trigger_source="manual",
+            approval_status="archived",
+            current_step="archived_pre_phase6",
+            state_payload={"archived_reason": "phase6_cutover"},
+        )
+        session.add(archived_run)
+        session.commit()
+
+    token = sign_approval_token(
+        run_id="archived-run",
+        decision="approve",
+        secret=app.state.settings.app_secret,
+        ttl_seconds=app.state.settings.approval_token_ttl_seconds,
+    )
+
+    response = client.get(f"/approval/{token}")
+
+    assert response.status_code == 410
+    assert response.json() == {
+        "detail": "Run was archived during the Phase 6 cutover and can no longer be approved"
+    }
 
 
 def test_invalid_approval_token_returns_400(tmp_path, monkeypatch):

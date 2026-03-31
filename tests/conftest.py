@@ -151,11 +151,9 @@ def persisted_run(app_factory):
     with app.state.session_factory() as session:
         run = app.state.run_service.get_run(run_id)
         assert run is not None
-        thread_id = run.thread_id
 
     return {
         "app": app,
         "client": client,
         "run_id": run_id,
-        "thread_id": thread_id,
     }

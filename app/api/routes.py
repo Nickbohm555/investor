@@ -7,7 +7,6 @@ from uuid import uuid4
 from fastapi import APIRouter, Header, HTTPException, Request, Response
 
 from app.db.models import RunRecord
-from app.graph.workflow import compile_workflow
 from app.services.approvals import (
     ApprovalService,
     DuplicateApprovalError,
@@ -35,7 +34,6 @@ def health() -> dict[str, str]:
 @router.post("/runs/trigger", status_code=202)
 def trigger_run(request: Request) -> dict[str, str]:
     run_id = f"run-{uuid4().hex[:8]}"
-    thread_id = f"thread-{uuid4().hex[:12]}"
     quiver_client = QuiverClient(
         base_url=request.app.state.settings.quiver_base_url,
         api_key=request.app.state.settings.quiver_api_key,
@@ -43,33 +41,17 @@ def trigger_run(request: Request) -> dict[str, str]:
     )
     request.app.state.run_service.create_pending_run(
         run_id=run_id,
-        thread_id=thread_id,
         status="triggered",
         current_step="research",
         trigger_source="manual",
     )
-    workflow = compile_workflow(
-        request.app.state.research_node,
-        request.app.state.settings,
-        request.app.state.mail_provider,
-    )
-    state = request.app.state.runtime.start_run(
+    state = request.app.state.workflow_engine.start_run(
         run_id=run_id,
-        thread_id=thread_id,
-        research_node=request.app.state.research_node,
         quiver_client=quiver_client,
-        workflow=workflow,
     )
-    request.app.state.run_service.store_state_payload(run_id, state)
     request.app.state.run_service.store_recommendations(
         run_id,
-        list(state.get("recommendations", [])),
-    )
-    request.app.state.run_service.mark_status(
-        run_id,
-        to_status=state["status"],
-        current_step="approval",
-        reason="Research completed and awaiting operator review",
+        list(state["state_payload"].get("recommendations", [])),
     )
     return {"status": "started", "run_id": run_id}
 
@@ -88,7 +70,6 @@ def trigger_scheduled_run(
             session,
             run_factory=lambda schedule_key: RunRecord(
                 run_id=f"run-{uuid4().hex[:8]}",
-                thread_id=f"thread-{uuid4().hex[:12]}",
                 status="triggered",
                 current_step="research",
                 trigger_source="scheduled",
@@ -116,29 +97,14 @@ def trigger_scheduled_run(
         api_key=request.app.state.settings.quiver_api_key,
         transport=request.app.state.quiver_transport,
     )
-    workflow = compile_workflow(
-        request.app.state.research_node,
-        request.app.state.settings,
-        request.app.state.mail_provider,
-    )
     try:
-        state = request.app.state.runtime.start_run(
+        state = request.app.state.workflow_engine.start_run(
             run_id=run.run_id,
-            thread_id=run.thread_id,
-            research_node=request.app.state.research_node,
             quiver_client=quiver_client,
-            workflow=workflow,
         )
-        request.app.state.run_service.store_state_payload(run.run_id, state)
         request.app.state.run_service.store_recommendations(
             run.run_id,
-            list(state.get("recommendations", [])),
-        )
-        request.app.state.run_service.mark_status(
-            run.run_id,
-            to_status=state["status"],
-            current_step="approval",
-            reason="Research completed and awaiting operator review",
+            list(state["state_payload"].get("recommendations", [])),
         )
     except Exception as exc:
         logger.exception(
@@ -172,7 +138,7 @@ def review_token(token: str, request: Request) -> dict:
         configure_approval_service(
             ApprovalService(
                 session_factory=request.app.state.session_factory,
-                runtime=request.app.state.runtime,
+                workflow_engine=request.app.state.workflow_engine,
                 research_node=request.app.state.research_node,
                 prestage_service=request.app.state.broker_prestage_service.prestage_approved_recommendations,
                 broker_mode=request.app.state.settings.broker_mode,

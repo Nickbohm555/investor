@@ -61,12 +61,7 @@ class RunService:
         with self.session_factory.begin() as session:
             repository = RunRepository(session)
             normalized = [
-                Recommendation(
-                    ticker=item.ticker,
-                    action=item.action,
-                    conviction_score=item.conviction_score,
-                    rationale=_recommendation_rationale(item),
-                )
+                _normalize_recommendation_input(item)
                 for item in recommendations
             ]
             rows = repository.replace_recommendations(run_id, normalized)
@@ -190,6 +185,34 @@ def _recommendation_rationale(item) -> str:
                 return "; ".join(values)
         return item.action
     return getattr(item, "rationale", getattr(item, "action", ""))
+
+
+def _normalize_recommendation_input(item) -> Recommendation:
+    if isinstance(item, Recommendation):
+        return item
+    if isinstance(item, CandidateRecommendation):
+        return Recommendation(
+            ticker=item.ticker,
+            action=item.action,
+            conviction_score=item.conviction_score,
+            rationale=_recommendation_rationale(item),
+        )
+    if isinstance(item, dict):
+        if "rationale" in item:
+            return Recommendation.model_validate(item)
+        candidate = CandidateRecommendation.model_validate(item)
+        return Recommendation(
+            ticker=candidate.ticker,
+            action=candidate.action,
+            conviction_score=candidate.conviction_score,
+            rationale=_recommendation_rationale(candidate),
+        )
+    return Recommendation(
+        ticker=item.ticker,
+        action=item.action,
+        conviction_score=item.conviction_score,
+        rationale=_recommendation_rationale(item),
+    )
 
 
 def _serialize_state(value):

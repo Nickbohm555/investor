@@ -7,20 +7,19 @@ from app.api.routes import router
 from app.config import get_settings
 from app.db.models import Base
 from app.db.session import get_session_factory
-from app.graph.runtime import InvestorRuntime
-from app.graph.workflow import compile_workflow
 from app.ops.readiness import assert_startup_readiness
 from app.services.broker_prestage import BrokerPrestageService
 from app.services.mail_provider import SmtpMailProvider
 from app.services.research_llm import HttpResearchLLM
 from app.services.run_service import RunService
+from app.workflows.engine import WorkflowEngine
 
 
 def create_app(
     *,
     settings=None,
     session_factory=None,
-    runtime=None,
+    workflow_engine=None,
     research_node=None,
     quiver_transport=None,
     mail_provider=None,
@@ -40,12 +39,11 @@ def create_app(
         )
     )
     mail_provider = mail_provider or SmtpMailProvider(settings)
-    runtime = runtime or InvestorRuntime(
+    workflow_engine = workflow_engine or WorkflowEngine(
+        session_factory=session_factory,
+        research_node=research_node,
         settings=settings,
         mail_provider=mail_provider,
-        workflow_factory=lambda research_node, settings, mail_provider, checkpointer, evidence_builder=None: compile_workflow(
-            research_node, settings, mail_provider
-        ),
     )
     broker_prestage_service = broker_prestage_service or BrokerPrestageService(
         session_factory=session_factory,
@@ -59,7 +57,7 @@ def create_app(
         app.state.settings = settings
         app.state.session_factory = session_factory
         app.state.run_service = run_service
-        app.state.runtime = runtime
+        app.state.workflow_engine = workflow_engine
         app.state.research_node = research_node
         app.state.mail_provider = mail_provider
         app.state.broker_prestage_service = broker_prestage_service
@@ -70,7 +68,7 @@ def create_app(
     app.state.settings = settings
     app.state.session_factory = session_factory
     app.state.run_service = run_service
-    app.state.runtime = runtime
+    app.state.workflow_engine = workflow_engine
     app.state.research_node = research_node
     app.state.mail_provider = mail_provider
     app.state.broker_prestage_service = broker_prestage_service
