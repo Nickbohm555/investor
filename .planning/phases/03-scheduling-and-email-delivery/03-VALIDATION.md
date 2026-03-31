@@ -1,9 +1,9 @@
 ---
 phase: 3
 slug: scheduling-and-email-delivery
-status: draft
-nyquist_compliant: false
-wave_0_complete: false
+status: ready
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-03-31
 ---
 
@@ -38,15 +38,15 @@ created: 2026-03-31
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 03-01-01 | 01 | 0 | SCHD-01 | smoke | `pytest tests/ops/test_cron_scripts.py::test_install_remove_status_cycle -q` | ❌ W0 | ⬜ pending |
-| 03-01-02 | 01 | 1 | SCHD-02 | integration | `pytest tests/api/test_scheduling.py::test_duplicate_scheduled_trigger_does_not_create_second_primary_run -q` | ❌ W0 | ⬜ pending |
-| 03-01-03 | 01 | 1 | SCHD-03 | integration | `pytest tests/ops/test_cron_scripts.py::test_trigger_wrapper_loads_env_and_logs -q` | ❌ W0 | ⬜ pending |
-| 03-02-01 | 02 | 0 | MAIL-01 | unit | `pytest tests/services/test_mail_provider.py::test_smtp_provider_sends_emailmessage -q` | ❌ W0 | ⬜ pending |
-| 03-02-02 | 02 | 1 | MAIL-02 | unit | `pytest tests/services/test_email.py::test_renderer_supports_ranked_watchlist_and_no_action_paths -q` | ✅ expand | ⬜ pending |
-| 03-02-03 | 02 | 1 | MAIL-03 | unit/integration | `pytest tests/services/test_tokens.py tests/api/test_routes.py -q` | ✅ partial | ⬜ pending |
-| 03-03-01 | 03 | 2 | SCHD-02 | integration | `pytest tests/api/test_scheduling.py tests/api/test_routes.py -q` | ❌ W0 | ⬜ pending |
-| 03-03-02 | 03 | 2 | MAIL-01 | integration | `pytest tests/services/test_mail_provider.py tests/services/test_email.py tests/api/test_routes.py -q` | ❌ W0 | ⬜ pending |
-| 03-03-03 | 03 | 2 | SCHD-03 | integration | `pytest tests/ops/test_cron_scripts.py tests/api/test_scheduling.py tests/api/test_routes.py -q` | ❌ W0 | ⬜ pending |
+| 03-01-01 | 01 | 1 | SCHD-02 | integration | `pytest tests/api/test_scheduling.py::test_duplicate_scheduled_trigger_does_not_create_second_primary_run -q` | ✅ seeded in task | ⬜ pending |
+| 03-01-02 | 01 | 1 | SCHD-01 | smoke | `pytest tests/ops/test_cron_scripts.py::test_install_remove_status_cycle -q` | ✅ seeded in task | ⬜ pending |
+| 03-01-03 | 01 | 1 | SCHD-03 | integration | `pytest tests/ops/test_cron_scripts.py::test_trigger_wrapper_loads_env_and_logs -q` | ✅ seeded in task | ⬜ pending |
+| 03-02-01 | 02 | 2 | MAIL-01 | unit | `pytest tests/services/test_mail_provider.py::test_smtp_provider_sends_emailmessage -q` | ✅ seeded in task | ⬜ pending |
+| 03-02-02 | 02 | 2 | MAIL-02 | unit | `pytest tests/services/test_email.py::test_renderer_supports_ranked_watchlist_and_no_action_paths -q` | ✅ expand existing | ⬜ pending |
+| 03-02-03 | 02 | 2 | MAIL-03 | unit/integration | `pytest tests/services/test_tokens.py tests/api/test_routes.py -q` | ✅ expand existing | ⬜ pending |
+| 03-03-01 | 03 | 3 | SCHD-02 | integration | `pytest tests/api/test_scheduling.py tests/api/test_routes.py -q` | ✅ available after plans 01-02 | ⬜ pending |
+| 03-03-02 | 03 | 3 | MAIL-01 | integration | `pytest tests/services/test_mail_provider.py tests/services/test_email.py tests/api/test_routes.py -q` | ✅ available after plans 01-02 | ⬜ pending |
+| 03-03-03 | 03 | 3 | SCHD-03 | integration | `pytest tests/ops/test_cron_scripts.py tests/api/test_scheduling.py tests/api/test_routes.py -q` | ✅ available after plans 01-02 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -54,11 +54,11 @@ created: 2026-03-31
 
 ## Wave 0 Requirements
 
-- [ ] `tests/ops/test_cron_scripts.py` — add cron install/remove/status and trigger-wrapper coverage for `SCHD-01` and `SCHD-03`
-- [ ] `tests/api/test_scheduling.py` — add scheduled-trigger idempotency coverage for `SCHD-02`
-- [ ] `tests/services/test_mail_provider.py` — add SMTP provider contract coverage for `MAIL-01`
-- [ ] Expand `tests/services/test_email.py` — add ranked, watchlist, and no-action memo rendering coverage for `MAIL-02`
-- [ ] Expand `tests/services/test_tokens.py` and `tests/api/test_routes.py` — add external-base-url and expiry/run-scope coverage for `MAIL-03`
+- [x] Existing plan tasks seed `tests/ops/test_cron_scripts.py` during `03-01` and expand it again during `03-03`
+- [x] Existing plan tasks seed `tests/api/test_scheduling.py` during `03-01` and reuse it in `03-03`
+- [x] Existing plan tasks seed `tests/services/test_mail_provider.py` during `03-02`
+- [x] Existing plan tasks expand `tests/services/test_email.py` for ranked, watchlist, and no-action rendering during `03-02`
+- [x] Existing plan tasks expand `tests/services/test_tokens.py` and `tests/api/test_routes.py` for external-base-url and expiry/run-scope coverage during `03-02` and `03-03`
 
 ---
 
@@ -74,11 +74,11 @@ created: 2026-03-31
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 30s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 coverage is embedded in the first test-seeding tasks of Plans 01 and 02
+- [x] No watch-mode flags
+- [x] Feedback latency < 30s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved 2026-03-31
