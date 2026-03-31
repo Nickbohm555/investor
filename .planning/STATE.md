@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: ready_to_plan
-stopped_at: Phase 03 complete; ready to plan Phase 04
-last_updated: "2026-03-31T14:53:11.719Z"
+stopped_at: Phase 04 complete; ready to plan Phase 05
+last_updated: "2026-03-31T15:25:11Z"
 progress:
   total_phases: 5
-  completed_phases: 3
-  total_plans: 12
-  completed_plans: 9
+  completed_phases: 4
+  total_plans: 14
+  completed_plans: 12
 ---
 
 # Project State
@@ -19,38 +19,40 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** The system must produce trustworthy daily recommendations on schedule and carry approved ideas into a safe broker-review path without brittle manual steps.
-**Current focus:** Phase 04 — hitl-and-broker-prestage
+**Current focus:** Phase 05 — operational-readiness
 
 ## Current Position
 
-Phase: 04
+Phase: 05
 Plan: Not started
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 0
-- Average duration: -
-- Total execution time: 0.0 hours
+- Total plans completed: 12
+- Average duration: 10.3 min
+- Total execution time: 2.1 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 01 | 3 | 16 min | 5.3 min |
+| 02 | 3 | 15 min | 5.0 min |
+| 03 | 3 | 64 min | 21.3 min |
+| 04 | 3 | 29 min | 9.7 min |
 
 **Recent Trend:**
 
-- Last 5 plans: -
+- Last 5 plans: 03-02, 03-03, 04-01, 04-02, 04-03
 - Trend: Stable
 
-| Phase 01 P01 | 5min | 2 tasks | 7 files |
-| Phase 01 P02 | 7min | 2 tasks | 10 files |
-| Phase 01 P03 | 4min | 2 tasks | 4 files |
-| Phase 02 P02 | 4min | 2 tasks | 6 files |
-| Phase 02 P03 | 7min | 2 tasks | 16 files |
+| Phase 03 P02 | 28 min | 2 tasks | 9 files |
 | Phase 03 P03 | 23 min | 2 tasks | 9 files |
+| Phase 04 P01 | 7 min | 2 tasks | 7 files |
+| Phase 04 P02 | 8 min | 2 tasks | 11 files |
+| Phase 04 P03 | 14 min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -76,6 +78,9 @@ Plan: Not started
 - [Phase 03]: Use the shared StaticPool SQLite harness to prove scheduled duplicate handling against the same unique-constraint seam used by app code. — This keeps duplicate-branch coverage deterministic without pretending to be PostgreSQL-only logic.
 - [Phase 03]: Compose approval and rejection links inside the workflow from `external_base_url` and token settings instead of passing request-derived URLs through runtime state. — This keeps memo links stable across manual, scheduled, and future non-request trigger paths.
 - [Phase 03]: Keep memo rendering structured and transport-agnostic, with provider delivery handled separately by `app.state.mail_provider`. — This preserves a clean seam for SMTP now and API-backed mail providers later.
+- [Phase 04]: Treat `broker_prestaged` as the terminal approved-state contract once broker artifacts are created. — This distinguishes a broker-ready approval path from generic workflow completion and keeps route assertions explicit.
+- [Phase 04]: Persist broker draft artifacts with deterministic `client_order_id = {run_id}-{recommendation_id}-{broker_mode}` and policy snapshots. — This preserves auditability, dedupe, and future broker-confirmation seams.
+- [Phase 04]: Default the shared test harness to local mail and Alpaca doubles. — This keeps restart-safe approval and broker-prestage coverage deterministic and network-free.
 
 ### Pending Todos
 
@@ -84,10 +89,9 @@ None yet.
 ### Blockers/Concerns
 
 - The documented Postgres smoke command could not be proven on this machine because the existing `localhost:5432` service rejected the documented `investor/investor` credentials.
-- Phase 4 broker-prestage behavior remains out of scope for the completed durability foundation.
 
 ## Session Continuity
 
-Last session: 2026-03-31T14:50:14.923Z
-Stopped at: Phase 03 complete; ready to plan Phase 04
+Last session: 2026-03-31T15:25:11Z
+Stopped at: Phase 04 complete; ready to plan Phase 05
 Resume file: None

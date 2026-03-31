@@ -13,7 +13,7 @@ This roadmap turns the current investor prototype into an env-ready local app by
 - [x] **Phase 1: Durable Workflow Foundation** - Replace in-memory orchestration with restart-safe persisted workflow state (completed 2026-03-31)
 - [x] **Phase 2: Quiver Research And Ranking** - Build the broad-signal research surface, detailed prompts, and ranking outputs (completed 2026-03-31)
 - [x] **Phase 3: Scheduling And Email Delivery** - Make the daily trigger, real sender path, and approval email content operational (completed 2026-03-31)
-- [ ] **Phase 4: HITL And Broker Prestage** - Resume approved runs durably and create safe Alpaca draft-order artifacts
+- [x] **Phase 4: HITL And Broker Prestage** - Resume approved runs durably and create safe Alpaca draft-order artifacts (completed 2026-03-31)
 - [ ] **Phase 5: Operational Readiness** - Validate envs, add dry-run tooling, and close the “fill vars and run” gap
 
 ## Phase Details
@@ -77,9 +77,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Build the durable approval-state machine, explicit 4xx approval semantics, and restart-safe HITL tests
-- [ ] 04-02-PLAN.md — Add broker artifact persistence, Alpaca policy enforcement, and app-owned draft-order prestage services
-- [ ] 04-03-PLAN.md — Wire approval to broker prestage and prove approve/reject/duplicate/invalid flows with end-to-end tests
+- [x] 04-01-PLAN.md — Build the durable approval-state machine, explicit 4xx approval semantics, and restart-safe HITL tests
+- [x] 04-02-PLAN.md — Add broker artifact persistence, Alpaca policy enforcement, and app-owned draft-order prestage services
+- [x] 04-03-PLAN.md — Wire approval to broker prestage and prove approve/reject/duplicate/invalid flows with end-to-end tests
 
 ### Phase 5: Operational Readiness
 **Goal**: The repo is operationally complete so adding environment variables is the remaining setup step
@@ -105,5 +105,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 1. Durable Workflow Foundation | 3/3 | Complete   | 2026-03-31 |
 | 2. Quiver Research And Ranking | 3/3 | Complete | 2026-03-31 |
 | 3. Scheduling And Email Delivery | 3/3 | Complete | 2026-03-31 |
-| 4. HITL And Broker Prestage | 0/3 | Not started | - |
+| 4. HITL And Broker Prestage | 3/3 | Complete | 2026-03-31 |
 | 5. Operational Readiness | 0/2 | Not started | - |
