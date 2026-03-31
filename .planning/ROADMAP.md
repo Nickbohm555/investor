@@ -125,7 +125,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — Define loop-agent contracts, prompts, and tool-capable LLM seams
+- [x] 07-01-PLAN.md — Define loop-agent contracts, prompts, and tool-capable LLM seams
 - [ ] 07-02-PLAN.md — Implement the bounded Quiver loop and persist trace-aware workflow state
 - [ ] 07-03-PLAN.md — Wire loop-agent settings, readiness checks, and dry-run operational regression coverage
 
@@ -157,5 +157,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 4. HITL And Broker Prestage | 3/3 | Complete | 2026-03-31 |
 | 5. Operational Readiness | 2/2 | Complete | 2026-03-31 |
 | 6. Replace LangGraph With A Custom Workflow Engine | 4/4 | Complete | 2026-03-31 |
-| 7. Build A Loop-Based Quiver Agent | 0/3 | Not Started | |
+| 7. Build A Loop-Based Quiver Agent | 1/3 | In Progress|  |
 | 8. Upgrade Outputs To Strategic Insight Reports | 0/0 | Not Started | |
