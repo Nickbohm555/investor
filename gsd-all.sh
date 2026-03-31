@@ -21,6 +21,11 @@ repo="$(pwd)"
 mode="${1:-}"
 phase_arg="${2:-}"
 push_enabled=true
+runner=()
+
+if command -v caffeinate >/dev/null 2>&1; then
+  runner=(caffeinate -dimsu)
+fi
 
 push_current_branch() {
   local branch
@@ -91,7 +96,7 @@ fi
 
 if [[ "$mode" == "plan" ]]; then
   for phase in "${phases[@]}"; do
-    codex exec --dangerously-bypass-approvals-and-sandbox -C "$repo" - <<EOF &
+    "${runner[@]}" codex exec --dangerously-bypass-approvals-and-sandbox -C "$repo" - <<EOF &
 Use \$gsd-plan-phase $(echo "$phase" | xargs)
 EOF
   done
@@ -107,7 +112,7 @@ EOF
 fi
 
 for phase in "${phases[@]}"; do
-  codex exec --dangerously-bypass-approvals-and-sandbox -C "$repo" - <<EOF
+  "${runner[@]}" codex exec --dangerously-bypass-approvals-and-sandbox -C "$repo" - <<EOF
 Use \$gsd-execute-phase $(echo "$phase" | xargs)
 Make all reasonable decisions yourself.
 Do not ask me for input, approval, or clarification.
