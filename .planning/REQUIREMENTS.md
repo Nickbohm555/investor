@@ -13,9 +13,9 @@
 
 ### Scheduling
 
-- [ ] **SCHD-01**: Operator can install and remove the local cron schedule from repo-managed scripts
-- [ ] **SCHD-02**: Scheduled execution creates at most one primary run per configured market-day window unless a replay is explicitly requested
-- [ ] **SCHD-03**: Scheduled run loads environment variables and writes observable logs for trigger success or failure
+- [x] **SCHD-01**: Operator can install and remove the local cron schedule from repo-managed scripts
+- [x] **SCHD-02**: Scheduled execution creates at most one primary run per configured market-day window unless a replay is explicitly requested
+- [x] **SCHD-03**: Scheduled run loads environment variables and writes observable logs for trigger success or failure
 
 ### Research And Ranking
 
@@ -26,9 +26,9 @@
 
 ### Email And Approval
 
-- [ ] **MAIL-01**: System sends the daily memo through a provider abstraction with SMTP implemented for v1
-- [ ] **MAIL-02**: Daily memo includes ranked candidates or watchlist items, rationale, and signed approval and rejection links
-- [ ] **MAIL-03**: Approval links are scoped to a single run, expire correctly, and use the configured external base URL
+- [x] **MAIL-01**: System sends the daily memo through a provider abstraction with SMTP implemented for v1
+- [x] **MAIL-02**: Daily memo includes ranked candidates or watchlist items, rationale, and signed approval and rejection links
+- [x] **MAIL-03**: Approval links are scoped to a single run, expire correctly, and use the configured external base URL
 
 ### Human Review And Broker Logic
 
@@ -69,16 +69,16 @@
 | RUNT-01 | Phase 1 | Complete |
 | RUNT-02 | Phase 1 | Complete |
 | RUNT-03 | Phase 1 | Complete |
-| SCHD-01 | Phase 3 | Pending |
-| SCHD-02 | Phase 3 | Pending |
-| SCHD-03 | Phase 3 | Pending |
+| SCHD-01 | Phase 3 | Complete |
+| SCHD-02 | Phase 3 | Complete |
+| SCHD-03 | Phase 3 | Complete |
 | RSCH-01 | Phase 2 | Complete |
 | RSCH-02 | Phase 2 | Complete |
 | RSCH-03 | Phase 2 | Complete |
 | RSCH-04 | Phase 2 | Complete |
-| MAIL-01 | Phase 3 | Pending |
-| MAIL-02 | Phase 3 | Pending |
-| MAIL-03 | Phase 3 | Pending |
+| MAIL-01 | Phase 3 | Complete |
+| MAIL-02 | Phase 3 | Complete |
+| MAIL-03 | Phase 3 | Complete |
 | HITL-01 | Phase 4 | Pending |
 | HITL-02 | Phase 4 | Pending |
 | BRKR-01 | Phase 4 | Pending |
@@ -95,4 +95,4 @@
 
 ---
 *Requirements defined: 2026-03-31*
-*Last updated: 2026-03-31 after initial definition*
+*Last updated: 2026-03-31 after Phase 3 completion*
