@@ -68,3 +68,31 @@ def test_alpaca_client_returns_buying_power():
     result = client.get_buying_power()
 
     assert result == Decimal("1234.56")
+
+
+def test_alpaca_client_returns_account_payload():
+    def handler(request: httpx.Request) -> httpx.Response:
+        assert request.url.path == "/v2/account"
+        return httpx.Response(200, json={"buying_power": "1234.56", "trading_blocked": False})
+
+    transport = httpx.MockTransport(handler)
+    client = AlpacaClient(base_url="https://example.test", api_key="secret", transport=transport)
+
+    result = client.get_account()
+
+    assert result["buying_power"] == "1234.56"
+    assert result["trading_blocked"] is False
+
+
+def test_alpaca_client_returns_asset_payload():
+    def handler(request: httpx.Request) -> httpx.Response:
+        assert request.url.path == "/v2/assets/NVDA"
+        return httpx.Response(200, json={"symbol": "NVDA", "tradable": True, "fractionable": True})
+
+    transport = httpx.MockTransport(handler)
+    client = AlpacaClient(base_url="https://example.test", api_key="secret", transport=transport)
+
+    result = client.get_asset("NVDA")
+
+    assert result["symbol"] == "NVDA"
+    assert result["tradable"] is True

@@ -1,4 +1,6 @@
-from typing import Optional
+from typing import Literal, Optional
+
+from pydantic import model_validator
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -21,6 +23,9 @@ class Settings(BaseSettings):
     cron_log_path: str = "logs/cron/daily-trigger.log"
     quiver_base_url: str = "https://example.test"
     quiver_api_key: str = "secret"
+    broker_mode: Literal["paper", "live"] = "paper"
+    alpaca_base_url: str = "https://paper-api.alpaca.markets"
+    alpaca_api_key: str = "secret"
     langgraph_checkpointer_url: Optional[str] = None
     approval_token_ttl_seconds: int = 900
 
@@ -29,6 +34,18 @@ class Settings(BaseSettings):
         env_prefix="INVESTOR_",
         extra="ignore",
     )
+
+    @model_validator(mode="after")
+    def validate_broker_mode_base_url(self) -> "Settings":
+        expected = {
+            "paper": "https://paper-api.alpaca.markets",
+            "live": "https://api.alpaca.markets",
+        }[self.broker_mode]
+        if self.alpaca_base_url != expected:
+            raise ValueError(
+                f"{self.broker_mode} mode requires alpaca_base_url={expected}"
+            )
+        return self
 
 
 def get_settings() -> Settings:

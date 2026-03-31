@@ -17,3 +17,13 @@ class AlpacaClient:
         response = self._client.get("/v2/account")
         response.raise_for_status()
         return Decimal(response.json()["buying_power"])
+
+    def get_account(self) -> dict:
+        response = self._client.get("/v2/account")
+        response.raise_for_status()
+        return response.json()
+
+    def get_asset(self, symbol: str) -> dict:
+        response = self._client.get(f"/v2/assets/{symbol}")
+        response.raise_for_status()
+        return response.json()
