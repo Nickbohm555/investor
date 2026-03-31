@@ -14,7 +14,6 @@ class RunRecord(Base):
     __table_args__ = (UniqueConstraint("schedule_key", name="uq_runs_schedule_key"),)
 
     run_id: Mapped[str] = mapped_column(String(64), primary_key=True)
-    thread_id: Mapped[str] = mapped_column(String(128), unique=True, nullable=False)
     status: Mapped[str] = mapped_column(String(32), nullable=False)
     trigger_source: Mapped[str] = mapped_column(String(32), nullable=False, default="manual")
     schedule_key: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)

@@ -39,7 +39,6 @@ class RunService:
         self,
         *,
         run_id: str,
-        thread_id: str,
         status: str,
         current_step: str,
         trigger_source: str,
@@ -49,7 +48,6 @@ class RunService:
             repository = RunRepository(session)
             run = repository.create_run(
                 run_id=run_id,
-                thread_id=thread_id,
                 status=status,
                 current_step=current_step,
                 trigger_source=trigger_source,
@@ -160,8 +158,8 @@ class RunService:
             session.flush()
             return {
                 "run_id": run.run_id,
-                "thread_id": run.thread_id,
                 "status": run.status,
+                "current_step": run.current_step,
                 "recommendations": recommendations,
             }
 

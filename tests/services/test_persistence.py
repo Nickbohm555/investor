@@ -5,6 +5,7 @@ import pytest
 from alembic import command
 from alembic.config import Config
 from alembic.script.revision import Revision, RevisionMap
+import sqlalchemy as sa
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -40,7 +41,6 @@ def test_create_run_record_persists_status():
     with Session(engine) as session:
         run = RunRecord(
             run_id="run-123",
-            thread_id="thread-123",
             status="created",
             trigger_source="manual",
             approval_status="pending",
@@ -53,20 +53,19 @@ def test_create_run_record_persists_status():
 
     assert stored is not None
     assert stored.status == "created"
-    assert stored.thread_id == "thread-123"
+    assert stored.current_step == "research"
 
 
 def test_runtime_models_include_durable_run_state_columns():
     run_columns = RunRecord.__table__.columns
 
-    assert run_columns["thread_id"].type.length == 128
-    assert not run_columns["thread_id"].nullable
     assert run_columns["trigger_source"].type.length == 32
     assert not run_columns["trigger_source"].nullable
     assert run_columns["approval_status"].type.length == 32
     assert not run_columns["approval_status"].nullable
     assert run_columns["current_step"].type.length == 64
     assert not run_columns["current_step"].nullable
+    assert run_columns["state_payload"].nullable
     assert not run_columns["updated_at"].nullable
 
 
@@ -103,12 +102,13 @@ def test_initial_migration_creates_expected_runtime_columns():
     }
 
     assert {
-        "thread_id",
         "trigger_source",
         "approval_status",
         "current_step",
+        "state_payload",
         "updated_at",
     }.issubset(run_columns)
+    assert "thread_id" not in run_columns
     assert {"created_at"}.issubset(recommendation_columns)
     assert {"token_id", "occurred_at"}.issubset(approval_columns)
     assert {"occurred_at", "reason"}.issubset(transition_columns)
@@ -136,7 +136,6 @@ def test_create_pending_run_persists_supplied_runtime_state():
 
     created = service.create_pending_run(
         run_id="run-123",
-        thread_id="thread-123",
         status="triggered",
         current_step="research",
         trigger_source="manual",
@@ -148,7 +147,6 @@ def test_create_pending_run_persists_supplied_runtime_state():
         stored = session.get(RunRecord, "run-123")
 
     assert stored is not None
-    assert stored.thread_id == "thread-123"
     assert stored.status == "triggered"
     assert stored.current_step == "research"
 
@@ -159,7 +157,6 @@ def test_store_recommendations_and_transition_share_same_run():
     service = RunService(session_factory)
     service.create_pending_run(
         run_id="run-123",
-        thread_id="thread-123",
         status="triggered",
         current_step="research",
         trigger_source="manual",
@@ -204,7 +201,6 @@ def test_record_approval_event_rejects_duplicate_token_ids():
     service = RunService(session_factory)
     service.create_pending_run(
         run_id="run-123",
-        thread_id="thread-123",
         status="awaiting_review",
         current_step="approval",
         trigger_source="manual",
@@ -223,7 +219,6 @@ def test_run_service_persists_completed_lifecycle_with_approval_event_and_transi
 
     service.create_pending_run(
         run_id="run-123",
-        thread_id="thread-123",
         status="triggered",
         current_step="research",
         trigger_source="manual",
@@ -259,6 +254,7 @@ def test_run_service_persists_completed_lifecycle_with_approval_event_and_transi
     )
 
     assert approval_state["status"] == "approved"
+    assert approval_state["current_step"] == "approval"
 
     with session_factory() as session:
         run = session.get(RunRecord, "run-123")
@@ -289,7 +285,6 @@ def test_broker_artifact_persists_run_recommendation_and_policy_snapshot():
     service = RunService(session_factory)
     service.create_pending_run(
         run_id="run-123",
-        thread_id="thread-123",
         status="awaiting_review",
         current_step="approval",
         trigger_source="manual",
@@ -346,7 +341,6 @@ def test_broker_artifact_client_order_id_must_be_unique():
     service = RunService(session_factory)
     service.create_pending_run(
         run_id="run-123",
-        thread_id="thread-123",
         status="awaiting_review",
         current_step="approval",
         trigger_source="manual",
@@ -400,10 +394,11 @@ def test_alembic_branch_merge_produces_single_head(monkeypatch, tmp_path):
             _load_revision("app.db.migrations.versions.0002_add_schedule_fields"),
             _load_revision("app.db.migrations.versions.0002_create_broker_artifacts"),
             _load_revision("app.db.migrations.versions.0003_merge_phase5_heads"),
+            _load_revision("app.db.migrations.versions.0004_phase6_workflow_engine_schema"),
         ]
     )
 
-    assert revision_map.heads == ("0003_merge_phase5_heads",)
+    assert revision_map.heads == ("0004_phase6_workflow_engine_schema",)
 
     database_path = tmp_path / "alembic-merge.sqlite"
     monkeypatch.setenv("INVESTOR_DATABASE_URL", f"sqlite+pysqlite:///{database_path}")
@@ -426,3 +421,78 @@ def test_alembic_branch_merge_produces_single_head(monkeypatch, tmp_path):
         "state_transitions",
         "broker_artifacts",
     }
+
+
+def test_phase6_schema_upgrade_archives_pre_cutover_runs(monkeypatch, tmp_path):
+    database_path = tmp_path / "phase6-upgrade.sqlite"
+    monkeypatch.setenv("INVESTOR_DATABASE_URL", f"sqlite+pysqlite:///{database_path}")
+
+    config = Config()
+    config.set_main_option(
+        "script_location",
+        str(Path(__file__).resolve().parents[2] / "app" / "db" / "migrations"),
+    )
+
+    command.upgrade(config, "0003_merge_phase5_heads")
+
+    legacy_engine = create_engine(f"sqlite+pysqlite:///{database_path}", future=True)
+    with legacy_engine.begin() as connection:
+        connection.execute(
+            sa.text(
+                """
+                INSERT INTO runs (
+                    run_id,
+                    thread_id,
+                    status,
+                    trigger_source,
+                    approval_status,
+                    current_step,
+                    created_at,
+                    updated_at
+                ) VALUES (
+                    :run_id,
+                    :thread_id,
+                    :status,
+                    :trigger_source,
+                    :approval_status,
+                    :current_step,
+                    CURRENT_TIMESTAMP,
+                    CURRENT_TIMESTAMP
+                )
+                """
+            ),
+            {
+                "run_id": "legacy-run-123",
+                "thread_id": "thread-legacy-123",
+                "status": "awaiting_review",
+                "trigger_source": "manual",
+                "approval_status": "pending",
+                "current_step": "approval",
+            },
+        )
+
+    command.upgrade(config, "head")
+
+    engine = create_engine(f"sqlite+pysqlite:///{database_path}", future=True)
+    inspector = inspect(engine)
+    run_columns = {column["name"] for column in inspector.get_columns("runs")}
+
+    assert "state_payload" in run_columns
+    assert "thread_id" not in run_columns
+
+    with engine.begin() as connection:
+        archived = connection.execute(
+            sa.text(
+                """
+                SELECT status, current_step, approval_status, state_payload
+                FROM runs
+                WHERE run_id = :run_id
+                """
+            ),
+            {"run_id": "legacy-run-123"},
+        ).mappings().one()
+
+    assert archived["status"] == "archived_pre_phase6"
+    assert archived["current_step"] == "archived_pre_phase6"
+    assert archived["approval_status"] == "archived"
+    assert "phase6_cutover" in str(archived["state_payload"])

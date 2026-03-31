@@ -21,7 +21,6 @@ class RunRepository:
         self,
         *,
         run_id: str,
-        thread_id: str,
         status: str,
         current_step: str,
         trigger_source: str,
@@ -29,7 +28,6 @@ class RunRepository:
     ) -> RunRecord:
         run = RunRecord(
             run_id=run_id,
-            thread_id=thread_id,
             status=status,
             trigger_source=trigger_source,
             approval_status=approval_status,
