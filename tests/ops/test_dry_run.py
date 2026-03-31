@@ -22,6 +22,9 @@ def test_dry_run_executes_scheduled_trigger_through_approval_and_prestage():
     assert payload["artifact_count"] >= 1
     assert payload["approval_url"]
     assert payload["run_id"]
+    assert payload["research_tool_call_count"] >= 2
+    assert payload["research_stop_reason"] == "final_answer"
+    assert payload["investigated_tickers"] == ["NVDA", "MSFT"]
 
 
 def test_dry_run_prints_operator_summary_json():
@@ -43,4 +46,7 @@ def test_dry_run_prints_operator_summary_json():
         "approval_url",
         "artifact_count",
         "log_lines",
+        "research_tool_call_count",
+        "research_stop_reason",
+        "investigated_tickers",
     }

@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 
 from app.agents.research import ResearchNode
 from app.config import Settings
-from app.db.models import Base, BrokerArtifactRecord
+from app.db.models import Base, BrokerArtifactRecord, RunRecord
 from app.db.session import get_session_factory
 
 DRY_RUN_COMMAND = "python -m app.ops.dry_run"
@@ -44,8 +44,56 @@ class MailProviderSpy:
 
 
 class StubResearchLLM:
+    def __init__(self) -> None:
+        self._tool_turn = 0
+
     def invoke(self, payload: dict[str, str]) -> str:
         return DRY_RUN_RESEARCH_RESPONSE
+
+    def complete_with_tools(
+        self,
+        *,
+        messages: list[dict[str, object]],
+        tools: list[dict[str, object]],
+        tool_choice: str = "auto",
+        parallel_tool_calls: bool = False,
+    ) -> dict[str, object]:
+        self._tool_turn += 1
+        if self._tool_turn == 1:
+            return {
+                "role": "assistant",
+                "content": None,
+                "tool_calls": [
+                    {
+                        "id": "call-1",
+                        "type": "function",
+                        "function": {
+                            "name": "get_live_congress_trading",
+                            "arguments": '{"ticker":"NVDA"}',
+                        },
+                    }
+                ],
+            }
+        if self._tool_turn == 2:
+            return {
+                "role": "assistant",
+                "content": None,
+                "tool_calls": [
+                    {
+                        "id": "call-2",
+                        "type": "function",
+                        "function": {
+                            "name": "get_live_insider_trading",
+                            "arguments": '{"ticker":"MSFT"}',
+                        },
+                    }
+                ],
+            }
+        return {
+            "role": "assistant",
+            "content": DRY_RUN_RESEARCH_RESPONSE,
+            "tool_calls": [],
+        }
 
 
 class StubAlpacaClient:
@@ -83,6 +131,9 @@ def _build_settings(database_url: str) -> Settings:
             "openai_base_url": "https://api.openai.example/v1",
             "openai_model": "gpt-4.1-mini",
             "approval_token_ttl_seconds": 900,
+            "research_agent_max_steps": 4,
+            "research_agent_max_tool_calls": 3,
+            "research_agent_max_seed_tickers": 2,
         }
     )
 
@@ -127,6 +178,9 @@ def _apply_env_overrides(settings: Settings) -> None:
         "INVESTOR_OPENAI_BASE_URL": settings.openai_base_url,
         "INVESTOR_OPENAI_MODEL": settings.openai_model,
         "INVESTOR_APPROVAL_TOKEN_TTL_SECONDS": str(settings.approval_token_ttl_seconds),
+        "INVESTOR_RESEARCH_AGENT_MAX_STEPS": str(settings.research_agent_max_steps),
+        "INVESTOR_RESEARCH_AGENT_MAX_TOOL_CALLS": str(settings.research_agent_max_tool_calls),
+        "INVESTOR_RESEARCH_AGENT_MAX_SEED_TICKERS": str(settings.research_agent_max_seed_tickers),
     }
     for key, value in env_values.items():
         os.environ[key] = value
@@ -169,11 +223,13 @@ def main() -> int:
             log_lines.append(f"approval callback returned {approval_payload['status']}")
 
         with Session(session_factory.kw["bind"]) as session:
+            stored_run = session.get(RunRecord, run_id)
             artifact_count = len(
                 session.scalars(
                     select(BrokerArtifactRecord).where(BrokerArtifactRecord.run_id == run_id)
                 ).all()
             )
+        assert stored_run is not None
 
         print(
             json.dumps(
@@ -183,6 +239,9 @@ def main() -> int:
                     "run_id": run_id,
                     "approval_url": approval_url,
                     "artifact_count": artifact_count,
+                    "research_tool_call_count": stored_run.state_payload["research_tool_call_count"],
+                    "research_stop_reason": stored_run.state_payload["research_stop_reason"],
+                    "investigated_tickers": stored_run.state_payload["investigated_tickers"],
                     "log_lines": log_lines,
                 }
             )
