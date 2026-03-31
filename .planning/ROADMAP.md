@@ -2,7 +2,7 @@
 
 ## Overview
 
-This roadmap turns the current investor prototype into an env-ready local app by first fixing durability and workflow correctness, then deepening research quality, then making delivery and scheduling real, then wiring approval into safe Alpaca review behavior, and finally hardening the system so the remaining step is entering environment variables and running the documented commands. The current final stretch pivots from broker prestage alone to a two-step approval model: email links approve candidate selections, and a separate explicit execution confirmation submits orders.
+This roadmap turns the current investor prototype into an env-ready local app by first fixing durability and workflow correctness, then deepening research quality, then making delivery and scheduling real, then wiring approval into safe Alpaca review behavior, and finally hardening the system so the remaining step is entering environment variables and running the documented commands. The final stretch was consolidated on 2026-03-31: the previously separate execution-confirmation, trading-safety, and scheduling-proof workstreams now land together in Phase 11 because the research showed they share one operational contract and one end-to-end verification surface.
 
 ## Phases
 
@@ -145,34 +145,34 @@ Plans:
 - [x] 08-03-PLAN.md — Wire baseline-aware strategic reports into workflow execution and persisted run state
 
 ### Phase 9: Execution Confirmation And Alpaca Order Submission
-**Goal**: Link-based approval keeps candidate selection simple, while a second explicit confirmation step submits Alpaca orders instead of stopping at broker prestage
+**Goal**: Superseded and merged into Phase 11 planning
 **Depends on**: Phase 8
-**Requirements**: TBD
+**Requirements**: Merged into SC11-02 and SC11-03
 **Success Criteria** (what must be TRUE):
-1. Email approval links still handle the initial yes/no decision without requiring inbound reply parsing
-2. A second explicit confirmation step is required before any Alpaca order submission occurs
-3. Confirmed executions submit traceable Alpaca orders tied to the originating run and recommendation set
+1. Scope moved into Phase 11 so execution confirmation and submission are planned together with the scheduled end-to-end proof
+2. No separate Phase 9 execution plan is required
+3. Phase 11 carries the concrete implementation and verification prompts for this work
 **Plans**: 0 plans
 
 Plans:
-- [ ] TBD (run `$gsd-plan-phase 9` to break down)
+- [ ] Superseded on 2026-03-31 — scope folded into Phase 11
 
 ### Phase 10: Trading Safety Rails And Paper/Live Verification
-**Goal**: Order submission is wrapped in deterministic safeguards so duplicate or unsafe executions are blocked before they reach Alpaca
-**Depends on**: Phase 9
-**Requirements**: TBD
+**Goal**: Superseded and merged into Phase 11 planning
+**Depends on**: Phase 8
+**Requirements**: Merged into SC11-02 and SC11-03
 **Success Criteria** (what must be TRUE):
-1. Execution requests enforce idempotency keys and duplicate-order prevention
-2. Position caps, max spend rules, allowlists, market-hours checks, and mode gates are validated before submission
-3. Paper-trading verification proves the full execution path before live mode is considered
+1. Scope moved into Phase 11 so trading-safety verification is planned together with execution confirmation and scheduled proof
+2. No separate Phase 10 execution plan is required
+3. Phase 11 carries the concrete implementation and verification prompts for this work
 **Plans**: 0 plans
 
 Plans:
-- [ ] TBD (run `$gsd-plan-phase 10` to break down)
+- [ ] Superseded on 2026-03-31 — scope folded into Phase 11
 
 ### Phase 11: Scheduling Reliability And End-To-End Execution Proof
 **Goal**: Scheduling and operational wiring are reliable enough to run the full approved execution flow at the intended market-open cadence
-**Depends on**: Phase 10
+**Depends on**: Phase 8
 **Requirements**: SC11-01, SC11-02, SC11-03
 **Success Criteria** (what must be TRUE):
 1. Scheduling supports a real `7:00am ET` configuration path wired through repo config and cron install scripts
@@ -182,7 +182,7 @@ Plans:
 
 Plans:
 - [ ] 11-01-PLAN.md — Replace hard-coded cron timing with a repo-configured 7:00am ET install/status contract
-- [ ] 11-02-PLAN.md — Extend the repo-local proof path through explicit execution confirmation and Alpaca submission
+- [ ] 11-02-PLAN.md — Wire the repo-local proof path through the existing execution confirmation and submission seams
 - [ ] 11-03-PLAN.md — Add scheduled-to-submitted integration proof and reconcile any remaining lifecycle gaps
 
 ### Phase 12: System Diagram And README Architecture Capture
@@ -213,7 +213,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 6. Replace LangGraph With A Custom Workflow Engine | 4/4 | Complete | 2026-03-31 |
 | 7. Build A Loop-Based Quiver Agent | 3/3 | Complete   | 2026-03-31 |
 | 8. Upgrade Outputs To Strategic Insight Reports | 3/3 | Complete | 2026-03-31 |
-| 9. Execution Confirmation And Alpaca Order Submission | 0/0 | Not Planned | — |
-| 10. Trading Safety Rails And Paper/Live Verification | 0/0 | Not Planned | — |
-| 11. Scheduling Reliability And End-To-End Execution Proof | 0/0 | Not Planned | — |
+| 9. Execution Confirmation And Alpaca Order Submission | 0/0 | Merged into Phase 11 | — |
+| 10. Trading Safety Rails And Paper/Live Verification | 0/0 | Merged into Phase 11 | — |
+| 11. Scheduling Reliability And End-To-End Execution Proof | 0/3 | Planned | — |
 | 12. System Diagram And README Architecture Capture | 0/0 | Not Planned | — |
