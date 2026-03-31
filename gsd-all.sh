@@ -109,6 +109,8 @@ fi
 for phase in "${phases[@]}"; do
   codex exec --dangerously-bypass-approvals-and-sandbox -C "$repo" - <<EOF
 Use \$gsd-execute-phase $(echo "$phase" | xargs)
+Make all reasonable decisions yourself.
+Do not ask me for input, approval, or clarification.
 EOF
 
   if [[ "$push_enabled" == true ]]; then
