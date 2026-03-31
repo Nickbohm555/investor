@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field
 
+from app.schemas.research import CandidateOutcome, CandidateRecommendation, ResearchOutcome
+
 
 class Recommendation(BaseModel):
     ticker: str
@@ -15,3 +17,18 @@ class ResearchResult(BaseModel):
 class RecommendationEmail(BaseModel):
     subject: str
     body: str
+
+
+ResearchRecommendation = CandidateRecommendation
+StructuredResearchResult = CandidateOutcome
+
+__all__ = [
+    "CandidateOutcome",
+    "CandidateRecommendation",
+    "Recommendation",
+    "RecommendationEmail",
+    "ResearchOutcome",
+    "ResearchRecommendation",
+    "ResearchResult",
+    "StructuredResearchResult",
+]
