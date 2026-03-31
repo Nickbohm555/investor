@@ -21,12 +21,23 @@ timestamp() {
   date -u +"%Y-%m-%dT%H:%M:%SZ"
 }
 
-if "$CURL_BIN" -fsS -X POST "$INVESTOR_SCHEDULE_TRIGGER_URL" \
+if RESPONSE=$("$CURL_BIN" -fsS -X POST "$INVESTOR_SCHEDULE_TRIGGER_URL" \
   -H "X-Investor-Scheduled-Trigger: $INVESTOR_SCHEDULED_TRIGGER_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"replay":false}' >/dev/null; then
-  printf '%s scheduled_trigger status=success\n' "$(timestamp)" >> "$LOG_PATH"
+  -d '{"replay":false}'); then
+  case "$RESPONSE" in
+    *'"status":"duplicate"'*)
+      printf '%s scheduled_trigger result=duplicate\n' "$(timestamp)" >> "$LOG_PATH"
+      ;;
+    *'"status":"started"'*)
+      printf '%s scheduled_trigger result=started\n' "$(timestamp)" >> "$LOG_PATH"
+      ;;
+    *)
+      printf '%s scheduled_trigger result=failure\n' "$(timestamp)" >> "$LOG_PATH"
+      exit 1
+      ;;
+  esac
 else
-  printf '%s scheduled_trigger status=failure\n' "$(timestamp)" >> "$LOG_PATH"
+  printf '%s scheduled_trigger result=failure\n' "$(timestamp)" >> "$LOG_PATH"
   exit 1
 fi

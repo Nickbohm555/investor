@@ -112,24 +112,32 @@ def trigger_scheduled_run(
         request.app.state.settings,
         request.app.state.mail_provider,
     )
-    state = request.app.state.runtime.start_run(
-        run_id=run.run_id,
-        thread_id=run.thread_id,
-        research_node=request.app.state.research_node,
-        quiver_client=quiver_client,
-        workflow=workflow,
-    )
-    request.app.state.run_service.store_state_payload(run.run_id, state)
-    request.app.state.run_service.store_recommendations(
-        run.run_id,
-        list(state.get("recommendations", [])),
-    )
-    request.app.state.run_service.mark_status(
-        run.run_id,
-        to_status=state["status"],
-        current_step="approval",
-        reason="Research completed and awaiting operator review",
-    )
+    try:
+        state = request.app.state.runtime.start_run(
+            run_id=run.run_id,
+            thread_id=run.thread_id,
+            research_node=request.app.state.research_node,
+            quiver_client=quiver_client,
+            workflow=workflow,
+        )
+        request.app.state.run_service.store_state_payload(run.run_id, state)
+        request.app.state.run_service.store_recommendations(
+            run.run_id,
+            list(state.get("recommendations", [])),
+        )
+        request.app.state.run_service.mark_status(
+            run.run_id,
+            to_status=state["status"],
+            current_step="approval",
+            reason="Research completed and awaiting operator review",
+        )
+    except Exception as exc:
+        logger.exception(
+            "scheduled_trigger result=failure schedule_key=%s run_id=%s",
+            run.schedule_key,
+            run.run_id,
+        )
+        raise HTTPException(status_code=500, detail="Scheduled trigger failed") from exc
     response.status_code = 202
     logger.info(
         "scheduled_trigger result=started schedule_key=%s run_id=%s",

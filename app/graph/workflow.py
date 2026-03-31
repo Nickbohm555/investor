@@ -117,8 +117,9 @@ class CompiledInvestorWorkflow:
         return "; ".join(parts)
 
     def _await_human_review(self, state: dict, message: RecommendationEmail) -> dict:
+        persisted_state = {key: value for key, value in state.items() if key != "quiver_client"}
         return {
-            **state,
+            **persisted_state,
             "status": "awaiting_human_review",
             "email_body": message.body,
         }

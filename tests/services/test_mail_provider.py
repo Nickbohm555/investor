@@ -93,3 +93,40 @@ def test_smtp_mail_provider_uses_configured_sender_and_recipient(monkeypatch):
     message = client.messages[0]
     assert message["From"] == "portfolio@example.com"
     assert message["To"] == "desk@example.com"
+
+
+def test_smtp_mail_provider_logs_failure(monkeypatch, caplog):
+    class FailingSMTP(FakeSMTP):
+        def send_message(self, message) -> None:
+            raise RuntimeError("smtp send failed")
+
+    client = FailingSMTP("smtp.example.com", 587, 30)
+    monkeypatch.setattr(
+        "app.services.mail_provider.smtplib.SMTP",
+        lambda host, port, timeout=30: client,
+    )
+
+    provider = SmtpMailProvider(
+        Settings(
+            smtp_host="smtp.example.com",
+            smtp_port=587,
+            smtp_username="investor-user",
+            smtp_password="change-me",
+            smtp_from_email="portfolio@example.com",
+            daily_memo_to_email="desk@example.com",
+        )
+    )
+
+    caplog.set_level("INFO")
+
+    try:
+        provider.send(
+            subject="Daily memo",
+            text_body="plain body",
+            html_body="<p>html body</p>",
+            recipient="desk@example.com",
+        )
+    except RuntimeError:
+        pass
+
+    assert "memo_delivery result=failure provider=smtp recipient=desk@example.com" in caplog.text
