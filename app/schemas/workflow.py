@@ -6,3 +6,7 @@ class Recommendation(BaseModel):
     action: str
     conviction_score: float = Field(ge=0.0, le=1.0)
     rationale: str
+
+
+class ResearchResult(BaseModel):
+    recommendations: list[Recommendation]
