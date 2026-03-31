@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from uuid import uuid4
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 
-from app.schemas.workflow import Recommendation
+from app.services.run_service import DuplicateApproval, RunNotFound, StaleApproval
 from app.services.tokens import verify_approval_token
+from app.services.tokens import ExpiredApprovalTokenError, InvalidApprovalTokenError
 
 router = APIRouter()
 
@@ -47,31 +48,37 @@ def trigger_run(request: Request) -> dict[str, str]:
 
 @router.get("/approval/{token}")
 def review_token(token: str, request: Request) -> dict:
-    payload = verify_approval_token(
-        token,
-        secret=request.app.state.settings.app_secret,
-        ttl_seconds=request.app.state.settings.approval_token_ttl_seconds,
-    )
-    run = request.app.state.run_service.get_run(payload.run_id)
-    recommendations = request.app.state.run_service.list_recommendations(payload.run_id)
+    try:
+        payload = verify_approval_token(
+            token,
+            secret=request.app.state.settings.app_secret,
+            ttl_seconds=request.app.state.settings.approval_token_ttl_seconds,
+        )
+        approval_state = request.app.state.run_service.apply_approval_decision(
+            payload.run_id,
+            decision=payload.decision,
+            token_id=payload.token_id,
+        )
+    except ExpiredApprovalTokenError as exc:
+        raise HTTPException(status_code=410, detail=str(exc)) from exc
+    except InvalidApprovalTokenError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except RunNotFound as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except (StaleApproval, DuplicateApproval) as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+
     result = request.app.state.runtime.resume_run(
-        {
-            "run_id": payload.run_id,
-            "thread_id": run.thread_id,
-            "status": run.status,
-            "recommendations": [
-                item if isinstance(item, Recommendation) else Recommendation.model_validate(item)
-                for item in recommendations
-            ],
-        },
+        approval_state,
         decision=payload.decision,
         research_node=request.app.state.research_node,
     )
-    request.app.state.run_service.mark_status(
-        payload.run_id,
-        to_status=result["status"],
-        current_step="completed" if result["status"] == "completed" else "rejected",
-        reason="Approval callback processed",
-        approval_status=payload.decision,
-    )
-    return result
+    if result["status"] != approval_state["status"]:
+        request.app.state.run_service.mark_status(
+            payload.run_id,
+            to_status=result["status"],
+            current_step="completed" if result["status"] == "completed" else "rejected",
+            reason="Approval callback processed",
+            approval_status=payload.decision,
+        )
+    return {"status": result["status"], "run_id": payload.run_id}

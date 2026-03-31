@@ -1,3 +1,4 @@
+import hashlib
 import time
 from dataclasses import dataclass
 
@@ -16,6 +17,7 @@ class ExpiredApprovalTokenError(InvalidApprovalTokenError):
 class ApprovalTokenPayload:
     run_id: str
     decision: str
+    token_id: str
 
 
 def _get_serializer(secret: str) -> URLSafeTimedSerializer:
@@ -44,4 +46,8 @@ def verify_approval_token(token: str, secret: str, ttl_seconds: int) -> Approval
         raise InvalidApprovalTokenError("Approval token invalid") from exc
     if time.time() - payload["issued_at"] > ttl_seconds:
         raise ExpiredApprovalTokenError("Approval token expired")
-    return ApprovalTokenPayload(run_id=payload["run_id"], decision=payload["decision"])
+    return ApprovalTokenPayload(
+        run_id=payload["run_id"],
+        decision=payload["decision"],
+        token_id=hashlib.sha256(token.encode("utf-8")).hexdigest(),
+    )

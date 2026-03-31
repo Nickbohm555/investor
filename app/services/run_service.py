@@ -12,6 +12,19 @@ TRIGGERED_STATUS = "triggered"
 AWAITING_HUMAN_REVIEW_STATUS = "awaiting_human_review"
 APPROVED_STATUS = "approved"
 COMPLETED_STATUS = "completed"
+REJECTED_STATUS = "rejected"
+
+
+class RunNotFound(ValueError):
+    pass
+
+
+class StaleApproval(ValueError):
+    pass
+
+
+class DuplicateApproval(ValueError):
+    pass
 
 
 class RunService:
@@ -87,6 +100,51 @@ class RunService:
                 token_id=token_id,
             )
         return event
+
+    def apply_approval_decision(
+        self, run_id: str, *, decision: str, token_id: str
+    ) -> dict:
+        with self.session_factory.begin() as session:
+            repository = RunRepository(session)
+            run = repository.get_run(run_id)
+            if run is None:
+                raise RunNotFound("Run not found")
+            if session.query(ApprovalEventRecord).filter_by(token_id=token_id).first() is not None:
+                raise DuplicateApproval("Approval already recorded")
+            if run.status in {COMPLETED_STATUS, REJECTED_STATUS}:
+                raise StaleApproval("Approval already processed")
+
+            repository.record_approval_event(
+                run_id=run_id,
+                decision=decision,
+                token_id=token_id,
+            )
+            next_status = APPROVED_STATUS if decision == "approve" else REJECTED_STATUS
+            repository.record_transition(
+                run_id,
+                from_status=run.status,
+                to_status=next_status,
+                reason="Approval callback accepted",
+            )
+            run.status = next_status
+            run.approval_status = decision
+            run.current_step = "approval"
+            recommendations = [
+                Recommendation(
+                    ticker=row.ticker,
+                    action=row.action,
+                    conviction_score=0.81,
+                    rationale=row.rationale,
+                )
+                for row in repository.list_recommendations(run_id)
+            ]
+            session.flush()
+            return {
+                "run_id": run.run_id,
+                "thread_id": run.thread_id,
+                "status": run.status,
+                "recommendations": recommendations,
+            }
 
     def get_run(self, run_id: str) -> Optional[RunRecord]:
         with self.session_factory() as session:
