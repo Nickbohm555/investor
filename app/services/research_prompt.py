@@ -5,20 +5,35 @@ from typing import Dict, List
 from app.schemas.quiver import TickerEvidenceBundle
 
 
-def build_research_prompt_payload(
+def build_quiver_loop_system_prompt(*, max_steps: int, max_tool_calls: int) -> str:
+    return (
+        "You are the investor research loop. Operate as a serial tool user and issue "
+        "one tool call at a time. Available tools: get_live_congress_trading, "
+        "get_live_insider_trading, get_live_government_contracts, get_live_lobbying. "
+        f"Max steps: {max_steps}. Max tool calls: {max_tool_calls}. "
+        "Stop when evidence is sufficient, when no ticker remains worth investigating, "
+        "or when a budget limit is reached."
+    )
+
+
+def build_seed_research_brief(
+    *,
     run_id: str,
     evidence_bundles: List[TickerEvidenceBundle],
     account_context: Dict[str, str],
-) -> Dict[str, str]:
-    system = (
-        "Return JSON only. "
-        "Choose exactly one outcome value from candidates, watchlist, or no_action. "
-        "Every recommendation-like item must include supporting_evidence, "
-        "opposing_evidence, risk_notes, and source_summary arrays."
-    )
-
+    max_seed_tickers: int,
+) -> str:
+    sorted_bundles = sorted(
+        evidence_bundles,
+        key=lambda bundle: (
+            -len(bundle.supporting_signals),
+            len(bundle.contradictory_signals),
+            bundle.ticker,
+        ),
+    )[:max_seed_tickers]
+    account_lines = "\n".join(f"{key}: {value}" for key, value in sorted(account_context.items()))
     bundle_lines = []
-    for bundle in evidence_bundles:
+    for bundle in sorted_bundles:
         supporting = ", ".join(signal.source_note for signal in bundle.supporting_signals) or "None"
         contradictory = (
             ", ".join(signal.source_note for signal in bundle.contradictory_signals) or "None"
@@ -31,7 +46,40 @@ def build_research_prompt_payload(
             f"Source summaries: {summaries}"
         )
 
-    account_lines = "\n".join(f"{key}: {value}" for key, value in sorted(account_context.items()))
-    user = f"Run ID: {run_id}\n{account_lines}\n\n" + "\n\n".join(bundle_lines)
+    return f"Run ID: {run_id}\n{account_lines}\n\n" + "\n\n".join(bundle_lines)
 
-    return {"system": system, "user": user}
+
+def build_final_research_payload(
+    *,
+    run_id: str,
+    evidence_bundles: List[TickerEvidenceBundle],
+    account_context: Dict[str, str],
+    trace_summary: str,
+) -> Dict[str, str]:
+    payload = build_seed_research_brief(
+        run_id=run_id,
+        evidence_bundles=evidence_bundles,
+        account_context=account_context,
+        max_seed_tickers=len(evidence_bundles),
+    )
+    return {
+        "system": (
+            "Return JSON only. Choose exactly one outcome value from candidates, "
+            "watchlist, or no_action. Every recommendation-like item must include "
+            "supporting_evidence, opposing_evidence, risk_notes, and source_summary arrays."
+        ),
+        "user": f"{payload}\n\nResearch trace summary:\n{trace_summary}",
+    }
+
+
+def build_research_prompt_payload(
+    run_id: str,
+    evidence_bundles: List[TickerEvidenceBundle],
+    account_context: Dict[str, str],
+) -> Dict[str, str]:
+    return build_final_research_payload(
+        run_id=run_id,
+        evidence_bundles=evidence_bundles,
+        account_context=account_context,
+        trace_summary="No follow-up tool calls executed.",
+    )
