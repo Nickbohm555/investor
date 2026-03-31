@@ -17,7 +17,7 @@ This roadmap turns the current investor prototype into an env-ready local app by
 - [x] **Phase 5: Operational Readiness** - Validate envs, add dry-run tooling, and close the “fill vars and run” gap (completed 2026-03-31)
 - [x] **Phase 6: Replace LangGraph With A Custom Workflow Engine** - Remove graph/checkpointer semantics and own workflow persistence, approval, and transitions directly (completed 2026-03-31)
 - [x] **Phase 7: Build A Loop-Based Quiver Agent** - Replace one-shot research generation with an iterative tool-using Quiver agent (completed 2026-03-31)
-- [ ] **Phase 8: Upgrade Outputs To Strategic Insight Reports** - Turn daily output into decision-quality insight reports with change-aware rationale
+- [x] **Phase 8: Upgrade Outputs To Strategic Insight Reports** - Turn daily output into decision-quality insight reports with change-aware rationale (completed 2026-03-31)
 
 ## Phase Details
 
@@ -142,7 +142,7 @@ Plans:
 Plans:
 - [x] 08-01-PLAN.md — Define the strategic report contract, comparison rules, and deterministic bucket builder
 - [x] 08-02-PLAN.md — Add Jinja2-backed report rendering and route email composition through templates
-- [ ] 08-03-PLAN.md — Wire baseline-aware strategic reports into workflow execution and persisted run state
+- [x] 08-03-PLAN.md — Wire baseline-aware strategic reports into workflow execution and persisted run state
 
 ## Progress
 
@@ -158,4 +158,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 5. Operational Readiness | 2/2 | Complete | 2026-03-31 |
 | 6. Replace LangGraph With A Custom Workflow Engine | 4/4 | Complete | 2026-03-31 |
 | 7. Build A Loop-Based Quiver Agent | 3/3 | Complete   | 2026-03-31 |
-| 8. Upgrade Outputs To Strategic Insight Reports | 2/3 | In Progress | |
+| 8. Upgrade Outputs To Strategic Insight Reports | 3/3 | Complete | 2026-03-31 |

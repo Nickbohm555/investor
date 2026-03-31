@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: phase_active
-stopped_at: Phase 08 plan 02 complete
-last_updated: "2026-03-31T21:13:10Z"
+status: phase_complete
+stopped_at: Phase 08 complete
+last_updated: "2026-03-31T21:25:10Z"
 progress:
   total_phases: 8
-  completed_phases: 7
+  completed_phases: 8
   total_plans: 24
-  completed_plans: 23
+  completed_plans: 24
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** The system must produce trustworthy daily recommendations on schedule and carry approved ideas into a safe broker-review path without brittle manual steps.
-**Current focus:** Phase 08 — upgrade-outputs-to-strategic-insight-reports
+**Current focus:** Phase 08 complete — upgrade-outputs-to-strategic-insight-reports
 
 ## Current Position
 
-Phase: 08 (upgrade-outputs-to-strategic-insight-reports) — EXECUTING
-Plan: 3 of 3
+Phase: 08 complete — upgrade-outputs-to-strategic-insight-reports
+Plan: Complete
 
 ## Performance Metrics
 
@@ -83,6 +83,8 @@ Plan: 3 of 3
 - [Phase 04]: Default the shared test harness to local mail and Alpaca doubles. — This keeps restart-safe approval and broker-prestage coverage deterministic and network-free.
 - [Phase 05]: Normal runtime composition uses env-backed research and Quiver configuration, while tests and the dry-run harness inject their doubles explicitly. — This removes hidden production fallbacks without losing deterministic verification seams.
 - [Phase 05]: Operator docs are now locked by automated drift tests and document the dry run as the canonical local workflow proof. — This keeps README and `.env.example` aligned with the implemented runtime surface.
+- [Phase 08]: Select baseline comparisons only from prior completed runs that already persisted both a strategic report and finalized outcome payload. — This keeps change detection tied to structured delivered data instead of rendered email text or in-flight runs.
+- [Phase 08]: Persist `strategic_report` and `baseline_run_id` directly on paused workflow state alongside `finalized_outcome`. — Review, approval, and future tooling can inspect the same structured source of truth without recomputing the report.
 
 ### Pending Todos
 
