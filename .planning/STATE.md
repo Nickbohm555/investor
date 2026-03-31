@@ -4,9 +4,9 @@ milestone: v1.0
 milestone_name: milestone
 status: phase_complete
 stopped_at: Phase 08 complete
-last_updated: "2026-03-31T21:25:10Z"
+last_updated: "2026-03-31T22:15:00Z"
 progress:
-  total_phases: 8
+  total_phases: 12
   completed_phases: 8
   total_plans: 24
   completed_plans: 24
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** The system must produce trustworthy daily recommendations on schedule and carry approved ideas into a safe broker-review path without brittle manual steps.
-**Current focus:** Phase 08 complete — upgrade-outputs-to-strategic-insight-reports
+**Current focus:** Next up: Phase 09 — execution-confirmation-and-alpaca-order-submission
 
 ## Current Position
 
-Phase: 08 complete — upgrade-outputs-to-strategic-insight-reports
-Plan: Complete
+Phase: 09 queued — execution-confirmation-and-alpaca-order-submission
+Plan: Not planned yet
 
 ## Performance Metrics
 
@@ -95,6 +95,10 @@ None yet.
 - Phase 6 added: Replace LangGraph with a custom workflow engine
 - Phase 7 added: Build a loop-based Quiver agent
 - Phase 8 added: Upgrade outputs to strategic insight reports
+- Phase 9 added: Execution confirmation and Alpaca order submission
+- Phase 10 added: Trading safety rails and paper/live verification
+- Phase 11 added: Scheduling reliability and end-to-end execution proof
+- Phase 12 added: System diagram and README architecture capture
 
 ### Blockers/Concerns
 
