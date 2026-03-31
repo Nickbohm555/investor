@@ -44,7 +44,7 @@ def create_app(
 ) -> FastAPI:
     settings = settings or get_settings()
     session_factory = session_factory or get_session_factory(settings.database_url)
-    Base.metadata.create_all(session_factory.kw["bind"])
+    Base.metadata.create_all(bind=session_factory.kw["bind"])
     run_service = RunService(session_factory)
     runtime = runtime or InvestorRuntime(settings=settings)
     research_node = research_node or ResearchNode(llm=StaticLLM())

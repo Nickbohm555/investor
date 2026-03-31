@@ -4,11 +4,16 @@ from typing import Optional
 import pytest
 from fastapi.testclient import TestClient
 
+from app.db.models import Base
+from app.db.session import get_session_factory
 from app.main import create_app
 
 
 os.environ.setdefault("INVESTOR_APP_SECRET", "test-secret")
 os.environ.setdefault("INVESTOR_DATABASE_URL", "sqlite+pysqlite:///:memory:")
+os.environ.setdefault("INVESTOR_SCHEDULED_TRIGGER_TOKEN", "test-scheduled-token")
+os.environ.setdefault("INVESTOR_SCHEDULE_TRIGGER_URL", "http://127.0.0.1:8000/runs/trigger/scheduled")
+os.environ.setdefault("INVESTOR_CRON_LOG_PATH", "logs/cron/daily-trigger.log")
 
 
 @pytest.fixture
@@ -34,6 +39,11 @@ def app_factory(tmp_path, monkeypatch):
             monkeypatch.delenv("INVESTOR_LANGGRAPH_CHECKPOINTER_URL", raising=False)
         else:
             monkeypatch.setenv("INVESTOR_LANGGRAPH_CHECKPOINTER_URL", checkpointer_url)
-        return create_app()
+        session_factory = get_session_factory(resolved_database_url)
+        Base.metadata.create_all(bind=session_factory.kw["bind"])
+        app = create_app(session_factory=session_factory)
+        # session_factory override keeps the shared in-memory SQLite harness stable in tests.
+        app.state.session_factory = session_factory
+        return app
 
     return factory
