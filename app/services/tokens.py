@@ -29,7 +29,6 @@ def sign_approval_token(run_id: str, decision: str, secret: str, ttl_seconds: in
             "run_id": run_id,
             "decision": decision,
             "issued_at": time.time(),
-            "ttl_seconds": ttl_seconds,
         },
         salt="approval-token",
     )
