@@ -10,7 +10,7 @@ This roadmap turns the current investor prototype into an env-ready local app by
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Durable Workflow Foundation** - Replace in-memory orchestration with restart-safe persisted workflow state
+- [x] **Phase 1: Durable Workflow Foundation** - Replace in-memory orchestration with restart-safe persisted workflow state (completed 2026-03-31)
 - [ ] **Phase 2: Quiver Research And Ranking** - Build the broad-signal research surface, detailed prompts, and ranking outputs
 - [ ] **Phase 3: Scheduling And Email Delivery** - Make the daily trigger, real sender path, and approval email content operational
 - [ ] **Phase 4: HITL And Broker Prestage** - Resume approved runs durably and create safe Alpaca draft-order artifacts
@@ -31,7 +31,7 @@ This roadmap turns the current investor prototype into an env-ready local app by
 Plans:
 - [x] 01-01: Replace the in-memory workflow store with persisted run/thread state and repository services
 - [x] 01-02: Wire durable workflow invoke/resume behavior with explicit state transitions and API error mapping
-- [ ] 01-03: Add persistence-focused tests for restart-safe approval and audit records
+- [x] 01-03: Add persistence-focused tests for restart-safe approval and audit records
 
 ### Phase 2: Quiver Research And Ranking
 **Goal**: The app can gather broad Quiver signals, synthesize evidence-dense recommendations, and output ranked candidates or a no-action watchlist
@@ -102,7 +102,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Durable Workflow Foundation | 1/3 | In Progress|  |
+| 1. Durable Workflow Foundation | 3/3 | Complete   | 2026-03-31 |
 | 2. Quiver Research And Ranking | 0/3 | Not started | - |
 | 3. Scheduling And Email Delivery | 0/3 | Not started | - |
 | 4. HITL And Broker Prestage | 0/3 | Not started | - |
