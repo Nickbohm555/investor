@@ -1,4 +1,10 @@
+import importlib
+from pathlib import Path
+
 import pytest
+from alembic import command
+from alembic.config import Config
+from alembic.script.revision import Revision, RevisionMap
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -17,6 +23,14 @@ from app.repositories.broker_artifacts import BrokerArtifactsRepository
 from app.schemas.broker import BrokerMode, BrokerPolicySnapshot, OrderProposal
 from app.schemas.workflow import Recommendation
 from app.services.run_service import RunService
+
+
+def _load_revision(module_name: str) -> Revision:
+    module = importlib.import_module(module_name)
+    return Revision(
+        revision=module.revision,
+        down_revision=module.down_revision,
+    )
 
 
 def test_create_run_record_persists_status():
@@ -377,3 +391,38 @@ def test_broker_artifact_client_order_id_must_be_unique():
         with session_factory.begin() as session:
             repository = BrokerArtifactsRepository(session)
             repository.create_artifact(proposal, snapshot)
+
+
+def test_alembic_branch_merge_produces_single_head(monkeypatch, tmp_path):
+    revision_map = RevisionMap(
+        lambda: [
+            _load_revision("app.db.migrations.versions.0001_create_run_tables"),
+            _load_revision("app.db.migrations.versions.0002_add_schedule_fields"),
+            _load_revision("app.db.migrations.versions.0002_create_broker_artifacts"),
+            _load_revision("app.db.migrations.versions.0003_merge_phase5_heads"),
+        ]
+    )
+
+    assert revision_map.heads == ("0003_merge_phase5_heads",)
+
+    database_path = tmp_path / "alembic-merge.sqlite"
+    monkeypatch.setenv("INVESTOR_DATABASE_URL", f"sqlite+pysqlite:///{database_path}")
+
+    config = Config()
+    config.set_main_option(
+        "script_location",
+        str(Path(__file__).resolve().parents[2] / "app" / "db" / "migrations"),
+    )
+
+    command.upgrade(config, "head")
+
+    engine = create_engine(f"sqlite+pysqlite:///{database_path}", future=True)
+    inspector = inspect(engine)
+
+    assert set(inspector.get_table_names()) >= {
+        "runs",
+        "recommendations",
+        "approval_events",
+        "state_transitions",
+        "broker_artifacts",
+    }
