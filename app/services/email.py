@@ -1,5 +1,6 @@
 from html import escape
 
+from app.schemas.reports import StrategicInsightReport
 from app.schemas.workflow import DailyMemoContent, RecommendationEmail
 
 
@@ -46,3 +47,9 @@ def compose_recommendation_email(
         body="\n".join(body),
         html_body="".join(html_parts),
     )
+
+
+def compose_report_email(
+    *, report: StrategicInsightReport, approval_url: str, rejection_url: str
+) -> RecommendationEmail:
+    raise NotImplementedError
