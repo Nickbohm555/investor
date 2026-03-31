@@ -1,8 +1,8 @@
 ---
 phase: 4
 slug: hitl-and-broker-prestage
-status: draft
-nyquist_compliant: false
+status: ready
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-03-31
 ---
@@ -19,18 +19,18 @@ created: 2026-03-31
 |----------|-------|
 | **Framework** | `pytest` |
 | **Config file** | `pyproject.toml` |
-| **Quick run command** | `python -m pytest tests/api/test_routes.py tests/graph/test_workflow.py -q` |
+| **Quick run command** | `python -m pytest tests/integration/test_hitl_resume.py tests/services/test_persistence.py tests/services/test_broker_policy.py tests/api/test_routes.py -q` |
 | **Full suite command** | `python -m pytest -q` |
-| **Estimated runtime** | ~30 seconds |
+| **Estimated runtime** | ~45 seconds |
 
 ---
 
 ## Sampling Rate
 
-- **After every task commit:** Run `python -m pytest tests/api/test_routes.py tests/graph/test_workflow.py -q`
+- **After every task commit:** Run `python -m pytest tests/integration/test_hitl_resume.py tests/services/test_persistence.py tests/services/test_broker_policy.py tests/api/test_routes.py -q`
 - **After every plan wave:** Run `python -m pytest -q`
 - **Before `$gsd-verify-work`:** Full suite must be green
-- **Max feedback latency:** 30 seconds
+- **Max feedback latency:** 45 seconds
 
 ---
 
@@ -38,11 +38,12 @@ created: 2026-03-31
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 04-01-01 | 01 | 1 | HITL-01 | integration | `python -m pytest tests/integration/test_hitl_resume.py::test_approval_resumes_same_thread -q` | ❌ W0 | ⬜ pending |
-| 04-01-02 | 01 | 1 | HITL-02 | integration | `python -m pytest tests/integration/test_hitl_resume.py::test_reject_finalizes_without_broker_side_effects -q` | ❌ W0 | ⬜ pending |
-| 04-02-01 | 02 | 1 | BRKR-01 | integration | `python -m pytest tests/integration/test_broker_prestage.py::test_approved_run_creates_broker_artifacts -q` | ❌ W0 | ⬜ pending |
-| 04-02-02 | 02 | 1 | BRKR-02 | unit + integration | `python -m pytest tests/services/test_broker_policy.py tests/integration/test_broker_prestage.py -q` | ❌ W0 | ⬜ pending |
-| 04-02-03 | 02 | 1 | BRKR-03 | integration | `python -m pytest tests/integration/test_broker_prestage.py::test_broker_artifact_links_to_run_and_recommendations -q` | ❌ W0 | ⬜ pending |
+| 04-01-01 | 01 | 1 | HITL-01 | integration | `python -m pytest tests/integration/test_hitl_resume.py -q` | ❌ W0 | ⬜ pending |
+| 04-01-02 | 01 | 1 | HITL-02 | route + workflow + integration | `python -m pytest tests/api/test_routes.py tests/graph/test_workflow.py tests/integration/test_hitl_resume.py -q` | ❌ W0 | ⬜ pending |
+| 04-02-01 | 02 | 1 | BRKR-01, BRKR-03 | persistence | `python -m pytest tests/services/test_persistence.py -q` | ❌ W0 | ⬜ pending |
+| 04-02-02 | 02 | 1 | BRKR-02 | unit + client | `python -m pytest tests/services/test_broker_policy.py tests/tools/test_clients.py -q` | ❌ W0 | ⬜ pending |
+| 04-03-01 | 03 | 2 | HITL-01, HITL-02 | route | `python -m pytest tests/api/test_routes.py -q` | ❌ W0 | ⬜ pending |
+| 04-03-02 | 03 | 2 | BRKR-01, BRKR-02, BRKR-03 | integration | `python -m pytest tests/integration/test_hitl_resume.py tests/integration/test_broker_prestage.py tests/api/test_routes.py -q` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -51,11 +52,12 @@ created: 2026-03-31
 ## Wave 0 Requirements
 
 - [ ] `tests/integration/test_hitl_resume.py` — durable approve/reject/duplicate/stale coverage for HITL-01 and HITL-02
-- [ ] `tests/integration/test_broker_prestage.py` — end-to-end approval-to-artifact coverage for BRKR-01 through BRKR-03
+- [ ] `tests/services/test_persistence.py` — broker artifact linkage, `client_order_id`, `broker_mode`, and `policy_snapshot_json` persistence proof
 - [ ] `tests/services/test_broker_policy.py` — deterministic policy checks for buying power, asset support, and order shape
+- [ ] `tests/integration/test_broker_prestage.py` — end-to-end approval-to-artifact coverage for BRKR-01 through BRKR-03
 - [ ] `tests/conftest.py` or equivalent shared fixture module — persisted run state, recommendations, and mocked Alpaca account/asset responses
 
-*Existing infrastructure covers the framework and config baseline, but this phase still needs Wave 0 test files and fixtures.*
+*Framework and config exist already. `wave_0_complete` remains `false` because the Phase 4 test files and shared fixtures are created by the execution plans above rather than pre-existing in the repo today.*
 
 ---
 
@@ -74,7 +76,7 @@ created: 2026-03-31
 - [ ] Sampling continuity: no 3 consecutive tasks without automated verify
 - [ ] Wave 0 covers all MISSING references
 - [ ] No watch-mode flags
-- [ ] Feedback latency < 30s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [ ] Feedback latency < 45s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved 2026-03-31
