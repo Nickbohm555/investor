@@ -4,6 +4,7 @@ from app.db.models import Base
 from app.db.session import get_session_factory
 from app.graph.workflow import compile_workflow
 from app.schemas.quiver import CongressionalTrade, TickerEvidenceBundle
+from app.schemas.research_agent import AgentTraceStep, ResearchExecutionResult
 from app.schemas.research import CandidateOutcome, CandidateRecommendation, NoActionOutcome
 from app.services.tokens import verify_approval_token
 from app.services.run_service import RunService
@@ -14,23 +15,53 @@ class StubResearchNode:
     def __init__(self) -> None:
         self.calls = []
 
-    def run(self, run_id: str, evidence_bundles: list[TickerEvidenceBundle], account_context: dict[str, str]):
-        self.calls.append((run_id, evidence_bundles, account_context))
-        return CandidateOutcome(
-            outcome="candidates",
-            recommendations=[
-                CandidateRecommendation(
-                    ticker="NVDA",
-                    action="buy",
-                    conviction_score=0.81,
-                    supporting_evidence=["Congress buy", "Insider buy"],
-                    opposing_evidence=[],
-                    risk_notes=["Volatile"],
-                    source_summary=["Signals aligned"],
-                    broker_eligible=False,
-                )
+    def run_with_trace(
+        self,
+        run_id: str,
+        evidence_bundles: list[TickerEvidenceBundle],
+        account_context: dict[str, str],
+        quiver_client,
+    ):
+        self.calls.append((run_id, evidence_bundles, account_context, quiver_client))
+        return ResearchExecutionResult(
+            outcome=CandidateOutcome(
+                outcome="candidates",
+                recommendations=[
+                    CandidateRecommendation(
+                        ticker="NVDA",
+                        action="buy",
+                        conviction_score=0.81,
+                        supporting_evidence=["Congress buy", "Insider buy"],
+                        opposing_evidence=[],
+                        risk_notes=["Volatile"],
+                        source_summary=["Signals aligned"],
+                        broker_eligible=False,
+                    )
+                ],
+            ),
+            trace=[
+                AgentTraceStep(
+                    step_index=0,
+                    action="tool_call",
+                    rationale="Inspect NVDA congress activity.",
+                    tool_name="get_live_congress_trading",
+                    tool_args={"ticker": "NVDA"},
+                    result_summary="1 row returned.",
+                ),
+                AgentTraceStep(
+                    step_index=1,
+                    action="finalize",
+                    rationale="Evidence is sufficient.",
+                    result_summary="Final outcome: candidates.",
+                ),
             ],
+            stop_reason="final_answer",
+            tool_call_count=1,
+            investigated_tickers=["NVDA"],
         )
+
+    def run(self, run_id: str, evidence_bundles: list[TickerEvidenceBundle], account_context: dict[str, str], quiver_client=None):
+        return self.run_with_trace(run_id, evidence_bundles, account_context, quiver_client).outcome
 
 
 class StubQuiverClient:
@@ -127,6 +158,10 @@ def test_workflow_pauses_for_human_review():
     assert result["current_step"] == "awaiting_review"
     assert quiver_client.calls == ["congress", "insiders", "gov_contracts", "lobbying"]
     assert state_payload["evidence_bundles"][0]["ticker"] == "NVDA"
+    assert state_payload["research_trace"][0]["tool_name"] == "get_live_congress_trading"
+    assert state_payload["research_stop_reason"] == "final_answer"
+    assert state_payload["research_tool_call_count"] == 1
+    assert state_payload["investigated_tickers"] == ["NVDA"]
     assert state_payload["finalized_outcome"]["outcome"] == "candidates"
     assert state_payload["recommendations"][0]["ticker"] == "NVDA"
     assert research_node.calls[0][0] == "run-123"
@@ -179,16 +214,39 @@ def test_workflow_email_uses_signed_links_from_state():
 
 def test_workflow_resume_uses_empty_recommendations_for_no_action():
     class NoActionResearchNode:
-        def run(self, run_id: str, evidence_bundles: list[TickerEvidenceBundle], account_context: dict[str, str]):
-            return NoActionOutcome(
-                outcome="no_action",
-                summary="No qualifying ideas.",
-                reasons=["No candidates survived deterministic pruning."],
+        def run_with_trace(
+            self,
+            run_id: str,
+            evidence_bundles: list[TickerEvidenceBundle],
+            account_context: dict[str, str],
+            quiver_client,
+        ):
+            return ResearchExecutionResult(
+                outcome=NoActionOutcome(
+                    outcome="no_action",
+                    summary="No qualifying ideas.",
+                    reasons=["No candidates survived deterministic pruning."],
+                ),
+                trace=[
+                    AgentTraceStep(
+                        step_index=0,
+                        action="stop",
+                        rationale="No qualifying ticker survived investigation.",
+                        result_summary="Stop reason: empty_ticker_set.",
+                    )
+                ],
+                stop_reason="empty_ticker_set",
+                tool_call_count=0,
+                investigated_tickers=[],
             )
+
+        def run(self, run_id: str, evidence_bundles: list[TickerEvidenceBundle], account_context: dict[str, str], quiver_client=None):
+            return self.run_with_trace(run_id, evidence_bundles, account_context, quiver_client).outcome
 
     engine = make_engine(research_node=NoActionResearchNode())
     paused = engine.start_run(run_id="run-123", quiver_client=StubQuiverClient())
     resumed = engine.advance_run(run_id="run-123", event="approval:approve")
 
     assert paused["state_payload"]["recommendations"] == []
+    assert paused["state_payload"]["research_stop_reason"] == "empty_ticker_set"
     assert resumed["handoff"]["recommendations"] == []

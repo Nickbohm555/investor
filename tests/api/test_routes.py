@@ -43,6 +43,35 @@ class StubResearchLLM:
             ']}'
         )
 
+    def complete_with_tools(
+        self,
+        *,
+        messages: list[dict[str, object]],
+        tools: list[dict[str, object]],
+        tool_choice: str = "auto",
+        parallel_tool_calls: bool = False,
+    ) -> dict[str, object]:
+        if not any(message.get("role") == "tool" for message in messages):
+            return {
+                "role": "assistant",
+                "content": None,
+                "tool_calls": [
+                    {
+                        "id": "call-1",
+                        "type": "function",
+                        "function": {
+                            "name": "get_live_congress_trading",
+                            "arguments": '{"ticker":"NVDA"}',
+                        },
+                    }
+                ],
+            }
+        return {
+            "role": "assistant",
+            "content": self.invoke({"system": "", "user": ""}),
+            "tool_calls": [],
+        }
+
 
 def _build_quiver_transport() -> httpx.MockTransport:
     payloads = {
@@ -127,6 +156,9 @@ def test_manual_trigger_persists_public_approval_links(tmp_path, monkeypatch):
     assert stored is not None
     approval_prefix = f"{app.state.settings.external_base_url}/approval/"
     assert approval_prefix in stored.state_payload["email_body"]
+    assert stored.state_payload["research_trace"][0]["tool_name"] == "get_live_congress_trading"
+    assert stored.state_payload["research_tool_call_count"] == 1
+    assert stored.state_payload["investigated_tickers"] == ["NVDA"]
 
 
 def test_approval_callback_resumes_a_paused_run(persisted_run):
@@ -165,6 +197,8 @@ def test_trigger_persists_run_and_approval_reuses_same_thread(tmp_path, monkeypa
     assert recommendations
     assert not hasattr(app.state, "workflow_store")
     assert isinstance(stored.state_payload["evidence_bundles"], list)
+    assert stored.state_payload["research_trace"][0]["tool_name"] == "get_live_congress_trading"
+    assert stored.state_payload["research_stop_reason"] == "final_answer"
     assert stored.state_payload["finalized_outcome"]["outcome"] == "candidates"
 
     token = sign_approval_token(

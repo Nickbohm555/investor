@@ -1,7 +1,9 @@
 import pytest
+from typing import Optional
 
 from app.agents.research import ResearchNode
 from app.schemas.quiver import SignalRecord, TickerEvidenceBundle
+from app.schemas.research_agent import AgentTraceStep, ResearchExecutionResult
 
 
 class FakeListLLM:
@@ -12,6 +14,51 @@ class FakeListLLM:
     def invoke(self, payload: dict[str, str]) -> str:
         self.payloads.append(payload)
         return self._responses.pop(0)
+
+
+class FakeToolLLM:
+    def __init__(self, responses: list[dict[str, object]]):
+        self._responses = responses
+        self.calls: list[dict[str, object]] = []
+
+    def complete_with_tools(
+        self,
+        *,
+        messages: list[dict[str, object]],
+        tools: list[dict[str, object]],
+        tool_choice: str = "auto",
+        parallel_tool_calls: bool = False,
+    ) -> dict[str, object]:
+        self.calls.append(
+            {
+                "messages": messages,
+                "tools": tools,
+                "tool_choice": tool_choice,
+                "parallel_tool_calls": parallel_tool_calls,
+            }
+        )
+        return self._responses.pop(0)
+
+
+class StubQuiverClient:
+    def __init__(self) -> None:
+        self.calls: list[tuple[str, str | None]] = []
+
+    def get_live_congress_trading(self, ticker: Optional[str] = None):
+        self.calls.append(("get_live_congress_trading", ticker))
+        return []
+
+    def get_live_insider_trading(self, ticker: Optional[str] = None):
+        self.calls.append(("get_live_insider_trading", ticker))
+        return []
+
+    def get_live_government_contracts(self, ticker: Optional[str] = None):
+        self.calls.append(("get_live_government_contracts", ticker))
+        return []
+
+    def get_live_lobbying(self, ticker: Optional[str] = None):
+        self.calls.append(("get_live_lobbying", ticker))
+        return []
 
 
 def _bundle() -> list[TickerEvidenceBundle]:
@@ -119,3 +166,74 @@ def test_research_node_raises_for_invalid_outcome_shape():
             evidence_bundles=_bundle(),
             account_context={"buying_power": "1000"},
         )
+
+
+def test_research_node_run_with_trace_returns_execution_result_and_run_stays_backward_compatible():
+    llm = FakeToolLLM(
+        responses=[
+            {
+                "role": "assistant",
+                "content": None,
+                "tool_calls": [
+                    {
+                        "id": "call-1",
+                        "type": "function",
+                        "function": {
+                            "name": "get_live_congress_trading",
+                            "arguments": '{"ticker":"NVDA"}',
+                        },
+                    }
+                ],
+            },
+            {
+                "role": "assistant",
+                "content": '{"outcome":"candidates","recommendations":[{"ticker":"NVDA","action":"buy","conviction_score":0.81,"supporting_evidence":["Congress buy"],"opposing_evidence":[],"risk_notes":["Volatile"],"source_summary":["Signals aligned"],"broker_eligible":true}]}',
+                "tool_calls": [],
+            },
+        ]
+    )
+    node = ResearchNode(llm=llm)
+
+    execution = node.run_with_trace(
+        run_id="run-123",
+        evidence_bundles=_bundle(),
+        account_context={"buying_power": "1000"},
+        quiver_client=StubQuiverClient(),
+    )
+    outcome = ResearchNode(
+        llm=FakeToolLLM(
+            responses=[
+                {
+                    "role": "assistant",
+                    "content": None,
+                    "tool_calls": [
+                        {
+                            "id": "call-1",
+                            "type": "function",
+                            "function": {
+                                "name": "get_live_congress_trading",
+                                "arguments": '{"ticker":"NVDA"}',
+                            },
+                        }
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": '{"outcome":"candidates","recommendations":[{"ticker":"NVDA","action":"buy","conviction_score":0.81,"supporting_evidence":["Congress buy"],"opposing_evidence":[],"risk_notes":["Volatile"],"source_summary":["Signals aligned"],"broker_eligible":true}]}',
+                    "tool_calls": [],
+                },
+            ]
+        )
+    ).run(
+        run_id="run-123",
+        evidence_bundles=_bundle(),
+        account_context={"buying_power": "1000"},
+        quiver_client=StubQuiverClient(),
+    )
+
+    assert isinstance(execution, ResearchExecutionResult)
+    assert execution.stop_reason == "final_answer"
+    assert execution.tool_call_count == 1
+    assert execution.investigated_tickers == ["NVDA"]
+    assert execution.trace[0].tool_name == "get_live_congress_trading"
+    assert outcome.outcome == "candidates"

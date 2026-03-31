@@ -4,6 +4,7 @@ from app.services.email import compose_recommendation_email
 from app.services.handoff import build_alpaca_handoff
 from app.services.quiver_normalize import build_ticker_evidence_bundles
 from app.services.ranking import finalize_research_outcome
+from app.services.research_trace import serialize_research_trace
 from app.services.tokens import sign_approval_token
 
 
@@ -16,8 +17,8 @@ class CompiledInvestorWorkflow:
 
     def invoke(self, state: dict) -> dict:
         evidence_bundles = self._build_evidence_bundles(state["quiver_client"])
-        research_result = self._run_research(state, evidence_bundles)
-        finalized_outcome = finalize_research_outcome(research_result)
+        research_execution = self._run_research(state, evidence_bundles)
+        finalized_outcome = finalize_research_outcome(research_execution.outcome)
         recommendations = finalized_outcome.recommendations if isinstance(finalized_outcome, CandidateOutcome) else []
         memo_content = self._build_memo_content(finalized_outcome)
         email = self._compose_email(state["run_id"], memo_content)
@@ -31,6 +32,10 @@ class CompiledInvestorWorkflow:
             {
                 **state,
                 "evidence_bundles": evidence_bundles,
+                "research_trace": serialize_research_trace(research_execution.trace),
+                "research_stop_reason": research_execution.stop_reason,
+                "research_tool_call_count": research_execution.tool_call_count,
+                "investigated_tickers": research_execution.investigated_tickers,
                 "finalized_outcome": finalized_outcome,
                 "recommendations": recommendations,
             },
@@ -63,11 +68,17 @@ class CompiledInvestorWorkflow:
             lobbying=quiver_client.get_live_lobbying(),
         )
 
-    def _run_research(self, state: dict, evidence_bundles) -> ResearchOutcome:
-        return self._research_node.run(
+    def _run_research(self, state: dict, evidence_bundles):
+        account_context = {
+            key: str(value)
+            for key, value in state.items()
+            if key != "quiver_client"
+        }
+        return self._research_node.run_with_trace(
             run_id=state["run_id"],
             evidence_bundles=evidence_bundles,
-            account_context=state,
+            account_context=account_context,
+            quiver_client=state["quiver_client"],
         )
 
     def _compose_email(self, run_id: str, recommendations: DailyMemoContent) -> RecommendationEmail:
