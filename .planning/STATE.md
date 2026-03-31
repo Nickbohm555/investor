@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-03-31T14:02:17Z"
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-03-31T14:40:00Z"
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 12
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
@@ -73,6 +73,8 @@ Plan: 2 of 3
 - [Phase 02]: Persist paused workflow state payloads on the run record. — The trigger path and later resume flows need access to evidence bundles and finalized outcomes beyond the in-memory invoke response.
 - [Phase 03]: Keep scheduled-run dedupe in the application/database path and keep cron responsible only for invoking the route and logging outcomes. — This preserves duplicate safety across cron, retries, and future trigger paths without relying on shell locking.
 - [Phase 03]: Use the shared StaticPool SQLite harness to prove scheduled duplicate handling against the same unique-constraint seam used by app code. — This keeps duplicate-branch coverage deterministic without pretending to be PostgreSQL-only logic.
+- [Phase 03]: Compose approval and rejection links inside the workflow from `external_base_url` and token settings instead of passing request-derived URLs through runtime state. — This keeps memo links stable across manual, scheduled, and future non-request trigger paths.
+- [Phase 03]: Keep memo rendering structured and transport-agnostic, with provider delivery handled separately by `app.state.mail_provider`. — This preserves a clean seam for SMTP now and API-backed mail providers later.
 
 ### Pending Todos
 
@@ -86,5 +88,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-31T06:07:05.628Z
-Stopped at: Completed 03-01-PLAN.md
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
