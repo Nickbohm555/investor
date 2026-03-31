@@ -4,6 +4,12 @@ from app.main import create_app
 from app.services.tokens import sign_approval_token
 
 
+def test_app_starts_with_test_settings():
+    app = create_app()
+
+    assert app is not None
+
+
 def test_health_route_returns_ok():
     client = TestClient(create_app())
     response = client.get("/health")
