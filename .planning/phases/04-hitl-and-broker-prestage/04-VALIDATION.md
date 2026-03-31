@@ -40,9 +40,9 @@ created: 2026-03-31
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
 | 04-01-01 | 01 | 1 | HITL-01 | integration | `python -m pytest tests/integration/test_hitl_resume.py::test_approval_resumes_same_thread -q` | ❌ W0 | ⬜ pending |
 | 04-01-02 | 01 | 1 | HITL-02 | integration | `python -m pytest tests/integration/test_hitl_resume.py::test_reject_finalizes_without_broker_side_effects -q` | ❌ W0 | ⬜ pending |
-| 04-02-01 | 02 | 2 | BRKR-01 | integration | `python -m pytest tests/integration/test_broker_prestage.py::test_approved_run_creates_broker_artifacts -q` | ❌ W0 | ⬜ pending |
-| 04-02-02 | 02 | 2 | BRKR-02 | unit + integration | `python -m pytest tests/services/test_broker_policy.py tests/integration/test_broker_prestage.py -q` | ❌ W0 | ⬜ pending |
-| 04-02-03 | 02 | 2 | BRKR-03 | integration | `python -m pytest tests/integration/test_broker_prestage.py::test_broker_artifact_links_to_run_and_recommendations -q` | ❌ W0 | ⬜ pending |
+| 04-02-01 | 02 | 1 | BRKR-01 | integration | `python -m pytest tests/integration/test_broker_prestage.py::test_approved_run_creates_broker_artifacts -q` | ❌ W0 | ⬜ pending |
+| 04-02-02 | 02 | 1 | BRKR-02 | unit + integration | `python -m pytest tests/services/test_broker_policy.py tests/integration/test_broker_prestage.py -q` | ❌ W0 | ⬜ pending |
+| 04-02-03 | 02 | 1 | BRKR-03 | integration | `python -m pytest tests/integration/test_broker_prestage.py::test_broker_artifact_links_to_run_and_recommendations -q` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
