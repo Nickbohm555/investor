@@ -32,10 +32,32 @@ class HttpResearchLLM:
             ],
             "response_format": {"type": "json_object"},
         }
+        response = self._post_chat_completion(body)
+        return response["choices"][0]["message"]["content"]
+
+    def complete_with_tools(
+        self,
+        *,
+        messages: list[dict[str, object]],
+        tools: list[dict[str, object]],
+        tool_choice: str = "auto",
+        parallel_tool_calls: bool = False,
+    ) -> dict[str, object]:
+        body = {
+            "model": self._model,
+            "messages": messages,
+            "tools": tools,
+            "tool_choice": tool_choice,
+            "parallel_tool_calls": parallel_tool_calls,
+        }
+        response = self._post_chat_completion(body)
+        return response["choices"][0]["message"]
+
+    def _post_chat_completion(self, body: dict[str, object]) -> dict[str, object]:
         response = self._client.post(
             "/chat/completions",
             content=json.dumps(body, separators=(",", ":")),
             headers={"Content-Type": "application/json"},
         )
         response.raise_for_status()
-        return response.json()["choices"][0]["message"]["content"]
+        return response.json()

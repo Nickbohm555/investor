@@ -86,6 +86,78 @@ def build_quiver_transport() -> httpx.MockTransport:
 
 
 @pytest.fixture
+def llm_tool_capability_fixture() -> dict:
+    captured: dict[str, object] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured["url"] = str(request.url)
+        captured["authorization"] = request.headers["Authorization"]
+        captured["json"] = request.read().decode("utf-8")
+        return httpx.Response(
+            200,
+            json={
+                "choices": [
+                    {
+                        "message": {
+                            "role": "assistant",
+                            "content": None,
+                            "tool_calls": [
+                                {
+                                    "id": "call-1",
+                                    "type": "function",
+                                    "function": {
+                                        "name": "lookup_quiver_ticker",
+                                        "arguments": '{"ticker":"NVDA"}',
+                                    },
+                                }
+                            ],
+                        }
+                    }
+                ]
+            },
+        )
+
+    return {
+        "captured": captured,
+        "transport": httpx.MockTransport(handler),
+    }
+
+
+@pytest.fixture
+def llm_structured_final_response_fixture() -> httpx.MockTransport:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={
+                "choices": [
+                    {
+                        "message": {
+                            "content": '{"outcome":"no_action","summary":"Hold","reasons":["Weak evidence"]}'
+                        }
+                    }
+                ]
+            },
+        )
+
+    return httpx.MockTransport(handler)
+
+
+@pytest.fixture
+def llm_unsupported_provider_transport() -> httpx.MockTransport:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            400,
+            json={
+                "error": {
+                    "message": "tools are not supported by this provider",
+                }
+            },
+        )
+
+    return httpx.MockTransport(handler)
+
+
+@pytest.fixture
 def client() -> TestClient:
     return TestClient(
         create_app(
