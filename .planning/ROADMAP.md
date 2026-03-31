@@ -92,8 +92,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: Add startup validation, readiness checks, and a dry-run/verification command set
-- [ ] 05-02: Finalize docs, go-live checklist, and acceptance verification against the full workflow
+- [ ] 05-01-PLAN.md — Add startup readiness gating and a deterministic dry-run command
+- [ ] 05-02-PLAN.md — Lock docs and env templates to the final operator workflow
 
 ## Progress
 
