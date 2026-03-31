@@ -77,9 +77,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: Build approval-state machine protections and durable resume/finalize behavior
-- [ ] 04-02: Implement Alpaca policy checks, order sizing, and draft-order/prestage services
-- [ ] 04-03: Add approval-to-broker integration tests covering approve, reject, duplicate, and invalid cases
+- [ ] 04-01-PLAN.md — Build the durable approval-state machine, explicit 4xx approval semantics, and restart-safe HITL tests
+- [ ] 04-02-PLAN.md — Add broker artifact persistence, Alpaca policy enforcement, and app-owned draft-order prestage services
+- [ ] 04-03-PLAN.md — Wire approval to broker prestage and prove approve/reject/duplicate/invalid flows with end-to-end tests
 
 ### Phase 5: Operational Readiness
 **Goal**: The repo is operationally complete so adding environment variables is the remaining setup step
