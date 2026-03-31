@@ -46,7 +46,7 @@ Plans:
 
 Plans:
 - [x] 02-01: Expand typed Quiver tools and schemas around the required multi-signal datasets
-- [ ] 02-02: Implement detailed research prompt contracts and structured recommendation outputs
+- [x] 02-02: Implement detailed research prompt contracts and structured recommendation outputs
 - [ ] 02-03: Add deterministic ranking, pruning, and no-action/watchlist behavior with tests
 
 ### Phase 3: Scheduling And Email Delivery
@@ -103,7 +103,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Durable Workflow Foundation | 3/3 | Complete   | 2026-03-31 |
-| 2. Quiver Research And Ranking | 1/3 | In Progress | - |
+| 2. Quiver Research And Ranking | 2/3 | In Progress | - |
 | 3. Scheduling And Email Delivery | 0/3 | Not started | - |
 | 4. HITL And Broker Prestage | 0/3 | Not started | - |
 | 5. Operational Readiness | 0/2 | Not started | - |
