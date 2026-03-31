@@ -8,11 +8,10 @@ from app.services.tokens import sign_approval_token
 
 
 class CompiledInvestorWorkflow:
-    def __init__(self, research_node, settings, mail_provider, checkpointer=None, evidence_builder=build_ticker_evidence_bundles):
+    def __init__(self, research_node, settings, mail_provider, evidence_builder=build_ticker_evidence_bundles):
         self._research_node = research_node
         self._settings = settings
         self._mail_provider = mail_provider
-        self._checkpointer = checkpointer
         self._evidence_builder = evidence_builder
 
     def invoke(self, state: dict) -> dict:
@@ -135,11 +134,10 @@ class CompiledInvestorWorkflow:
         }
 
 
-def compile_workflow(research_node, settings, mail_provider, checkpointer=None, evidence_builder=build_ticker_evidence_bundles) -> CompiledInvestorWorkflow:
+def compile_workflow(research_node, settings, mail_provider, evidence_builder=build_ticker_evidence_bundles) -> CompiledInvestorWorkflow:
     return CompiledInvestorWorkflow(
         research_node=research_node,
         settings=settings,
         mail_provider=mail_provider,
-        checkpointer=checkpointer,
         evidence_builder=evidence_builder,
     )

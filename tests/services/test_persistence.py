@@ -125,7 +125,6 @@ def test_settings_expose_runtime_persistence_configuration():
     settings = Settings()
 
     assert settings.database_url
-    assert settings.langgraph_checkpointer_url is None
     assert settings.approval_token_ttl_seconds == 900
 
 

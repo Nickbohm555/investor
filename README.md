@@ -1,6 +1,6 @@
 # investor
 
-Local-first Python service for a LangGraph-driven investing workflow.
+Local-first Python service for an app-owned investing workflow.
 
 ## Setup
 

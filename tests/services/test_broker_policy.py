@@ -30,9 +30,8 @@ def _seed_run_and_recommendation():
     run_service = RunService(session_factory)
     run_service.create_pending_run(
         run_id="run-123",
-        thread_id="thread-123",
         status="awaiting_review",
-        current_step="approval",
+        current_step="awaiting_review",
         trigger_source="manual",
     )
     recommendation = run_service.store_recommendations(

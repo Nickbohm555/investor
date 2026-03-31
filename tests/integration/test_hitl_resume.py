@@ -31,11 +31,9 @@ def _resolve_database_url(tmp_path) -> str:
 
 def _create_run_and_payload(app_factory, tmp_path):
     database_url = _resolve_database_url(tmp_path)
-    checkpointer_url = os.getenv("INVESTOR_LANGGRAPH_CHECKPOINTER_URL")
 
     first_app = app_factory(
         database_url=database_url,
-        checkpointer_url=checkpointer_url,
         mail_provider=MailProviderSpy(),
     )
     first_client = TestClient(first_app)
@@ -51,7 +49,6 @@ def _create_run_and_payload(app_factory, tmp_path):
     )
     second_app = app_factory(
         database_url=database_url,
-        checkpointer_url=checkpointer_url,
         mail_provider=MailProviderSpy(),
     )
     return first_app, second_app, run_id, payload

@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import Literal
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -26,7 +26,6 @@ class Settings(BaseSettings):
     openai_api_key: str = "replace-with-openai-api-key"
     openai_base_url: str = "https://api.openai.com/v1"
     openai_model: str = "gpt-4.1-mini"
-    langgraph_checkpointer_url: Optional[str] = None
     approval_token_ttl_seconds: int = 900
 
     model_config = SettingsConfigDict(

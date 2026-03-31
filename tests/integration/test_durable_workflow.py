@@ -20,12 +20,10 @@ def test_durable_workflow_survives_app_restart(app_factory, tmp_path):
         database_url = configured_database_url
     else:
         database_url = f"sqlite+pysqlite:///{tmp_path / 'investor.db'}"
-    checkpointer_url = os.getenv("INVESTOR_LANGGRAPH_CHECKPOINTER_URL")
 
     # Build create_app() twice against the same database URL to prove restart safety.
     first_app = app_factory(
         database_url=database_url,
-        checkpointer_url=checkpointer_url,
     )
     first_client = TestClient(first_app)
 
@@ -42,7 +40,6 @@ def test_durable_workflow_survives_app_restart(app_factory, tmp_path):
 
     second_app = app_factory(
         database_url=database_url,
-        checkpointer_url=checkpointer_url,
     )
     second_client = TestClient(second_app)
     approval_response = second_client.get(f"/approval/{token}")
@@ -65,6 +62,5 @@ def test_durable_workflow_survives_app_restart(app_factory, tmp_path):
     assert len(approval_events) == 1
     assert {transition.to_status for transition in transitions} >= {
         "awaiting_review",
-        "resuming",
         "broker_prestaged",
     }

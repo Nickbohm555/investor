@@ -76,7 +76,6 @@ def make_settings():
         external_base_url="https://investor.example.com",
         daily_memo_to_email="operator@example.com",
         database_url="postgresql://example",
-        langgraph_checkpointer_url=None,
     )
 
 

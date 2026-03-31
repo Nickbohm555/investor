@@ -100,7 +100,6 @@ def app_factory(tmp_path, monkeypatch):
     def factory(
         *,
         database_url: Optional[str] = None,
-        checkpointer_url: Optional[str] = None,
         approval_token_ttl_seconds: int = 900,
         mail_provider=None,
         alpaca_client_factory=None,
@@ -111,10 +110,6 @@ def app_factory(tmp_path, monkeypatch):
             "INVESTOR_APPROVAL_TOKEN_TTL_SECONDS",
             str(approval_token_ttl_seconds),
         )
-        if checkpointer_url is None:
-            monkeypatch.delenv("INVESTOR_LANGGRAPH_CHECKPOINTER_URL", raising=False)
-        else:
-            monkeypatch.setenv("INVESTOR_LANGGRAPH_CHECKPOINTER_URL", checkpointer_url)
         session_factory = get_session_factory(resolved_database_url)
         Base.metadata.create_all(bind=session_factory.kw["bind"])
         app = create_app(
