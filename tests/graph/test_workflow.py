@@ -98,7 +98,7 @@ def test_workflow_pauses_for_human_review():
         }
     )
 
-    assert result["status"] == "awaiting_human_review"
+    assert result["status"] == "awaiting_review"
     assert quiver_client.calls == ["congress", "insiders", "gov_contracts", "lobbying"]
     assert result["evidence_bundles"][0].ticker == "NVDA"
     assert result["finalized_outcome"].outcome == "candidates"
@@ -127,7 +127,33 @@ def test_workflow_resumes_to_handoff_after_approval():
     resumed = compiled_graph.resume(paused, decision="approve")
 
     assert resumed["status"] == "completed"
+    assert resumed["next_node"] == "broker_prestage"
+    assert resumed["resume_command"] == 'Command(resume={"decision": "approve"})'
     assert resumed["handoff"]["run_id"] == "run-123"
+
+
+def test_workflow_reject_branch_terminates_as_rejected():
+    compiled_graph = compile_workflow(
+        research_node=StubResearchNode(),
+        settings=make_settings(),
+        mail_provider=MailProviderSpy(),
+        evidence_builder=lambda **_: [
+            TickerEvidenceBundle(ticker="NVDA", supporting_signals=[], contradictory_signals=[], source_summary=["Signals aligned"])
+        ],
+    )
+    paused = compiled_graph.invoke(
+        {
+            "run_id": "run-123",
+            "buying_power": "1000",
+            "quiver_client": StubQuiverClient(),
+        }
+    )
+
+    resumed = compiled_graph.resume(paused, decision="reject")
+
+    assert resumed["status"] == "rejected"
+    assert resumed["next_node"] == "finalize_rejected"
+    assert resumed["resume_command"] == 'Command(resume={"decision": "reject"})'
 
 
 def test_workflow_email_uses_signed_links_from_state():
@@ -207,7 +233,7 @@ def test_runtime_bootstraps_postgres_checkpointer_and_reuses_thread_id():
     class FakeWorkflow:
         def invoke(self, state: dict) -> dict:
             calls.append(("invoke", state["thread_id"]))
-            return {**state, "status": "awaiting_human_review", "recommendations": []}
+            return {**state, "status": "awaiting_review", "recommendations": []}
 
         def resume(self, state: dict, decision: str) -> dict:
             calls.append(("resume", state["thread_id"]))
@@ -237,5 +263,5 @@ def test_runtime_bootstraps_postgres_checkpointer_and_reuses_thread_id():
 
     assert checkpointer.setup_calls == 1
     assert calls == [("invoke", "thread-123"), ("resume", "thread-123")]
-    assert paused["status"] == "awaiting_human_review"
+    assert paused["status"] == "awaiting_review"
     assert resumed["status"] == "completed"

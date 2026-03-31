@@ -40,12 +40,22 @@ class CompiledInvestorWorkflow:
 
     def resume(self, state: dict, decision: str) -> dict:
         if decision != "approve":
-            return {**state, "status": "rejected"}
+            return {
+                **state,
+                "status": "rejected",
+                "next_node": "finalize_rejected",
+                "resume_command": 'Command(resume={"decision": "reject"})',
+            }
         handed_off = {
             **state,
             "handoff": build_alpaca_handoff(state["run_id"], state["recommendations"]),
         }
-        return {**handed_off, "status": "completed"}
+        return {
+            **handed_off,
+            "status": "completed",
+            "next_node": "broker_prestage",
+            "resume_command": 'Command(resume={"decision": "approve"})',
+        }
 
     def _build_evidence_bundles(self, quiver_client):
         return self._evidence_builder(

@@ -108,7 +108,7 @@ def test_trigger_persists_run_and_approval_reuses_same_thread(tmp_path, monkeypa
 
     assert stored is not None
     assert stored.thread_id
-    assert stored.status == "awaiting_human_review"
+    assert stored.status == "awaiting_review"
     assert recommendations
     assert not hasattr(app.state, "workflow_store")
     assert isinstance(stored.state_payload["evidence_bundles"], list)
@@ -229,5 +229,5 @@ def test_stale_approval_returns_409(tmp_path, monkeypatch):
     stale = client.get(f"/approval/{approve_token}")
 
     assert rejected.status_code == 200
-    assert stale.status_code == 409
+    assert stale.status_code == 410
     assert stale.json() == {"detail": "Approval already processed"}

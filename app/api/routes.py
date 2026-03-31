@@ -8,10 +8,18 @@ from fastapi import APIRouter, Header, HTTPException, Request, Response
 
 from app.db.models import RunRecord
 from app.graph.workflow import compile_workflow
+from app.services.approvals import (
+    ApprovalService,
+    DuplicateApprovalError,
+    MissingRunError,
+    RunNotAwaitingReviewError,
+    StaleApprovalError,
+    apply_review_decision,
+    configure_approval_service,
+)
 from app.services.scheduling import create_or_get_scheduled_run
-from app.services.run_service import DuplicateApproval, RunNotFound, StaleApproval
-from app.services.tokens import verify_approval_token
 from app.services.tokens import ExpiredApprovalTokenError, InvalidApprovalTokenError
+from app.services.tokens import verify_approval_token
 from app.tools.quiver import QuiverClient
 
 router = APIRouter()
@@ -160,31 +168,23 @@ def review_token(token: str, request: Request) -> dict:
             secret=request.app.state.settings.app_secret,
             ttl_seconds=request.app.state.settings.approval_token_ttl_seconds,
         )
-        approval_state = request.app.state.run_service.apply_approval_decision(
-            payload.run_id,
-            decision=payload.decision,
-            token_id=payload.token_id,
+        configure_approval_service(
+            ApprovalService(
+                session_factory=request.app.state.session_factory,
+                runtime=request.app.state.runtime,
+                research_node=request.app.state.research_node,
+            )
         )
+        result = apply_review_decision(payload, token_id=payload.token_id)
     except ExpiredApprovalTokenError as exc:
         raise HTTPException(status_code=410, detail=str(exc)) from exc
     except InvalidApprovalTokenError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    except RunNotFound as exc:
+    except MissingRunError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
-    except (StaleApproval, DuplicateApproval) as exc:
+    except StaleApprovalError as exc:
+        raise HTTPException(status_code=410, detail=str(exc)) from exc
+    except (DuplicateApprovalError, RunNotAwaitingReviewError) as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
 
-    result = request.app.state.runtime.resume_run(
-        approval_state,
-        decision=payload.decision,
-        research_node=request.app.state.research_node,
-    )
-    if result["status"] != approval_state["status"]:
-        request.app.state.run_service.mark_status(
-            payload.run_id,
-            to_status=result["status"],
-            current_step="completed" if result["status"] == "completed" else "rejected",
-            reason="Approval callback processed",
-            approval_status=payload.decision,
-        )
     return {"status": result["status"], "run_id": payload.run_id}
