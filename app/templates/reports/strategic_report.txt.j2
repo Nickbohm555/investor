@@ -1,7 +1,45 @@
 Strategic Insight Report
+Run {{ report.run_id }}
+Headline: {{ report.headline }}
+Summary: {{ report.summary }}
 Immediate Actions
+{% if report.immediate_actions %}
+{% for item in report.immediate_actions %}
+- {{ item.ticker }} | {{ item.thesis }}
+  Change: {{ item.change_summary }}
+  Why now: {{ item.why_now }}
+  Action: {{ item.operator_action }}
+{% endfor %}
+{% else %}
+None.
+{% endif %}
 Deferred
+{% if report.deferred_actions %}
+{% for item in report.deferred_actions %}
+- {{ item.ticker }} | {{ item.thesis }}
+  Change: {{ item.change_summary }}
+  Reason: {{ item.defer_reason }}
+  Action: {{ item.operator_action }}
+{% endfor %}
+{% else %}
+None.
+{% endif %}
 Research Queue
+{% if report.research_queue %}
+{% for item in report.research_queue %}
+- {{ item.ticker }} | {{ item.thesis }}
+  Uncertainty: {{ item.uncertainty }}
+  Follow-up: {{ item.follow_up_questions | join('; ') }}
+  Action: {{ item.operator_action }}
+{% endfor %}
+{% else %}
+None.
+{% endif %}
 Dropped Since Last Delivered Run
-Approve:
-Reject:
+{% if report.dropped_tickers %}
+{{ report.dropped_tickers | join(', ') }}
+{% else %}
+None.
+{% endif %}
+Approve: {{ approval_url }}
+Reject: {{ rejection_url }}

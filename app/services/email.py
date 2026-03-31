@@ -1,7 +1,11 @@
-from html import escape
-
-from app.schemas.reports import StrategicInsightReport
+from app.schemas.reports import (
+    DeferredActionItem,
+    ImmediateActionItem,
+    ResearchNeededItem,
+    StrategicInsightReport,
+)
 from app.schemas.workflow import DailyMemoContent, RecommendationEmail
+from app.services.report_render import render_report_email
 
 
 def compose_recommendation_email(
@@ -10,46 +14,67 @@ def compose_recommendation_email(
     approval_url: str,
     rejection_url: str,
 ) -> RecommendationEmail:
-    body = [f"Run {run_id}"]
-    html_parts = [f"<p>Run {escape(run_id)}</p>"]
-
-    if recommendations.recommendations:
-        body.append("Ranked Candidates")
-        html_parts.append("<h2>Ranked Candidates</h2>")
-        for item in recommendations.recommendations:
-            body.append(f"{item.ticker} | {item.action} | conviction={item.conviction_score:.2f}")
-            body.append(item.rationale)
-            html_parts.append(
-                "<p>"
-                f"{escape(item.ticker)} | {escape(item.action)} | conviction={item.conviction_score:.2f}<br>"
-                f"{escape(item.rationale)}"
-                "</p>"
-            )
-    elif recommendations.watchlist:
-        body.append("Watchlist")
-        html_parts.append("<h2>Watchlist</h2>")
-        for item in recommendations.watchlist:
-            body.append(f"{item.ticker} | {item.summary}")
-            html_parts.append(f"<p>{escape(item.ticker)} | {escape(item.summary)}</p>")
-    else:
-        body.append("No Action")
-        html_parts.append("<h2>No Action</h2>")
-        body.extend(recommendations.no_action_reasons)
-        for reason in recommendations.no_action_reasons:
-            html_parts.append(f"<p>{escape(reason)}</p>")
-
-    body.append(f"Approve: {approval_url}")
-    body.append(f"Reject: {rejection_url}")
-    html_parts.append(f"<p>Approve: <a href=\"{escape(approval_url)}\">{escape(approval_url)}</a></p>")
-    html_parts.append(f"<p>Reject: <a href=\"{escape(rejection_url)}\">{escape(rejection_url)}</a></p>")
-    return RecommendationEmail(
-        subject=f"Investor review for {run_id}",
-        body="\n".join(body),
-        html_body="".join(html_parts),
+    return render_report_email(
+        report=_legacy_memo_to_report(run_id=run_id, recommendations=recommendations),
+        approval_url=approval_url,
+        rejection_url=rejection_url,
     )
 
 
-def compose_report_email(
-    *, report: StrategicInsightReport, approval_url: str, rejection_url: str
-) -> RecommendationEmail:
-    raise NotImplementedError
+def compose_report_email(*, report: StrategicInsightReport, approval_url: str, rejection_url: str) -> RecommendationEmail:
+    return render_report_email(
+        report=report,
+        approval_url=approval_url,
+        rejection_url=rejection_url,
+    )
+
+
+def _legacy_memo_to_report(*, run_id: str, recommendations: DailyMemoContent) -> StrategicInsightReport:
+    if recommendations.recommendations:
+        return StrategicInsightReport(
+            run_id=run_id,
+            headline=f"{len(recommendations.recommendations)} immediate | 0 defer | 0 research",
+            summary="Compared against no prior delivered run; dropped tickers: none.",
+            immediate_actions=[
+                ImmediateActionItem(
+                    ticker=item.ticker,
+                    thesis=item.rationale,
+                    change_summary="signal mix unchanged",
+                    why_now=item.rationale,
+                    operator_action="Review for approval and paper-order prestage.",
+                )
+                for item in recommendations.recommendations
+            ],
+        )
+    if recommendations.watchlist:
+        return StrategicInsightReport(
+            run_id=run_id,
+            headline=f"0 immediate | 0 defer | {len(recommendations.watchlist)} research",
+            summary="Compared against no prior delivered run; dropped tickers: none.",
+            research_queue=[
+                ResearchNeededItem(
+                    ticker=item.ticker,
+                    thesis=item.summary,
+                    uncertainty=item.summary,
+                    follow_up_questions=[item.summary],
+                    operator_action="Collect more Quiver evidence before approval.",
+                )
+                for item in recommendations.watchlist
+            ],
+        )
+    return StrategicInsightReport(
+        run_id=run_id,
+        headline=f"0 immediate | 0 defer | {len(recommendations.no_action_reasons)} research",
+        summary="Compared against no prior delivered run; dropped tickers: none.",
+        research_queue=[
+            ResearchNeededItem(
+                ticker=run_id.upper(),
+                thesis=recommendations.no_action_reasons[0],
+                uncertainty=recommendations.no_action_reasons[0],
+                follow_up_questions=recommendations.no_action_reasons,
+                operator_action="Collect more Quiver evidence before approval.",
+            )
+        ]
+        if recommendations.no_action_reasons
+        else [],
+    )

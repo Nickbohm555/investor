@@ -1,6 +1,61 @@
 <h1>Strategic Insight Report</h1>
+<p>Run {{ report.run_id }}</p>
+<p>Headline: {{ report.headline }}</p>
+<p>Summary: {{ report.summary }}</p>
 <h2>Immediate Actions</h2>
+{% if report.immediate_actions %}
+<ul>
+{% for item in report.immediate_actions %}
+  <li>
+    <strong>{{ item.ticker }}</strong> | {{ item.thesis }}<br>
+    Change: {{ item.change_summary }}<br>
+    Why now: {{ item.why_now }}<br>
+    Action: {{ item.operator_action }}
+  </li>
+{% endfor %}
+</ul>
+{% else %}
+<p>None.</p>
+{% endif %}
 <h2>Deferred</h2>
+{% if report.deferred_actions %}
+<ul>
+{% for item in report.deferred_actions %}
+  <li>
+    <strong>{{ item.ticker }}</strong> | {{ item.thesis }}<br>
+    Change: {{ item.change_summary }}<br>
+    Reason: {{ item.defer_reason }}<br>
+    Action: {{ item.operator_action }}
+  </li>
+{% endfor %}
+</ul>
+{% else %}
+<p>None.</p>
+{% endif %}
 <h2>Research Queue</h2>
-<p>Approve:</p>
-<p>Reject:</p>
+{% if report.research_queue %}
+<ul>
+{% for item in report.research_queue %}
+  <li>
+    <strong>{{ item.ticker }}</strong> | {{ item.thesis }}<br>
+    Uncertainty: {{ item.uncertainty }}<br>
+    Follow-up: {{ item.follow_up_questions | join('; ') }}<br>
+    Action: {{ item.operator_action }}
+  </li>
+{% endfor %}
+</ul>
+{% else %}
+<p>None.</p>
+{% endif %}
+<h2>Dropped Since Last Delivered Run</h2>
+{% if report.dropped_tickers %}
+<ul>
+{% for ticker in report.dropped_tickers %}
+  <li>{{ ticker }}</li>
+{% endfor %}
+</ul>
+{% else %}
+<p>None.</p>
+{% endif %}
+<p>Approve: <a href="{{ approval_url }}">{{ approval_url }}</a></p>
+<p>Reject: <a href="{{ rejection_url }}">{{ rejection_url }}</a></p>
