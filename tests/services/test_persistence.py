@@ -1,4 +1,6 @@
+import pytest
 from sqlalchemy import create_engine, inspect
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.config import Settings
@@ -9,6 +11,9 @@ from app.db.models import (
     RunRecord,
     StateTransitionRecord,
 )
+from app.db.session import get_session_factory
+from app.schemas.workflow import Recommendation
+from app.services.run_service import RunService
 
 
 def test_create_run_record_persists_status():
@@ -92,3 +97,90 @@ def test_settings_expose_runtime_persistence_configuration():
     assert settings.database_url
     assert settings.langgraph_checkpointer_url is None
     assert settings.approval_token_ttl_seconds == 900
+
+
+def test_create_pending_run_persists_supplied_runtime_state():
+    session_factory = get_session_factory("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(session_factory.kw["bind"])
+    service = RunService(session_factory)
+
+    created = service.create_pending_run(
+        run_id="run-123",
+        thread_id="thread-123",
+        status="triggered",
+        current_step="research",
+        trigger_source="manual",
+    )
+
+    assert created.run_id == "run-123"
+
+    with session_factory() as session:
+        stored = session.get(RunRecord, "run-123")
+
+    assert stored is not None
+    assert stored.thread_id == "thread-123"
+    assert stored.status == "triggered"
+    assert stored.current_step == "research"
+
+
+def test_store_recommendations_and_transition_share_same_run():
+    session_factory = get_session_factory("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(session_factory.kw["bind"])
+    service = RunService(session_factory)
+    service.create_pending_run(
+        run_id="run-123",
+        thread_id="thread-123",
+        status="triggered",
+        current_step="research",
+        trigger_source="manual",
+    )
+
+    service.store_recommendations(
+        "run-123",
+        [
+            Recommendation(
+                ticker="NVDA",
+                action="buy",
+                conviction_score=0.82,
+                rationale="Durable infrastructure demand remains strong.",
+            )
+        ],
+    )
+    service.mark_status(
+        "run-123",
+        to_status="awaiting_human_review",
+        current_step="approval",
+        reason="Recommendations ready for operator review",
+    )
+
+    with session_factory() as session:
+        recommendations = session.query(RecommendationRecord).filter_by(run_id="run-123").all()
+        transitions = session.query(StateTransitionRecord).filter_by(run_id="run-123").all()
+        stored = session.get(RunRecord, "run-123")
+
+    assert stored is not None
+    assert stored.status == "awaiting_human_review"
+    assert stored.current_step == "approval"
+    assert len(recommendations) == 1
+    assert recommendations[0].ticker == "NVDA"
+    assert len(transitions) == 1
+    assert transitions[0].from_status == "triggered"
+    assert transitions[0].to_status == "awaiting_human_review"
+
+
+def test_record_approval_event_rejects_duplicate_token_ids():
+    session_factory = get_session_factory("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(session_factory.kw["bind"])
+    service = RunService(session_factory)
+    service.create_pending_run(
+        run_id="run-123",
+        thread_id="thread-123",
+        status="awaiting_human_review",
+        current_step="approval",
+        trigger_source="manual",
+    )
+
+    service.record_approval_event("run-123", decision="approve", token_id="token-123")
+
+    with pytest.raises(IntegrityError):
+        service.record_approval_event("run-123", decision="approve", token_id="token-123")
