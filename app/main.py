@@ -8,6 +8,7 @@ from app.config import get_settings
 from app.db.models import Base
 from app.db.session import get_session_factory
 from app.ops.readiness import assert_startup_readiness
+from app.schemas.research_agent import ResearchAgentBudget
 from app.services.broker_prestage import BrokerPrestageService
 from app.services.mail_provider import SmtpMailProvider
 from app.services.research_llm import HttpResearchLLM
@@ -36,7 +37,12 @@ def create_app(
             base_url=settings.openai_base_url,
             api_key=settings.openai_api_key,
             model=settings.openai_model,
-        )
+        ),
+        budget=ResearchAgentBudget(
+            max_steps=settings.research_agent_max_steps,
+            max_tool_calls=settings.research_agent_max_tool_calls,
+            max_seed_tickers=settings.research_agent_max_seed_tickers,
+        ),
     )
     mail_provider = mail_provider or SmtpMailProvider(settings)
     workflow_engine = workflow_engine or WorkflowEngine(

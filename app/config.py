@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     openai_base_url: str = "https://api.openai.com/v1"
     openai_model: str = "gpt-4.1-mini"
     approval_token_ttl_seconds: int = 900
+    research_agent_max_steps: int = 4
+    research_agent_max_tool_calls: int = 3
+    research_agent_max_seed_tickers: int = 2
 
     model_config = SettingsConfigDict(
         env_file=".env",

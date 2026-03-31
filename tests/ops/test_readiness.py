@@ -31,6 +31,9 @@ def _explicit_settings(**overrides) -> Settings:
         "openai_base_url": "https://api.openai.example/v1",
         "openai_model": "gpt-4.1-mini",
         "approval_token_ttl_seconds": 900,
+        "research_agent_max_steps": 4,
+        "research_agent_max_tool_calls": 3,
+        "research_agent_max_seed_tickers": 2,
     }
     values.update(overrides)
     return Settings.model_validate(values)
@@ -61,8 +64,23 @@ def _placeholder_settings() -> Settings:
             "openai_base_url": "https://api.openai.com/v1",
             "openai_model": "gpt-4.1-mini",
             "approval_token_ttl_seconds": 900,
+            "research_agent_max_steps": 4,
+            "research_agent_max_tool_calls": 3,
+            "research_agent_max_seed_tickers": 2,
         }
     )
+
+
+def test_settings_expose_positive_loop_agent_controls():
+    settings = _explicit_settings(
+        research_agent_max_steps=5,
+        research_agent_max_tool_calls=4,
+        research_agent_max_seed_tickers=3,
+    )
+
+    assert settings.research_agent_max_steps == 5
+    assert settings.research_agent_max_tool_calls == 4
+    assert settings.research_agent_max_seed_tickers == 3
 
 
 def test_create_app_rejects_placeholder_operational_values():
@@ -97,6 +115,35 @@ def test_create_app_rejects_live_mode_with_paper_alpaca_base_url():
     )
 
 
+def test_create_app_rejects_non_positive_loop_budgets():
+    with pytest.raises(ValueError) as excinfo:
+        create_app(
+            settings=_explicit_settings(
+                research_agent_max_steps=0,
+                research_agent_max_tool_calls=-1,
+                research_agent_max_seed_tickers=0,
+            )
+        )
+
+    message = str(excinfo.value)
+    assert "INVESTOR_RESEARCH_AGENT_MAX_STEPS must be greater than 0" in message
+    assert "INVESTOR_RESEARCH_AGENT_MAX_TOOL_CALLS must be greater than 0" in message
+    assert "INVESTOR_RESEARCH_AGENT_MAX_SEED_TICKERS must be greater than 0" in message
+
+
+def test_create_app_rejects_provider_without_required_tool_calling_contract():
+    with pytest.raises(ValueError) as excinfo:
+        create_app(
+            settings=_explicit_settings(
+                openai_base_url="https://api.openai.example/compat",
+            )
+        )
+
+    assert "does not expose the required /v1 OpenAI-compatible tool-calling surface" in str(
+        excinfo.value
+    )
+
+
 def test_create_app_accepts_explicit_non_placeholder_values():
     app = create_app(settings=_explicit_settings())
 
@@ -105,3 +152,6 @@ def test_create_app_accepts_explicit_non_placeholder_values():
 
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
+    assert app.state.research_node._budget.max_steps == 4
+    assert app.state.research_node._budget.max_tool_calls == 3
+    assert app.state.research_node._budget.max_seed_tickers == 2

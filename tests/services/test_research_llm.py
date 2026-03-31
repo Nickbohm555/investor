@@ -4,7 +4,7 @@ import pytest
 import httpx
 
 from app.main import create_app
-from app.services.research_llm import HttpResearchLLM
+from app.services.research_llm import HttpResearchLLM, provider_capability_missing
 
 
 def test_http_research_llm_posts_openai_chat_completion_payload():
@@ -120,3 +120,11 @@ def test_http_research_llm_complete_with_tools_surfaces_provider_capability_fail
                 }
             ],
         )
+
+
+def test_provider_capability_probe_recognizes_supported_and_unsupported_base_urls():
+    assert provider_capability_missing("https://api.openai.example/v1") is None
+    assert (
+        provider_capability_missing("https://api.openai.example/compat")
+        == "INVESTOR_OPENAI_BASE_URL does not expose the required /v1 OpenAI-compatible tool-calling surface"
+    )

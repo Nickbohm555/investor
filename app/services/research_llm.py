@@ -1,10 +1,18 @@
 from __future__ import annotations
 
 import json
+from urllib.parse import urlsplit
 
 import httpx
 
 AUTHORIZATION_HEADER = "Authorization: Bearer {api_key}"
+
+
+def provider_capability_missing(base_url: str) -> str | None:
+    path = urlsplit(base_url).path.rstrip("/")
+    if path.endswith("/v1"):
+        return None
+    return "INVESTOR_OPENAI_BASE_URL does not expose the required /v1 OpenAI-compatible tool-calling surface"
 
 
 class HttpResearchLLM:

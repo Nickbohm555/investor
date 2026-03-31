@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from app.config import Settings
+from app.services.research_llm import provider_capability_missing
 
 PLACEHOLDER_ASSIGNMENTS = [
     "INVESTOR_APP_SECRET=change-me",
@@ -41,6 +42,19 @@ def collect_readiness_errors(settings: Settings) -> list[str]:
             f"INVESTOR_BROKER_MODE={settings.broker_mode} requires "
             f"INVESTOR_ALPACA_BASE_URL={expected_base_url}"
         )
+
+    loop_budget_fields = [
+        ("INVESTOR_RESEARCH_AGENT_MAX_STEPS", settings.research_agent_max_steps),
+        ("INVESTOR_RESEARCH_AGENT_MAX_TOOL_CALLS", settings.research_agent_max_tool_calls),
+        ("INVESTOR_RESEARCH_AGENT_MAX_SEED_TICKERS", settings.research_agent_max_seed_tickers),
+    ]
+    for env_name, value in loop_budget_fields:
+        if value < 1:
+            errors.append(f"{env_name} must be greater than 0")
+
+    provider_error = provider_capability_missing(settings.openai_base_url)
+    if provider_error is not None:
+        errors.append(provider_error)
 
     return errors
 
