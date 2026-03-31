@@ -140,7 +140,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 08-01-PLAN.md — Define the strategic report contract, comparison rules, and deterministic bucket builder
+- [x] 08-01-PLAN.md — Define the strategic report contract, comparison rules, and deterministic bucket builder
 - [ ] 08-02-PLAN.md — Add Jinja2-backed report rendering and route email composition through templates
 - [ ] 08-03-PLAN.md — Wire baseline-aware strategic reports into workflow execution and persisted run state
 
@@ -158,4 +158,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 5. Operational Readiness | 2/2 | Complete | 2026-03-31 |
 | 6. Replace LangGraph With A Custom Workflow Engine | 4/4 | Complete | 2026-03-31 |
 | 7. Build A Loop-Based Quiver Agent | 3/3 | Complete   | 2026-03-31 |
-| 8. Upgrade Outputs To Strategic Insight Reports | 0/0 | Not Started | |
+| 8. Upgrade Outputs To Strategic Insight Reports | 1/3 | In Progress | |
