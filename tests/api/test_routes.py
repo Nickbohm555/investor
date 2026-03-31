@@ -69,7 +69,8 @@ def test_manual_trigger_persists_public_approval_links(tmp_path, monkeypatch):
         stored = session.get(RunRecord, run_id)
 
     assert stored is not None
-    assert "https://investor.example.com/approval/" in stored.state_payload["email_body"]
+    approval_prefix = f"{app.state.settings.external_base_url}/approval/"
+    assert approval_prefix in stored.state_payload["email_body"]
 
 
 def test_approval_callback_resumes_a_paused_run():
@@ -133,7 +134,8 @@ def test_trigger_persists_run_and_approval_reuses_same_thread(tmp_path, monkeypa
     assert updated.status == "completed"
     assert len(approval_events) == 1
     assert approval_events[0].decision == "approve"
-    assert "https://investor.example.com/approval/" in stored.state_payload["email_body"]
+    approval_prefix = f"{app.state.settings.external_base_url}/approval/"
+    assert approval_prefix in stored.state_payload["email_body"]
 
 
 def test_invalid_approval_token_returns_400(tmp_path, monkeypatch):
