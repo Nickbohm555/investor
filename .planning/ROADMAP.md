@@ -61,9 +61,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: Add repo-managed cron install/remove/status scripts and schedule-aware trigger logic
-- [ ] 03-02: Implement provider-based email sending with SMTP and structured memo rendering
-- [ ] 03-03: Add email/cron integration tests and operational logging for delivery and schedule behavior
+- [ ] 03-01-PLAN.md — Build the scheduled trigger path, schedule-key persistence, and repo-managed cron scripts
+- [ ] 03-02-PLAN.md — Add SMTP provider delivery, branch-aware memo rendering, and signed public approval links
+- [ ] 03-03-PLAN.md — Wire duplicate-safe scheduled delivery logging and expand integration verification/docs
 
 ### Phase 4: HITL And Broker Prestage
 **Goal**: Human approval resumes the persisted run and creates safe Alpaca draft-order artifacts ready for final confirmation
