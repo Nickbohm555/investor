@@ -26,10 +26,10 @@ if RESPONSE=$("$CURL_BIN" -fsS -X POST "$INVESTOR_SCHEDULE_TRIGGER_URL" \
   -H "Content-Type: application/json" \
   -d '{"replay":false}'); then
   case "$RESPONSE" in
-    *'"status":"duplicate"'*)
+    *duplicate*)
       printf '%s scheduled_trigger result=duplicate\n' "$(timestamp)" >> "$LOG_PATH"
       ;;
-    *'"status":"started"'*)
+    *started*)
       printf '%s scheduled_trigger result=started\n' "$(timestamp)" >> "$LOG_PATH"
       ;;
     *)

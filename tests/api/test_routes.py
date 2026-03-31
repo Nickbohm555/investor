@@ -7,28 +7,48 @@ from app.main import create_app
 from app.services.tokens import sign_approval_token
 
 
+class MailProviderSpy:
+    def __init__(self) -> None:
+        self.sent_messages = []
+
+    def send(self, subject: str, text_body: str, html_body: str, recipient: str) -> None:
+        self.sent_messages.append(
+            {
+                "subject": subject,
+                "text_body": text_body,
+                "html_body": html_body,
+                "recipient": recipient,
+            }
+        )
+
+
 def _build_app(tmp_path, monkeypatch):
     database_url = f"sqlite+pysqlite:///{tmp_path / 'investor.db'}"
     monkeypatch.setenv("INVESTOR_DATABASE_URL", database_url)
-    return create_app()
+    app = create_app()
+    app.state.mail_provider = MailProviderSpy()
+    return app
 
 
 def test_app_starts_with_test_settings():
     app = create_app()
+    app.state.mail_provider = MailProviderSpy()
 
     assert app is not None
 
 
 def test_health_route_returns_ok():
-    client = TestClient(create_app())
+    app = create_app()
+    app.state.mail_provider = MailProviderSpy()
+    client = TestClient(app)
     response = client.get("/health")
 
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
 
 
-def test_manual_trigger_starts_a_run():
-    client = TestClient(create_app())
+def test_manual_trigger_starts_a_run(tmp_path, monkeypatch):
+    client = TestClient(_build_app(tmp_path, monkeypatch))
 
     response = client.post("/runs/trigger")
 
@@ -36,8 +56,25 @@ def test_manual_trigger_starts_a_run():
     assert response.json()["status"] == "started"
 
 
+def test_manual_trigger_persists_public_approval_links(tmp_path, monkeypatch):
+    app = _build_app(tmp_path, monkeypatch)
+    client = TestClient(app)
+
+    response = client.post("/runs/trigger")
+
+    assert response.status_code == 202
+    run_id = response.json()["run_id"]
+
+    with Session(app.state.session_factory.kw["bind"]) as session:
+        stored = session.get(RunRecord, run_id)
+
+    assert stored is not None
+    assert "https://investor.example.com/approval/" in stored.state_payload["email_body"]
+
+
 def test_approval_callback_resumes_a_paused_run():
     app = create_app()
+    app.state.mail_provider = MailProviderSpy()
     client = TestClient(app)
 
     trigger_response = client.post("/runs/trigger")
@@ -96,6 +133,7 @@ def test_trigger_persists_run_and_approval_reuses_same_thread(tmp_path, monkeypa
     assert updated.status == "completed"
     assert len(approval_events) == 1
     assert approval_events[0].decision == "approve"
+    assert "https://investor.example.com/approval/" in stored.state_payload["email_body"]
 
 
 def test_invalid_approval_token_returns_400(tmp_path, monkeypatch):

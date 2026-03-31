@@ -53,7 +53,7 @@ printf '%s\n' "$*" >> "{curl_log}"
 if [ "${{CURL_SHOULD_FAIL:-0}}" = "1" ]; then
   exit 1
 fi
-printf '{{"status":"started"}}'
+printf '%s' "${{CURL_RESPONSE:-{{\"status\":\"started\"}}}}"
 """,
     )
 
@@ -131,10 +131,25 @@ def test_cron_trigger_loads_env_posts_and_logs_success_and_failure(tmp_path: Pat
 
     assert success.returncode == 0
     log_text = (tmp_path / "logs/cron/daily-trigger.log").read_text()
-    assert "scheduled_trigger status=success" in log_text
+    assert "scheduled_trigger result=started" in log_text
     curl_args = (tmp_path / "curl.log").read_text()
     assert "/runs/trigger/scheduled" in curl_args
     assert "X-Investor-Scheduled-Trigger: scheduled-test-token" in curl_args
+
+    duplicate_env = env.copy()
+    duplicate_env["CURL_RESPONSE"] = '{"status":"duplicate"}'
+    duplicate = subprocess.run(
+        [str(SCRIPTS_DIR / "cron-trigger.sh")],
+        cwd=tmp_path,
+        env=duplicate_env,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert duplicate.returncode == 0
+    log_text = (tmp_path / "logs/cron/daily-trigger.log").read_text()
+    assert "scheduled_trigger result=duplicate" in log_text
 
     failure_env = env.copy()
     failure_env["CURL_SHOULD_FAIL"] = "1"
@@ -148,4 +163,4 @@ def test_cron_trigger_loads_env_posts_and_logs_success_and_failure(tmp_path: Pat
 
     assert failure.returncode != 0
     log_text = (tmp_path / "logs/cron/daily-trigger.log").read_text()
-    assert "scheduled_trigger status=failure" in log_text
+    assert "scheduled_trigger result=failure" in log_text
