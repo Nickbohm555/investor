@@ -92,7 +92,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [x] 05-01-PLAN.md — Add startup readiness gating and a deterministic dry-run command
+- [ ] 05-01-PLAN.md — Add startup readiness gating and a deterministic dry-run command
 - [ ] 05-02-PLAN.md — Lock docs and env templates to the final operator workflow
 
 ## Progress

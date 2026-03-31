@@ -4,29 +4,50 @@ Local-first Python service for a LangGraph-driven investing workflow.
 
 ## Setup
 
-1. Create a virtual environment with Python 3.12.
-2. Install dependencies with `pip install -e .`.
-3. Copy `.env.example` to `.env`.
-4. Start Postgres with `docker compose up -d postgres`.
-5. Run the API with `uvicorn app.main:app --reload`.
+```bash
+pip install -e .
+cp .env.example .env
+docker compose up -d postgres
+alembic upgrade head
+```
 
-## Verification
+Normal runtime composition now depends on the configured Quiver and OpenAI-compatible credentials rather than the old stubbed defaults.
 
-- Run `pytest tests/services/test_persistence.py tests/api/test_routes.py tests/integration/test_durable_workflow.py -q`.
-- Run `docker compose up -d postgres && INVESTOR_DATABASE_URL=postgresql://investor:investor@localhost:5432/investor INVESTOR_LANGGRAPH_CHECKPOINTER_URL=postgresql://investor:investor@localhost:5432/investor pytest tests/integration/test_durable_workflow.py -q`.
-- Run `./scripts/cron-install.sh`.
-- Run `./scripts/cron-status.sh` and confirm it reports `managed=present`.
-- Run `./scripts/cron-trigger.sh` and confirm the cron log shows `scheduled_trigger result=started` or `scheduled_trigger result=duplicate`.
-- Run `pytest tests/api/test_scheduling.py tests/ops/test_cron_scripts.py -q`.
-- Check `GET /health` returns `{"status": "ok"}`.
-- Trigger a run with `POST /runs/trigger`.
-- Approve via the signed `/approval/{token}` callback and confirm the returned payload includes an Alpaca handoff artifact.
-- Confirm the received SMTP message uses the configured `INVESTOR_EXTERNAL_BASE_URL` host in both approval links.
-- Run `./scripts/cron-remove.sh` when you want to uninstall the managed cron block.
+## Dry Run
 
-## Current contents
+```bash
+python -m app.ops.dry_run
+```
 
-- product design spec in `docs/specs/`
-- `AGENTS.md` with repo workflow rules
-- `superpower.sh` developer helper script
-- FastAPI service bootstrap, workflow routes, persistence models, and test suite
+Use `python -m app.ops.dry_run` as the canonical no-hidden-manual-work proof path. It runs scheduled trigger, memo generation, approval callback, and broker prestage locally by injecting deterministic doubles instead of the normal live adapters.
+
+## Run The Service
+
+```bash
+uvicorn app.main:app --reload
+```
+
+## Cron Operations
+
+```bash
+./scripts/cron-install.sh
+./scripts/cron-status.sh
+./scripts/cron-trigger.sh
+./scripts/cron-remove.sh
+```
+
+## Go-Live Checklist
+
+- SMTP credentials send to the real operator inbox
+- Quiver API key and base URL point to the intended account
+- OpenAI-compatible API key, base URL, and model are configured for ResearchNode
+- INVESTOR_EXTERNAL_BASE_URL resolves to the public approval host
+- Alpaca paper mode uses https://paper-api.alpaca.markets
+- Cron is installed with ./scripts/cron-install.sh and verified with ./scripts/cron-status.sh
+
+## Acceptance Verification
+
+```bash
+python -m pytest tests/ops/test_readiness.py tests/services/test_research_llm.py tests/ops/test_dry_run.py tests/ops/test_operational_docs.py -q
+python -m app.ops.dry_run
+```
