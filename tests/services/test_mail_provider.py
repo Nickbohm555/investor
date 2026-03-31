@@ -27,7 +27,7 @@ class FakeSMTP:
         self.messages.append(message)
 
 
-def test_smtp_mail_provider_sends_email_with_tls_and_login(monkeypatch):
+def test_smtp_mail_provider_sends_email_with_tls_and_login(monkeypatch, caplog):
     client = FakeSMTP("smtp.example.com", 587, 30)
 
     monkeypatch.setattr(
@@ -46,6 +46,8 @@ def test_smtp_mail_provider_sends_email_with_tls_and_login(monkeypatch):
         )
     )
 
+    caplog.set_level("INFO")
+
     provider.send(
         subject="Investor review for run-123",
         text_body="plain body",
@@ -62,6 +64,7 @@ def test_smtp_mail_provider_sends_email_with_tls_and_login(monkeypatch):
     assert message["Subject"] == "Investor review for run-123"
     assert message.get_body(preferencelist=("plain",)).get_content().strip() == "plain body"
     assert message.get_body(preferencelist=("html",)).get_content().strip() == "<p>html body</p>"
+    assert "memo_delivery result=sent provider=smtp recipient=operator@example.com" in caplog.text
 
 
 def test_smtp_mail_provider_uses_configured_sender_and_recipient(monkeypatch):
