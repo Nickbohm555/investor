@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready_to_plan
-stopped_at: Phase 04 complete; ready to plan Phase 05
-last_updated: "2026-03-31T15:25:11Z"
+status: executing
+stopped_at: Phase 05 plan 01 complete; continue to plan 02
+last_updated: "2026-03-31T16:07:30Z"
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 14
-  completed_plans: 12
+  completed_plans: 13
 ---
 
 # Project State
@@ -23,8 +23,8 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 
 ## Current Position
 
-Phase: 05
-Plan: Not started
+Phase: 05 (operational-readiness) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -81,6 +81,7 @@ Plan: Not started
 - [Phase 04]: Treat `broker_prestaged` as the terminal approved-state contract once broker artifacts are created. — This distinguishes a broker-ready approval path from generic workflow completion and keeps route assertions explicit.
 - [Phase 04]: Persist broker draft artifacts with deterministic `client_order_id = {run_id}-{recommendation_id}-{broker_mode}` and policy snapshots. — This preserves auditability, dedupe, and future broker-confirmation seams.
 - [Phase 04]: Default the shared test harness to local mail and Alpaca doubles. — This keeps restart-safe approval and broker-prestage coverage deterministic and network-free.
+- [Phase 05]: Normal runtime composition uses env-backed research and Quiver configuration, while tests and the dry-run harness inject their doubles explicitly. — This removes hidden production fallbacks without losing deterministic verification seams.
 
 ### Pending Todos
 

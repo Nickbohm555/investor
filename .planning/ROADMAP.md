@@ -92,7 +92,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Add startup readiness gating and a deterministic dry-run command
+- [x] 05-01-PLAN.md — Add startup readiness gating and a deterministic dry-run command
 - [ ] 05-02-PLAN.md — Lock docs and env templates to the final operator workflow
 
 ## Progress
@@ -106,4 +106,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 2. Quiver Research And Ranking | 3/3 | Complete | 2026-03-31 |
 | 3. Scheduling And Email Delivery | 3/3 | Complete | 2026-03-31 |
 | 4. HITL And Broker Prestage | 3/3 | Complete | 2026-03-31 |
-| 5. Operational Readiness | 0/2 | Not started | - |
+| 5. Operational Readiness | 1/2 | In progress | - |
