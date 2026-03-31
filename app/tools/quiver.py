@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
 import httpx
+from pydantic import TypeAdapter
 
-
-class CongressTrade(BaseModel):
-    ticker: str
-    transaction: str
+from app.schemas.quiver import (
+    CongressionalTrade,
+    GovernmentContractAward,
+    InsiderTrade,
+    LobbyingDisclosure,
+)
 
 
 class QuiverClient:
@@ -17,14 +19,30 @@ class QuiverClient:
             transport=transport,
         )
 
-    def get_congress_trades(self) -> list[CongressTrade]:
-        response = self._client.get("/congresstrading")
+    def _get(self, path: str, ticker: str | None = None) -> list[dict]:
+        params = {"ticker": ticker} if ticker else None
+        response = self._client.get(path, params=params)
         response.raise_for_status()
-        data = response.json()
-        return [
-            CongressTrade(
-                ticker=item["Ticker"],
-                transaction=item["Transaction"],
-            )
-            for item in data
-        ]
+        return response.json()
+
+    def get_live_congress_trading(self, ticker: str | None = None) -> list[CongressionalTrade]:
+        return TypeAdapter(list[CongressionalTrade]).validate_python(
+            self._get("/beta/live/congresstrading", ticker=ticker)
+        )
+
+    def get_live_insider_trading(self, ticker: str | None = None) -> list[InsiderTrade]:
+        return TypeAdapter(list[InsiderTrade]).validate_python(
+            self._get("/beta/live/insiders", ticker=ticker)
+        )
+
+    def get_live_government_contracts(
+        self, ticker: str | None = None
+    ) -> list[GovernmentContractAward]:
+        return TypeAdapter(list[GovernmentContractAward]).validate_python(
+            self._get("/beta/live/govcontracts", ticker=ticker)
+        )
+
+    def get_live_lobbying(self, ticker: str | None = None) -> list[LobbyingDisclosure]:
+        return TypeAdapter(list[LobbyingDisclosure]).validate_python(
+            self._get("/beta/live/lobbying", ticker=ticker)
+        )
