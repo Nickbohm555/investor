@@ -1,15 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -lt 1 ]; then
-  echo "Usage: $0 \"<test instructions>\"" >&2
-  echo "How to run: ./superpower.sh \"test the investor workflow end to end and fix failures\"" >&2
-  exit 1
-fi
-
-TEST_INSTRUCTIONS="$*"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TESTING_SUFFIX="make sure this works, track the data flow, find the root cause if there are errors and solve them"
 COMMIT_PUSH_INSTRUCTION="If you make code changes, create an atomic git commit for your changes and push them before finishing. If you do not make code changes, do not create an empty commit."
 
 if [ "${SUPERPOWER_CAFFEINATED:-0}" != "1" ]; then

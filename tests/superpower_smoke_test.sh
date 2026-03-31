@@ -30,7 +30,7 @@ SUPERPOWER_CAFFEINATED=1 \
 SUPERPOWER_TEST_COUNT_FILE="$OUT_DIR/count" \
 SUPERPOWER_TEST_OUT_DIR="$OUT_DIR" \
 PATH="$BIN_DIR:$PATH" \
-"$REPO_ROOT/superpower.sh" "dummy instructions"
+"$REPO_ROOT/superpower.sh"
 
 assert_contains() {
   local file="$1"
