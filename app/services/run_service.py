@@ -164,7 +164,19 @@ class RunService:
             return repository.get_run(run_id)
 
     def get_latest_report_baseline(self, *, exclude_run_id: str) -> dict | None:
-        return None
+        with self.session_factory() as session:
+            repository = RunRepository(session)
+            run = repository.get_latest_delivered_report_run(exclude_run_id=exclude_run_id)
+            if run is None:
+                return None
+            payload = run.state_payload or {}
+            if payload["finalized_outcome"] is None or payload["strategic_report"] is None:
+                return None
+            return {
+                "run_id": run.run_id,
+                "finalized_outcome": payload["finalized_outcome"],
+                "strategic_report": payload["strategic_report"],
+            }
 
     def list_recommendations(self, run_id: str) -> list[Recommendation]:
         with self.session_factory() as session:

@@ -35,7 +35,7 @@ class StubResearchNode:
                         opposing_evidence=[],
                         risk_notes=["Volatile"],
                         source_summary=["Signals aligned"],
-                        broker_eligible=False,
+                        broker_eligible=True,
                     )
                 ],
             ),

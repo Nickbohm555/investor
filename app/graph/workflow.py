@@ -1,11 +1,16 @@
-from app.schemas.research import CandidateOutcome, NoActionOutcome, ResearchOutcome, WatchlistOutcome
-from app.schemas.workflow import DailyMemoContent, Recommendation, RecommendationEmail, WatchlistItem
-from app.services.email import compose_recommendation_email
+from pydantic import TypeAdapter
+
+from app.schemas.research import CandidateOutcome, ResearchOutcome
+from app.schemas.workflow import RecommendationEmail
+from app.services.email import compose_report_email
 from app.services.handoff import build_alpaca_handoff
 from app.services.quiver_normalize import build_ticker_evidence_bundles
 from app.services.ranking import finalize_research_outcome
+from app.services.report_builder import build_strategic_insight_report
 from app.services.research_trace import serialize_research_trace
 from app.services.tokens import sign_approval_token
+
+RESEARCH_OUTCOME_ADAPTER = TypeAdapter(ResearchOutcome)
 
 
 class CompiledInvestorWorkflow:
@@ -20,8 +25,19 @@ class CompiledInvestorWorkflow:
         research_execution = self._run_research(state, evidence_bundles)
         finalized_outcome = finalize_research_outcome(research_execution.outcome)
         recommendations = finalized_outcome.recommendations if isinstance(finalized_outcome, CandidateOutcome) else []
-        memo_content = self._build_memo_content(finalized_outcome)
-        email = self._compose_email(state["run_id"], memo_content)
+        baseline_report = state.get("baseline_report")
+        baseline_outcome = (
+            RESEARCH_OUTCOME_ADAPTER.validate_python(baseline_report["finalized_outcome"])
+            if baseline_report
+            else None
+        )
+        report = build_strategic_insight_report(
+            run_id=state["run_id"],
+            outcome=finalized_outcome,
+            baseline_run_id=baseline_report["run_id"] if baseline_report else None,
+            baseline_outcome=baseline_outcome,
+        )
+        email = self._compose_email(state["run_id"], report)
         self._mail_provider.send(
             subject=email.subject,
             text_body=email.body,
@@ -38,6 +54,8 @@ class CompiledInvestorWorkflow:
                 "investigated_tickers": research_execution.investigated_tickers,
                 "finalized_outcome": finalized_outcome,
                 "recommendations": recommendations,
+                "strategic_report": report.model_dump(mode="python"),
+                "baseline_run_id": report.baseline_run_id,
             },
             email,
         )
@@ -81,10 +99,9 @@ class CompiledInvestorWorkflow:
             quiver_client=state["quiver_client"],
         )
 
-    def _compose_email(self, run_id: str, recommendations: DailyMemoContent) -> RecommendationEmail:
-        return compose_recommendation_email(
-            run_id=run_id,
-            recommendations=recommendations,
+    def _compose_email(self, run_id: str, report) -> RecommendationEmail:
+        return compose_report_email(
+            report=report,
             approval_url=self._build_approval_url(run_id, "approve"),
             rejection_url=self._build_approval_url(run_id, "reject"),
         )
@@ -97,43 +114,6 @@ class CompiledInvestorWorkflow:
             ttl_seconds=self._settings.approval_token_ttl_seconds,
         )
         return f"{self._settings.external_base_url.rstrip('/')}/approval/{token}"
-
-    def _build_memo_content(self, outcome: ResearchOutcome) -> DailyMemoContent:
-        if isinstance(outcome, CandidateOutcome):
-            return DailyMemoContent(
-                recommendations=[
-                    Recommendation(
-                        ticker=item.ticker,
-                        action=item.action,
-                        conviction_score=item.conviction_score,
-                        rationale=self._candidate_rationale(item),
-                    )
-                    for item in outcome.recommendations
-                ]
-            )
-        if isinstance(outcome, WatchlistOutcome):
-            return DailyMemoContent(
-                watchlist=[
-                    WatchlistItem(
-                        ticker=item.ticker,
-                        summary=item.source_summary[0] if item.source_summary else outcome.summary,
-                    )
-                    for item in outcome.items
-                ]
-            )
-        if isinstance(outcome, NoActionOutcome):
-            return DailyMemoContent(no_action_reasons=[outcome.summary, *outcome.reasons])
-        raise TypeError(f"Unsupported outcome: {type(outcome)!r}")
-
-    def _candidate_rationale(self, item) -> str:
-        parts = []
-        if item.supporting_evidence:
-            parts.append(", ".join(item.supporting_evidence))
-        if item.source_summary:
-            parts.append(", ".join(item.source_summary))
-        if item.risk_notes:
-            parts.append(f"Risks: {', '.join(item.risk_notes)}")
-        return "; ".join(parts)
 
     def _await_human_review(self, state: dict, message: RecommendationEmail) -> dict:
         persisted_state = {key: value for key, value in state.items() if key != "quiver_client"}

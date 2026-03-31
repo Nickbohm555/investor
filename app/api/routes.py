@@ -45,9 +45,13 @@ def trigger_run(request: Request) -> dict[str, str]:
         current_step="research",
         trigger_source="manual",
     )
+    baseline_report = request.app.state.run_service.get_latest_report_baseline(
+        exclude_run_id=run_id,
+    )
     state = request.app.state.workflow_engine.start_run(
         run_id=run_id,
         quiver_client=quiver_client,
+        baseline_report=baseline_report,
     )
     request.app.state.run_service.store_recommendations(
         run_id,
@@ -98,9 +102,13 @@ def trigger_scheduled_run(
         transport=request.app.state.quiver_transport,
     )
     try:
+        baseline_report = request.app.state.run_service.get_latest_report_baseline(
+            exclude_run_id=run.run_id,
+        )
         state = request.app.state.workflow_engine.start_run(
             run_id=run.run_id,
             quiver_client=quiver_client,
+            baseline_report=baseline_report,
         )
         request.app.state.run_service.store_recommendations(
             run.run_id,

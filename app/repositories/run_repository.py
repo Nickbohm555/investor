@@ -42,6 +42,20 @@ class RunRepository:
         return self.session.get(RunRecord, run_id)
 
     def get_latest_delivered_report_run(self, *, exclude_run_id: str) -> RunRecord | None:
+        candidates = (
+            self.session.query(RunRecord)
+            .filter(
+                RunRecord.run_id != exclude_run_id,
+                RunRecord.status == "completed",
+                RunRecord.state_payload.isnot(None),
+            )
+            .order_by(RunRecord.created_at.desc())
+            .all()
+        )
+        for run in candidates:
+            payload = run.state_payload or {}
+            if payload["email_body"] is not None:
+                return run
         return None
 
     def list_recommendations(self, run_id: str) -> list[RecommendationRecord]:

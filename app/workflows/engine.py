@@ -27,7 +27,7 @@ class WorkflowEngine:
         self._mail_provider = mail_provider
         self._workflow_factory = workflow_factory
 
-    def start_run(self, *, run_id: str, quiver_client: object) -> dict:
+    def start_run(self, *, run_id: str, quiver_client: object, baseline_report: dict | None = None) -> dict:
         workflow = self._compile_workflow()
         with self._session_factory.begin() as session:
             repository = RunsRepository(session)
@@ -36,6 +36,7 @@ class WorkflowEngine:
                 {
                     "run_id": run_id,
                     "quiver_client": quiver_client,
+                    "baseline_report": baseline_report,
                 }
             )
             serialized_result = WorkflowResult(
