@@ -8,6 +8,11 @@ from app.db.models import ApprovalEventRecord, RecommendationRecord, RunRecord
 from app.repositories.run_repository import RunRepository
 from app.schemas.workflow import Recommendation
 
+TRIGGERED_STATUS = "triggered"
+AWAITING_HUMAN_REVIEW_STATUS = "awaiting_human_review"
+APPROVED_STATUS = "approved"
+COMPLETED_STATUS = "completed"
+
 
 class RunService:
     def __init__(self, session_factory: sessionmaker[Session]) -> None:
@@ -82,3 +87,22 @@ class RunService:
                 token_id=token_id,
             )
         return event
+
+    def get_run(self, run_id: str) -> Optional[RunRecord]:
+        with self.session_factory() as session:
+            repository = RunRepository(session)
+            return repository.get_run(run_id)
+
+    def list_recommendations(self, run_id: str) -> list[Recommendation]:
+        with self.session_factory() as session:
+            repository = RunRepository(session)
+            rows = repository.list_recommendations(run_id)
+            return [
+                Recommendation(
+                    ticker=row.ticker,
+                    action=row.action,
+                    conviction_score=0.81,
+                    rationale=row.rationale,
+                )
+                for row in rows
+            ]

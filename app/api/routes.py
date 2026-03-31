@@ -4,20 +4,10 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Request
 
-from app.agents.research import ResearchNode
-from app.graph.workflow import compile_workflow
+from app.schemas.workflow import Recommendation
 from app.services.tokens import verify_approval_token
 
 router = APIRouter()
-
-
-class StaticLLM:
-    def invoke(self, _: dict[str, str]) -> str:
-        return (
-            '{"recommendations": ['
-            '{"ticker": "NVDA", "action": "buy", "conviction_score": 0.81, "rationale": "signal"}'
-            "]}"
-        )
 
 
 @router.get("/health")
@@ -28,9 +18,30 @@ def health() -> dict[str, str]:
 @router.post("/runs/trigger", status_code=202)
 def trigger_run(request: Request) -> dict[str, str]:
     run_id = f"run-{uuid4().hex[:8]}"
-    workflow = compile_workflow(research_node=ResearchNode(llm=StaticLLM()))
-    state = workflow.invoke({"run_id": run_id})
-    request.app.state.workflow_store[run_id] = {"workflow": workflow, "state": state}
+    thread_id = f"thread-{uuid4().hex[:12]}"
+    request.app.state.run_service.create_pending_run(
+        run_id=run_id,
+        thread_id=thread_id,
+        status="triggered",
+        current_step="research",
+        trigger_source="manual",
+    )
+    state = request.app.state.runtime.start_run(
+        run_id=run_id,
+        thread_id=thread_id,
+        research_node=request.app.state.research_node,
+        base_url=str(request.base_url).rstrip("/"),
+    )
+    request.app.state.run_service.store_recommendations(
+        run_id,
+        list(state.get("recommendations", [])),
+    )
+    request.app.state.run_service.mark_status(
+        run_id,
+        to_status=state["status"],
+        current_step="approval",
+        reason="Research completed and awaiting operator review",
+    )
     return {"status": "started", "run_id": run_id}
 
 
@@ -39,9 +50,28 @@ def review_token(token: str, request: Request) -> dict:
     payload = verify_approval_token(
         token,
         secret=request.app.state.settings.app_secret,
-        ttl_seconds=900,
+        ttl_seconds=request.app.state.settings.approval_token_ttl_seconds,
     )
-    stored = request.app.state.workflow_store[payload.run_id]
-    result = stored["workflow"].resume(stored["state"], decision=payload.decision)
-    request.app.state.workflow_store[payload.run_id]["state"] = result
+    run = request.app.state.run_service.get_run(payload.run_id)
+    recommendations = request.app.state.run_service.list_recommendations(payload.run_id)
+    result = request.app.state.runtime.resume_run(
+        {
+            "run_id": payload.run_id,
+            "thread_id": run.thread_id,
+            "status": run.status,
+            "recommendations": [
+                item if isinstance(item, Recommendation) else Recommendation.model_validate(item)
+                for item in recommendations
+            ],
+        },
+        decision=payload.decision,
+        research_node=request.app.state.research_node,
+    )
+    request.app.state.run_service.mark_status(
+        payload.run_id,
+        to_status=result["status"],
+        current_step="completed" if result["status"] == "completed" else "rejected",
+        reason="Approval callback processed",
+        approval_status=payload.decision,
+    )
     return result

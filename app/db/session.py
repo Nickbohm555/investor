@@ -6,18 +6,30 @@ from typing import Optional
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from app.config import get_settings
 
 
 @lru_cache(maxsize=1)
 def _get_default_engine():
-    return create_engine(get_settings().database_url, future=True)
+    return _create_engine(get_settings().database_url)
+
+
+def _create_engine(database_url: str):
+    if database_url == "sqlite+pysqlite:///:memory:":
+        return create_engine(
+            database_url,
+            future=True,
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
+        )
+    return create_engine(database_url, future=True)
 
 
 def get_engine(database_url: Optional[str] = None):
     if database_url is not None:
-        return create_engine(database_url, future=True)
+        return _create_engine(database_url)
     return _get_default_engine()
 
 
