@@ -7,8 +7,8 @@
 
 ### Runtime And Persistence
 
-- [ ] **RUNT-01**: Operator can trigger a daily run that persists workflow state and survives process restart
-- [ ] **RUNT-02**: System stores run records, recommendation records, approval events, and state transitions in Postgres
+- [x] **RUNT-01**: Operator can trigger a daily run that persists workflow state and survives process restart
+- [x] **RUNT-02**: System stores run records, recommendation records, approval events, and state transitions in Postgres
 - [ ] **RUNT-03**: Operator receives explicit API responses for invalid, expired, stale, or duplicate approval attempts
 
 ### Scheduling
@@ -66,8 +66,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RUNT-01 | Phase 1 | Pending |
-| RUNT-02 | Phase 1 | Pending |
+| RUNT-01 | Phase 1 | Complete |
+| RUNT-02 | Phase 1 | Complete |
 | RUNT-03 | Phase 1 | Pending |
 | SCHD-01 | Phase 3 | Pending |
 | SCHD-02 | Phase 3 | Pending |

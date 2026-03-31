@@ -29,7 +29,7 @@ This roadmap turns the current investor prototype into an env-ready local app by
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: Replace the in-memory workflow store with persisted run/thread state and repository services
+- [x] 01-01: Replace the in-memory workflow store with persisted run/thread state and repository services
 - [ ] 01-02: Wire durable workflow invoke/resume behavior with explicit state transitions and API error mapping
 - [ ] 01-03: Add persistence-focused tests for restart-safe approval and audit records
 
@@ -102,7 +102,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Durable Workflow Foundation | 0/3 | Not started | - |
+| 1. Durable Workflow Foundation | 1/3 | In Progress|  |
 | 2. Quiver Research And Ranking | 0/3 | Not started | - |
 | 3. Scheduling And Email Delivery | 0/3 | Not started | - |
 | 4. HITL And Broker Prestage | 0/3 | Not started | - |
