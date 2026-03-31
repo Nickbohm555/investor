@@ -43,8 +43,8 @@ class CompiledInvestorWorkflow:
             return {
                 **state,
                 "status": "rejected",
-                "next_node": "finalize_rejected",
-                "resume_command": 'Command(resume={"decision": "reject"})',
+                "current_step": "rejected",
+                "handoff": None,
             }
         handed_off = {
             **state,
@@ -52,9 +52,8 @@ class CompiledInvestorWorkflow:
         }
         return {
             **handed_off,
-            "status": "completed",
-            "next_node": "broker_prestage",
-            "resume_command": 'Command(resume={"decision": "approve"})',
+            "status": "broker_prestaged",
+            "current_step": "broker_prestaged",
         }
 
     def _build_evidence_bundles(self, quiver_client):
@@ -131,6 +130,7 @@ class CompiledInvestorWorkflow:
         return {
             **persisted_state,
             "status": "awaiting_review",
+            "current_step": "awaiting_review",
             "email_body": message.body,
         }
 
