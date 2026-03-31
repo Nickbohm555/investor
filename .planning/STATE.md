@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-03-31T05:31:13.513Z"
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-03-31T05:41:23.522Z"
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 12
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 ## Current Position
 
 Phase: 01 (durable-workflow-foundation) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -46,6 +46,7 @@ Plan: 2 of 3
 - Trend: Stable
 
 | Phase 01 P01 | 5min | 2 tasks | 7 files |
+| Phase 01 P02 | 7min | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -57,6 +58,8 @@ Plan: 2 of 3
 - Initialization: approval leads to Alpaca prestage, not auto-execution
 - [Phase 01]: Separate application-owned runtime records from future LangGraph checkpoint persistence so run audit data stays straightforward to query and validate. — Needed durable app-owned records for later invoke/resume logic without coupling business queries to checkpoint storage.
 - [Phase 01]: Cache only the default configured engine. Explicit database URLs used in tests create fresh engines so isolated runs do not share in-memory SQLite state. — Prevents false cross-test coupling while preserving reusable default engine behavior for app runtime code.
+- [Phase 01]: Route handlers persist and validate approval state before calling the runtime resume path, so duplicate and stale callbacks are rejected from database truth instead of transient app memory. — Needed stable approval semantics across restarts and duplicate callback attempts.
+- [Phase 01]: Runtime bootstrap falls back to a no-op checkpointer on non-Postgres URLs so SQLite tests can verify invoke/resume behavior without pretending to be a live checkpoint backend. — Keeps local tests honest while preserving the PostgresSaver seam for production-backed runtimes.
 
 ### Pending Todos
 
@@ -70,6 +73,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31T05:31:03.179Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-03-31T05:41:23.520Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None

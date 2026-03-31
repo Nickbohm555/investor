@@ -30,7 +30,7 @@ This roadmap turns the current investor prototype into an env-ready local app by
 
 Plans:
 - [x] 01-01: Replace the in-memory workflow store with persisted run/thread state and repository services
-- [ ] 01-02: Wire durable workflow invoke/resume behavior with explicit state transitions and API error mapping
+- [x] 01-02: Wire durable workflow invoke/resume behavior with explicit state transitions and API error mapping
 - [ ] 01-03: Add persistence-focused tests for restart-safe approval and audit records
 
 ### Phase 2: Quiver Research And Ranking
