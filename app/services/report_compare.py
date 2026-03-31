@@ -3,9 +3,7 @@ from __future__ import annotations
 from app.schemas.research import CandidateRecommendation
 
 
-def classify_change(
-    *, current: CandidateRecommendation, previous: CandidateRecommendation | None
-) -> str:
+def classify_change(*, current: CandidateRecommendation, previous: CandidateRecommendation | None) -> str:
     if previous is None:
         return "new thesis"
     if current.conviction_score > previous.conviction_score:
@@ -17,11 +15,7 @@ def classify_change(
     return "signal mix unchanged"
 
 
-def compare_candidates(
-    *,
-    current: list[CandidateRecommendation],
-    previous: list[CandidateRecommendation],
-) -> tuple[dict[str, str], list[str]]:
+def compare_candidates(*, current: list[CandidateRecommendation], previous: list[CandidateRecommendation]) -> tuple[dict[str, str], list[str]]:
     previous_by_ticker = {candidate.ticker.upper(): candidate for candidate in previous}
     current_by_ticker = {candidate.ticker.upper(): candidate for candidate in current}
     change_map = {
