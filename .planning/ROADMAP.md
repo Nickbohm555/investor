@@ -173,15 +173,17 @@ Plans:
 ### Phase 11: Scheduling Reliability And End-To-End Execution Proof
 **Goal**: Scheduling and operational wiring are reliable enough to run the full approved execution flow at the intended market-open cadence
 **Depends on**: Phase 10
-**Requirements**: TBD
+**Requirements**: SC11-01, SC11-02, SC11-03
 **Success Criteria** (what must be TRUE):
 1. Scheduling supports a real `7:00am ET` configuration path wired through repo config and cron install scripts
 2. The scheduled run, memo delivery, approval links, execution confirmation, and submission path work together without hidden manual glue
 3. End-to-end tests cover scheduled run to submitted order behavior
-**Plans**: 0 plans
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD (run `$gsd-plan-phase 11` to break down)
+- [ ] 11-01-PLAN.md — Replace hard-coded cron timing with a repo-configured 7:00am ET install/status contract
+- [ ] 11-02-PLAN.md — Extend the repo-local proof path through explicit execution confirmation and Alpaca submission
+- [ ] 11-03-PLAN.md — Add scheduled-to-submitted integration proof and reconcile any remaining lifecycle gaps
 
 ### Phase 12: System Diagram And README Architecture Capture
 **Goal**: The repo includes a complete, highly legible system diagram that shows all major components and their relationships, plus a README screenshot for quick orientation
