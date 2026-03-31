@@ -30,7 +30,8 @@ created: 2026-03-31
 - **After every task commit:** Run the plan-local smoke command from the task `<verify>` block
 - **After every plan wave:** Run `python -m pytest -q`
 - **Before `$gsd-verify-work`:** Full suite must be green
-- **Max feedback latency:** 60 seconds
+- **Task-smoke feedback latency:** <=30 seconds
+- **Wave/full-suite latency:** may exceed 30 seconds
 
 ---
 
@@ -54,9 +55,11 @@ created: 2026-03-31
 ## Wave 0 Requirements
 
 - [ ] `tests/services/test_persistence.py` — add migration-path coverage for upgrading a Phase-5 schema into the Phase-6 schema, including the duplicate-`0002` Alembic branch situation
+- [ ] `tests/services/test_persistence.py` — fence pre-cutover runs into `archived_pre_phase6` / `approval_status=archived` with a `phase6_cutover` payload marker during migration
 - [ ] `tests/graph/test_workflow.py` — replace LangGraph-era assertions on `resume_command`, `resuming`, and checkpointer semantics with engine-step assertions
 - [ ] `tests/integration/test_hitl_resume.py` — assert approval and rejection advance persisted workflow steps directly instead of replaying a paused payload
 - [ ] `tests/api/test_routes.py` — assert the HTTP layer uses `workflow_engine` and exposes no `thread_id`
+- [ ] `tests/api/test_routes.py` — assert archived pre-cutover runs return HTTP 410 with the exact cutover rejection detail
 - [ ] `tests/integration/test_broker_prestage.py` — assert the approve path consumes returned `handoff` data and persists broker artifacts after restart
 
 ---
