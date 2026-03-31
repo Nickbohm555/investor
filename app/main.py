@@ -7,6 +7,7 @@ from app.config import get_settings
 from app.db.models import Base
 from app.db.session import get_session_factory
 from app.graph.runtime import InvestorRuntime
+from app.graph.workflow import compile_workflow
 from app.services.mail_provider import SmtpMailProvider
 from app.services.run_service import RunService
 
@@ -47,9 +48,15 @@ def create_app(
     session_factory = session_factory or get_session_factory(settings.database_url)
     Base.metadata.create_all(bind=session_factory.kw["bind"])
     run_service = RunService(session_factory)
-    runtime = runtime or InvestorRuntime(settings=settings)
     research_node = research_node or ResearchNode(llm=StaticLLM())
     mail_provider = SmtpMailProvider(settings)
+    runtime = runtime or InvestorRuntime(
+        settings=settings,
+        mail_provider=mail_provider,
+        workflow_factory=lambda research_node, settings, mail_provider, checkpointer, evidence_builder=None: compile_workflow(
+            research_node, settings, mail_provider
+        ),
+    )
     app = FastAPI(title=settings.app_name)
     app.state.settings = settings
     app.state.session_factory = session_factory

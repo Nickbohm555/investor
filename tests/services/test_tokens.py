@@ -23,6 +23,7 @@ def test_sign_and_verify_token_round_trip(settings: Settings):
 
     assert payload.run_id == "run-123"
     assert payload.decision == "approve"
+    assert payload.token_id
 
 
 def test_verify_token_rejects_expired_token(settings: Settings):
@@ -33,7 +34,7 @@ def test_verify_token_rejects_expired_token(settings: Settings):
         ttl_seconds=1,
     )
 
-    time.sleep(1.1)
+    time.sleep(2.1)
 
     with pytest.raises(ExpiredApprovalTokenError):
         verify_approval_token(token, secret=settings.app_secret, ttl_seconds=1)

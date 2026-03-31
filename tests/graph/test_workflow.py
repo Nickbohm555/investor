@@ -4,6 +4,7 @@ from app.graph.runtime import InvestorRuntime
 from app.graph.workflow import compile_workflow
 from app.schemas.quiver import CongressionalTrade, TickerEvidenceBundle
 from app.schemas.research import CandidateOutcome, CandidateRecommendation, NoActionOutcome
+from app.services.tokens import verify_approval_token
 
 
 class StubResearchNode:
@@ -50,12 +51,40 @@ class StubQuiverClient:
         return []
 
 
+class MailProviderSpy:
+    def __init__(self) -> None:
+        self.calls = []
+
+    def send(self, subject: str, text_body: str, html_body: str, recipient: str) -> None:
+        self.calls.append(
+            {
+                "subject": subject,
+                "text_body": text_body,
+                "html_body": html_body,
+                "recipient": recipient,
+            }
+        )
+
+
+def make_settings():
+    return SimpleNamespace(
+        app_secret="test-secret",
+        approval_token_ttl_seconds=900,
+        external_base_url="https://investor.example.com",
+        daily_memo_to_email="operator@example.com",
+        database_url="postgresql://example",
+        langgraph_checkpointer_url=None,
+    )
+
+
 def test_workflow_pauses_for_human_review():
     research_node = StubResearchNode()
     quiver_client = StubQuiverClient()
+    mail_provider = MailProviderSpy()
     compiled_graph = compile_workflow(
         research_node=research_node,
-        quiver_client=quiver_client,
+        settings=make_settings(),
+        mail_provider=mail_provider,
         evidence_builder=lambda **_: [
             TickerEvidenceBundle(ticker="NVDA", supporting_signals=[], contradictory_signals=[], source_summary=["Signals aligned"])
         ],
@@ -64,9 +93,8 @@ def test_workflow_pauses_for_human_review():
     result = compiled_graph.invoke(
         {
             "run_id": "run-123",
-            "approval_url": "http://testserver/approval/approve-token",
-            "rejection_url": "http://testserver/approval/reject-token",
             "buying_power": "1000",
+            "quiver_client": quiver_client,
         }
     )
 
@@ -76,12 +104,14 @@ def test_workflow_pauses_for_human_review():
     assert result["finalized_outcome"].outcome == "candidates"
     assert result["recommendations"][0].ticker == "NVDA"
     assert research_node.calls[0][0] == "run-123"
+    assert mail_provider.calls[0]["recipient"] == "operator@example.com"
 
 
 def test_workflow_resumes_to_handoff_after_approval():
     compiled_graph = compile_workflow(
         research_node=StubResearchNode(),
-        quiver_client=StubQuiverClient(),
+        settings=make_settings(),
+        mail_provider=MailProviderSpy(),
         evidence_builder=lambda **_: [
             TickerEvidenceBundle(ticker="NVDA", supporting_signals=[], contradictory_signals=[], source_summary=["Signals aligned"])
         ],
@@ -89,9 +119,8 @@ def test_workflow_resumes_to_handoff_after_approval():
     paused = compiled_graph.invoke(
         {
             "run_id": "run-123",
-            "approval_url": "http://testserver/approval/approve-token",
-            "rejection_url": "http://testserver/approval/reject-token",
             "buying_power": "1000",
+            "quiver_client": StubQuiverClient(),
         }
     )
 
@@ -102,9 +131,12 @@ def test_workflow_resumes_to_handoff_after_approval():
 
 
 def test_workflow_email_uses_signed_links_from_state():
+    settings = make_settings()
+    mail_provider = MailProviderSpy()
     compiled_graph = compile_workflow(
         research_node=StubResearchNode(),
-        quiver_client=StubQuiverClient(),
+        settings=settings,
+        mail_provider=mail_provider,
         evidence_builder=lambda **_: [
             TickerEvidenceBundle(ticker="NVDA", supporting_signals=[], contradictory_signals=[], source_summary=["Signals aligned"])
         ],
@@ -113,16 +145,22 @@ def test_workflow_email_uses_signed_links_from_state():
     paused = compiled_graph.invoke(
         {
             "run_id": "run-123",
-            "approval_url": "http://testserver/approval/signed-approve-token",
-            "rejection_url": "http://testserver/approval/signed-reject-token",
             "buying_power": "1000",
+            "quiver_client": StubQuiverClient(),
         }
     )
 
+    sent_message = mail_provider.calls[0]
     assert "Ranked Candidates" in paused["email_body"]
-    assert "signed-approve-token" in paused["email_body"]
-    assert "signed-reject-token" in paused["email_body"]
+    assert "https://investor.example.com/approval/" in paused["email_body"]
     assert "run-123:approve" not in paused["email_body"]
+    assert "https://investor.example.com/approval/" in sent_message["text_body"]
+
+    approve_token = sent_message["text_body"].split("Approve: https://investor.example.com/approval/")[1].splitlines()[0]
+    reject_token = sent_message["text_body"].split("Reject: https://investor.example.com/approval/")[1].splitlines()[0]
+
+    assert verify_approval_token(approve_token, settings.app_secret, settings.approval_token_ttl_seconds).decision == "approve"
+    assert verify_approval_token(reject_token, settings.app_secret, settings.approval_token_ttl_seconds).decision == "reject"
 
 
 def test_workflow_resume_uses_empty_recommendations_for_no_action():
@@ -136,7 +174,8 @@ def test_workflow_resume_uses_empty_recommendations_for_no_action():
 
     compiled_graph = compile_workflow(
         research_node=NoActionResearchNode(),
-        quiver_client=StubQuiverClient(),
+        settings=make_settings(),
+        mail_provider=MailProviderSpy(),
         evidence_builder=lambda **_: [
             TickerEvidenceBundle(ticker="NVDA", supporting_signals=[], contradictory_signals=[], source_summary=["Signals aligned"])
         ],
@@ -145,9 +184,8 @@ def test_workflow_resume_uses_empty_recommendations_for_no_action():
     paused = compiled_graph.invoke(
         {
             "run_id": "run-123",
-            "approval_url": "http://testserver/approval/approve-token",
-            "rejection_url": "http://testserver/approval/reject-token",
             "buying_power": "1000",
+            "quiver_client": StubQuiverClient(),
         }
     )
     resumed = compiled_graph.resume(paused, decision="approve")
@@ -182,8 +220,10 @@ def test_runtime_bootstraps_postgres_checkpointer_and_reuses_thread_id():
             langgraph_checkpointer_url=None,
             app_secret="secret",
             approval_token_ttl_seconds=900,
+            external_base_url="https://investor.example.com",
+            daily_memo_to_email="operator@example.com",
         ),
-        workflow_factory=lambda research_node, quiver_client, checkpointer, evidence_builder=None: FakeWorkflow(),
+        workflow_factory=lambda research_node, settings, mail_provider, checkpointer, evidence_builder=None: FakeWorkflow(),
         checkpointer_factory=lambda conn: checkpointer,
     )
 
@@ -192,7 +232,6 @@ def test_runtime_bootstraps_postgres_checkpointer_and_reuses_thread_id():
         thread_id="thread-123",
         research_node=StubResearchNode(),
         quiver_client=StubQuiverClient(),
-        base_url="http://testserver",
     )
     resumed = runtime.resume_run(paused, decision="approve", research_node=StubResearchNode())
 

@@ -7,6 +7,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Header, HTTPException, Request, Response
 
 from app.db.models import RunRecord
+from app.graph.workflow import compile_workflow
 from app.services.scheduling import create_or_get_scheduled_run
 from app.services.run_service import DuplicateApproval, RunNotFound, StaleApproval
 from app.services.tokens import verify_approval_token
@@ -38,12 +39,17 @@ def trigger_run(request: Request) -> dict[str, str]:
         current_step="research",
         trigger_source="manual",
     )
+    workflow = compile_workflow(
+        request.app.state.research_node,
+        request.app.state.settings,
+        request.app.state.mail_provider,
+    )
     state = request.app.state.runtime.start_run(
         run_id=run_id,
         thread_id=thread_id,
         research_node=request.app.state.research_node,
         quiver_client=quiver_client,
-        base_url=str(request.base_url).rstrip("/"),
+        workflow=workflow,
     )
     request.app.state.run_service.store_state_payload(run_id, state)
     request.app.state.run_service.store_recommendations(
@@ -101,12 +107,17 @@ def trigger_scheduled_run(
         api_key=request.app.state.settings.quiver_api_key,
         transport=request.app.state.quiver_transport,
     )
+    workflow = compile_workflow(
+        request.app.state.research_node,
+        request.app.state.settings,
+        request.app.state.mail_provider,
+    )
     state = request.app.state.runtime.start_run(
         run_id=run.run_id,
         thread_id=run.thread_id,
         research_node=request.app.state.research_node,
         quiver_client=quiver_client,
-        base_url=str(request.base_url).rstrip("/"),
+        workflow=workflow,
     )
     request.app.state.run_service.store_state_payload(run.run_id, state)
     request.app.state.run_service.store_recommendations(

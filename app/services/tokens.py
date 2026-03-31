@@ -1,5 +1,4 @@
 import hashlib
-import time
 from dataclasses import dataclass
 
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
@@ -30,7 +29,6 @@ def sign_approval_token(run_id: str, decision: str, secret: str, ttl_seconds: in
         {
             "run_id": run_id,
             "decision": decision,
-            "issued_at": time.time(),
         },
         salt="approval-token",
     )
@@ -44,8 +42,6 @@ def verify_approval_token(token: str, secret: str, ttl_seconds: int) -> Approval
         raise ExpiredApprovalTokenError("Approval token expired") from exc
     except BadSignature as exc:
         raise InvalidApprovalTokenError("Approval token invalid") from exc
-    if time.time() - payload["issued_at"] > ttl_seconds:
-        raise ExpiredApprovalTokenError("Approval token expired")
     return ApprovalTokenPayload(
         run_id=payload["run_id"],
         decision=payload["decision"],

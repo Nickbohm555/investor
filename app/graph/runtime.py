@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable, Optional
+from typing import Callable
 
 from app.graph.workflow import compile_workflow
-from app.services.tokens import sign_approval_token
 
 
 class NoopCheckpointer:
@@ -28,6 +27,7 @@ def _default_checkpointer_factory(connection_string: str):
 @dataclass
 class InvestorRuntime:
     settings: object
+    mail_provider: object = None
     workflow_factory: Callable = compile_workflow
     checkpointer_factory: Callable[[str], object] = _default_checkpointer_factory
 
@@ -43,25 +43,24 @@ class InvestorRuntime:
         thread_id: str,
         research_node,
         quiver_client,
-        base_url: str,
+        workflow=None,
     ) -> dict:
-        workflow = self._compile_workflow(research_node, quiver_client)
+        workflow = workflow or self._compile_workflow(research_node)
         return workflow.invoke(
             {
                 "run_id": run_id,
                 "thread_id": thread_id,
-                "approval_url": self._build_approval_url(base_url, run_id, "approve"),
-                "rejection_url": self._build_approval_url(base_url, run_id, "reject"),
+                "quiver_client": quiver_client,
             }
         )
 
     def resume_run(self, state: dict, *, decision: str, research_node) -> dict:
-        workflow = self._compile_workflow(research_node, quiver_client=None)
+        workflow = self._compile_workflow(research_node)
         return workflow.resume(state, decision=decision)
 
-    def _compile_workflow(self, research_node, quiver_client):
+    def _compile_workflow(self, research_node):
         self._ensure_checkpointer()
-        return self.workflow_factory(research_node, quiver_client, self._checkpointer)
+        return self.workflow_factory(research_node, self.settings, self.mail_provider, self._checkpointer)
 
     def _ensure_checkpointer(self) -> None:
         if self._checkpointer is None:
@@ -77,12 +76,3 @@ class InvestorRuntime:
         if not self._bootstrapped:
             self._checkpointer.setup()
             self._bootstrapped = True
-
-    def _build_approval_url(self, base_url: str, run_id: str, decision: str) -> str:
-        token = sign_approval_token(
-            run_id=run_id,
-            decision=decision,
-            secret=self.settings.app_secret,
-            ttl_seconds=self.settings.approval_token_ttl_seconds,
-        )
-        return f"{base_url.rstrip('/')}/approval/{token}"
