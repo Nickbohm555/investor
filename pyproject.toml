@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "investor"
+version = "0.1.0"
+description = "Local-first investing workflow service"
+requires-python = ">=3.12"
+dependencies = [
+  "alembic",
+  "fastapi",
+  "httpx",
+  "itsdangerous",
+  "uvicorn",
+  "pydantic-settings",
+  "pytest",
+  "sqlalchemy",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.setuptools]
+packages = ["app"]
