@@ -42,9 +42,10 @@ class InvestorRuntime:
         run_id: str,
         thread_id: str,
         research_node,
+        quiver_client,
         base_url: str,
     ) -> dict:
-        workflow = self._compile_workflow(research_node)
+        workflow = self._compile_workflow(research_node, quiver_client)
         return workflow.invoke(
             {
                 "run_id": run_id,
@@ -55,12 +56,12 @@ class InvestorRuntime:
         )
 
     def resume_run(self, state: dict, *, decision: str, research_node) -> dict:
-        workflow = self._compile_workflow(research_node)
+        workflow = self._compile_workflow(research_node, quiver_client=None)
         return workflow.resume(state, decision=decision)
 
-    def _compile_workflow(self, research_node):
+    def _compile_workflow(self, research_node, quiver_client):
         self._ensure_checkpointer()
-        return self.workflow_factory(research_node, self._checkpointer)
+        return self.workflow_factory(research_node, quiver_client, self._checkpointer)
 
     def _ensure_checkpointer(self) -> None:
         if self._checkpointer is None:

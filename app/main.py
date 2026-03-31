@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+import httpx
 
 from app.agents.research import ResearchNode
 from app.api.routes import router
@@ -12,10 +13,25 @@ from app.services.run_service import RunService
 class StaticLLM:
     def invoke(self, _: dict[str, str]) -> str:
         return (
-            '{"recommendations": ['
-            '{"ticker": "NVDA", "action": "buy", "conviction_score": 0.81, "rationale": "signal"}'
-            "]}"
+            '{"outcome":"candidates","recommendations":['
+            '{"ticker":"NVDA","action":"buy","conviction_score":0.81,"supporting_evidence":["Congress buy","Insider buy"],'
+            '"opposing_evidence":[],"risk_notes":["Volatile"],'
+            '"source_summary":["Congress and insider signals aligned"],"broker_eligible":true}'
+            ']}'
         )
+
+
+def _static_quiver_transport() -> httpx.MockTransport:
+    def handler(request: httpx.Request) -> httpx.Response:
+        payloads = {
+            "/beta/live/congresstrading": [{"Ticker": "NVDA", "Transaction": "Purchase"}],
+            "/beta/live/insiders": [{"Ticker": "NVDA", "Transaction": "Buy"}],
+            "/beta/live/govcontracts": [{"Ticker": "NVDA", "Agency": "NASA", "Amount": "1000"}],
+            "/beta/live/lobbying": [{"Ticker": "NVDA", "Client": "Example Client", "Issue": "Semiconductors"}],
+        }
+        return httpx.Response(200, json=payloads[request.url.path])
+
+    return httpx.MockTransport(handler)
 
 
 def create_app(
@@ -24,6 +40,7 @@ def create_app(
     session_factory=None,
     runtime=None,
     research_node=None,
+    quiver_transport=None,
 ) -> FastAPI:
     settings = settings or get_settings()
     session_factory = session_factory or get_session_factory(settings.database_url)
@@ -37,6 +54,7 @@ def create_app(
     app.state.run_service = run_service
     app.state.runtime = runtime
     app.state.research_node = research_node
+    app.state.quiver_transport = quiver_transport if quiver_transport is not None else _static_quiver_transport()
     app.include_router(router)
 
     return app

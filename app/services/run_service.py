@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Optional
+
+from pydantic import BaseModel
 
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.db.models import ApprovalEventRecord, RecommendationRecord, RunRecord
 from app.repositories.run_repository import RunRepository
+from app.schemas.research import CandidateRecommendation
 from app.schemas.workflow import Recommendation
 
 TRIGGERED_STATUS = "triggered"
@@ -54,12 +58,27 @@ class RunService:
         return run
 
     def store_recommendations(
-        self, run_id: str, recommendations: list[Recommendation]
+        self, run_id: str, recommendations: list
     ) -> list[RecommendationRecord]:
         with self.session_factory.begin() as session:
             repository = RunRepository(session)
-            rows = repository.replace_recommendations(run_id, recommendations)
+            normalized = [
+                Recommendation(
+                    ticker=item.ticker,
+                    action=item.action,
+                    conviction_score=item.conviction_score,
+                    rationale=_recommendation_rationale(item),
+                )
+                for item in recommendations
+            ]
+            rows = repository.replace_recommendations(run_id, normalized)
         return rows
+
+    def store_state_payload(self, run_id: str, state: dict) -> RunRecord:
+        with self.session_factory.begin() as session:
+            repository = RunRepository(session)
+            run = repository.update_state_payload(run_id, _serialize_state(state))
+        return run
 
     def mark_status(
         self,
@@ -164,3 +183,24 @@ class RunService:
                 )
                 for row in rows
             ]
+
+
+def _recommendation_rationale(item) -> str:
+    if isinstance(item, CandidateRecommendation):
+        for values in (item.source_summary, item.supporting_evidence, item.risk_notes):
+            if values:
+                return "; ".join(values)
+        return item.action
+    return getattr(item, "rationale", getattr(item, "action", ""))
+
+
+def _serialize_state(value):
+    if isinstance(value, datetime):
+        return value.isoformat()
+    if isinstance(value, BaseModel):
+        return {key: _serialize_state(item) for key, item in value.model_dump(mode="python").items()}
+    if isinstance(value, dict):
+        return {key: _serialize_state(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_serialize_state(item) for item in value]
+    return value

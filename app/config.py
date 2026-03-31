@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     app_env: str = "development"
     app_secret: str = "change-me"
     database_url: str = "sqlite+pysqlite:///./investor.db"
+    quiver_base_url: str = "https://example.test"
+    quiver_api_key: str = "secret"
     langgraph_checkpointer_url: Optional[str] = None
     approval_token_ttl_seconds: int = 900
 

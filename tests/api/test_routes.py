@@ -73,6 +73,8 @@ def test_trigger_persists_run_and_approval_reuses_same_thread(tmp_path, monkeypa
     assert stored.status == "awaiting_human_review"
     assert recommendations
     assert not hasattr(app.state, "workflow_store")
+    assert isinstance(stored.state_payload["evidence_bundles"], list)
+    assert stored.state_payload["finalized_outcome"]["outcome"] == "candidates"
 
     token = sign_approval_token(
         run_id=run_id,

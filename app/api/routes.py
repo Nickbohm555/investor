@@ -7,6 +7,7 @@ from fastapi import APIRouter, HTTPException, Request
 from app.services.run_service import DuplicateApproval, RunNotFound, StaleApproval
 from app.services.tokens import verify_approval_token
 from app.services.tokens import ExpiredApprovalTokenError, InvalidApprovalTokenError
+from app.tools.quiver import QuiverClient
 
 router = APIRouter()
 
@@ -20,6 +21,11 @@ def health() -> dict[str, str]:
 def trigger_run(request: Request) -> dict[str, str]:
     run_id = f"run-{uuid4().hex[:8]}"
     thread_id = f"thread-{uuid4().hex[:12]}"
+    quiver_client = QuiverClient(
+        base_url=request.app.state.settings.quiver_base_url,
+        api_key=request.app.state.settings.quiver_api_key,
+        transport=request.app.state.quiver_transport,
+    )
     request.app.state.run_service.create_pending_run(
         run_id=run_id,
         thread_id=thread_id,
@@ -31,8 +37,10 @@ def trigger_run(request: Request) -> dict[str, str]:
         run_id=run_id,
         thread_id=thread_id,
         research_node=request.app.state.research_node,
+        quiver_client=quiver_client,
         base_url=str(request.base_url).rstrip("/"),
     )
+    request.app.state.run_service.store_state_payload(run_id, state)
     request.app.state.run_service.store_recommendations(
         run_id,
         list(state.get("recommendations", [])),

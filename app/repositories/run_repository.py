@@ -34,6 +34,7 @@ class RunRepository:
             trigger_source=trigger_source,
             approval_status=approval_status,
             current_step=current_step,
+            state_payload=None,
         )
         self.session.add(run)
         self.session.flush()
@@ -66,6 +67,14 @@ class RunRepository:
         self.session.add_all(rows)
         self.session.flush()
         return rows
+
+    def update_state_payload(self, run_id: str, state_payload: dict) -> RunRecord:
+        run = self.get_run(run_id)
+        if run is None:
+            raise ValueError(f"Run {run_id} not found")
+        run.state_payload = state_payload
+        self.session.flush()
+        return run
 
     def record_transition(
         self,
