@@ -1,9 +1,12 @@
 from types import SimpleNamespace
 
+from app.db.models import Base
+from app.db.session import get_session_factory
 from app.graph.workflow import compile_workflow
 from app.schemas.quiver import CongressionalTrade, TickerEvidenceBundle
 from app.schemas.research import CandidateOutcome, CandidateRecommendation, NoActionOutcome
 from app.services.tokens import verify_approval_token
+from app.services.run_service import RunService
 from app.workflows.engine import WorkflowEngine
 
 
@@ -78,7 +81,17 @@ def make_settings():
 
 
 def make_engine(*, research_node, settings=None, mail_provider=None):
+    session_factory = get_session_factory("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(session_factory.kw["bind"])
+    run_service = RunService(session_factory)
+    run_service.create_pending_run(
+        run_id="run-123",
+        status="triggered",
+        current_step="research",
+        trigger_source="manual",
+    )
     return WorkflowEngine(
+        session_factory=session_factory,
         research_node=research_node,
         settings=settings or make_settings(),
         mail_provider=mail_provider or MailProviderSpy(),

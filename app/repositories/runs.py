@@ -25,6 +25,11 @@ class RunsRepository:
             .all()
         )
 
+    def update_state_payload(self, run: RunRecord, state_payload: dict | None) -> RunRecord:
+        run.state_payload = state_payload
+        self.session.flush()
+        return run
+
     def record_approval_event(self, *, run_id: str, decision: str, token_id: str) -> ApprovalEventRecord:
         event = ApprovalEventRecord(
             run_id=run_id,
