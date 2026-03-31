@@ -11,7 +11,7 @@ This roadmap turns the current investor prototype into an env-ready local app by
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Durable Workflow Foundation** - Replace in-memory orchestration with restart-safe persisted workflow state (completed 2026-03-31)
-- [ ] **Phase 2: Quiver Research And Ranking** - Build the broad-signal research surface, detailed prompts, and ranking outputs
+- [x] **Phase 2: Quiver Research And Ranking** - Build the broad-signal research surface, detailed prompts, and ranking outputs (completed 2026-03-31)
 - [ ] **Phase 3: Scheduling And Email Delivery** - Make the daily trigger, real sender path, and approval email content operational
 - [ ] **Phase 4: HITL And Broker Prestage** - Resume approved runs durably and create safe Alpaca draft-order artifacts
 - [ ] **Phase 5: Operational Readiness** - Validate envs, add dry-run tooling, and close the “fill vars and run” gap
@@ -47,7 +47,7 @@ Plans:
 Plans:
 - [x] 02-01: Expand typed Quiver tools and schemas around the required multi-signal datasets
 - [x] 02-02: Implement detailed research prompt contracts and structured recommendation outputs
-- [ ] 02-03: Add deterministic ranking, pruning, and no-action/watchlist behavior with tests
+- [x] 02-03: Add deterministic ranking, pruning, and no-action/watchlist behavior with tests
 
 ### Phase 3: Scheduling And Email Delivery
 **Goal**: The app can be scheduled locally and send real daily memos with valid approval links
@@ -103,7 +103,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Durable Workflow Foundation | 3/3 | Complete   | 2026-03-31 |
-| 2. Quiver Research And Ranking | 2/3 | In Progress | - |
+| 2. Quiver Research And Ranking | 3/3 | Complete | 2026-03-31 |
 | 3. Scheduling And Email Delivery | 0/3 | Not started | - |
 | 4. HITL And Broker Prestage | 0/3 | Not started | - |
 | 5. Operational Readiness | 0/2 | Not started | - |

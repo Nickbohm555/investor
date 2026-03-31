@@ -21,8 +21,8 @@
 
 - [x] **RSCH-01**: System queries a broad Quiver signal set including congressional trading, insider activity, government contracts, and lobbying before ranking ideas
 - [x] **RSCH-02**: Each recommendation includes supporting evidence, contradictory evidence, risk notes, and a concise source summary
-- [ ] **RSCH-03**: System produces ranked candidates with deterministic pruning by conviction, duplication, and broker eligibility
-- [ ] **RSCH-04**: System can send a no-action or watchlist memo when evidence is weak or conflicting
+- [x] **RSCH-03**: System produces ranked candidates with deterministic pruning by conviction, duplication, and broker eligibility
+- [x] **RSCH-04**: System can send a no-action or watchlist memo when evidence is weak or conflicting
 
 ### Email And Approval
 
@@ -74,8 +74,8 @@
 | SCHD-03 | Phase 3 | Pending |
 | RSCH-01 | Phase 2 | Complete |
 | RSCH-02 | Phase 2 | Complete |
-| RSCH-03 | Phase 2 | Pending |
-| RSCH-04 | Phase 2 | Pending |
+| RSCH-03 | Phase 2 | Complete |
+| RSCH-04 | Phase 2 | Complete |
 | MAIL-01 | Phase 3 | Pending |
 | MAIL-02 | Phase 3 | Pending |
 | MAIL-03 | Phase 3 | Pending |
