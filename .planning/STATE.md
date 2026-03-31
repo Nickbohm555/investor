@@ -4,9 +4,9 @@ milestone: v1.0
 milestone_name: milestone
 status: phase_complete
 stopped_at: Phase 05 complete
-last_updated: "2026-03-31T16:16:00Z"
+last_updated: "2026-03-31T20:16:00Z"
 progress:
-  total_phases: 5
+  total_phases: 8
   completed_phases: 5
   total_plans: 14
   completed_plans: 14
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** The system must produce trustworthy daily recommendations on schedule and carry approved ideas into a safe broker-review path without brittle manual steps.
-**Current focus:** Phase 05 complete — operational-readiness
+**Current focus:** Future phases added for custom workflow ownership, loop-based Quiver research, and strategic insight reporting
 
 ## Current Position
 
-Phase: 05 (operational-readiness) — COMPLETE
-Plan: Complete
+Phase: 05 complete; next planned phase is 06 (replace-langgraph-with-a-custom-workflow-engine)
+Plan: Not started
 
 ## Performance Metrics
 
@@ -87,6 +87,12 @@ Plan: Complete
 ### Pending Todos
 
 None yet.
+
+### Roadmap Evolution
+
+- Phase 6 added: Replace LangGraph with a custom workflow engine
+- Phase 7 added: Build a loop-based Quiver agent
+- Phase 8 added: Upgrade outputs to strategic insight reports
 
 ### Blockers/Concerns
 

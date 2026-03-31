@@ -15,6 +15,9 @@ This roadmap turns the current investor prototype into an env-ready local app by
 - [x] **Phase 3: Scheduling And Email Delivery** - Make the daily trigger, real sender path, and approval email content operational (completed 2026-03-31)
 - [x] **Phase 4: HITL And Broker Prestage** - Resume approved runs durably and create safe Alpaca draft-order artifacts (completed 2026-03-31)
 - [x] **Phase 5: Operational Readiness** - Validate envs, add dry-run tooling, and close the “fill vars and run” gap (completed 2026-03-31)
+- [ ] **Phase 6: Replace LangGraph With A Custom Workflow Engine** - Remove graph/checkpointer semantics and own workflow persistence, approval, and transitions directly
+- [ ] **Phase 7: Build A Loop-Based Quiver Agent** - Replace one-shot research generation with an iterative tool-using Quiver agent
+- [ ] **Phase 8: Upgrade Outputs To Strategic Insight Reports** - Turn daily output into decision-quality insight reports with change-aware rationale
 
 ## Phase Details
 
@@ -95,10 +98,49 @@ Plans:
 - [x] 05-01-PLAN.md — Add startup readiness gating and a deterministic dry-run command
 - [x] 05-02-PLAN.md — Lock docs and env templates to the final operator workflow
 
+### Phase 6: Replace LangGraph With A Custom Workflow Engine
+**Goal**: The app owns workflow execution, approval handling, and restart-safe step transitions without LangGraph, checkpointers, or resume semantics
+**Depends on**: Phase 5
+**Requirements**: TBD
+**Success Criteria** (what must be TRUE):
+1. Runtime orchestration no longer depends on LangGraph naming, configuration, or checkpointer concepts
+2. Approval and rejection execute through app-owned persisted workflow steps instead of replaying a paused state payload
+3. Restart-safe trigger, approval, and broker-prestage flows remain covered by tests after the cutover
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run `$gsd-plan-phase 6` to break down)
+
+### Phase 7: Build A Loop-Based Quiver Agent
+**Goal**: Research runs as a bounded loop-and-tools agent that decides what Quiver evidence to inspect next instead of relying on a single prompt pass
+**Depends on**: Phase 6
+**Requirements**: TBD
+**Success Criteria** (what must be TRUE):
+1. The agent can make multiple Quiver tool calls in one run with explicit stop conditions and budget limits
+2. Research traces show why the agent chose additional investigation steps for a ticker or thesis
+3. Final recommendations still satisfy the structured candidate, watchlist, or no-action contract
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run `$gsd-plan-phase 7` to break down)
+
+### Phase 8: Upgrade Outputs To Strategic Insight Reports
+**Goal**: Operator-facing output explains what changed, why it matters, and what action or follow-up research is warranted
+**Depends on**: Phase 7
+**Requirements**: TBD
+**Success Criteria** (what must be TRUE):
+1. Reports explain signal changes, thesis updates, or uncertainty instead of only listing ranked tickers
+2. The operator can distinguish immediate actions, defer cases, and items needing more research from the delivered report
+3. Email or report output remains deterministic enough to test and review locally
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run `$gsd-plan-phase 8` to break down)
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -107,3 +149,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 3. Scheduling And Email Delivery | 3/3 | Complete | 2026-03-31 |
 | 4. HITL And Broker Prestage | 3/3 | Complete | 2026-03-31 |
 | 5. Operational Readiness | 2/2 | Complete | 2026-03-31 |
+| 6. Replace LangGraph With A Custom Workflow Engine | 0/0 | Not Started | |
+| 7. Build A Loop-Based Quiver Agent | 0/0 | Not Started | |
+| 8. Upgrade Outputs To Strategic Insight Reports | 0/0 | Not Started | |
