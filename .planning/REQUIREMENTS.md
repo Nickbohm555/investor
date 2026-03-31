@@ -44,6 +44,12 @@
 - [ ] **OPER-02**: Operator can run a documented dry-run path that exercises scheduling, research, email rendering, approval flow, and Alpaca paper prestage without hidden manual steps
 - [ ] **OPER-03**: Repository includes an env-ready README and `.env.example` that make “fill variables and run” the final setup step
 
+### Strategic Insight Reporting
+
+- [ ] **REP-01**: System compares each new run against the latest prior delivered run and records explicit change summaries plus dropped tickers from that baseline
+- [ ] **REP-02**: System classifies output into deterministic `immediate`, `defer`, and `research` operator buckets with rationale fields that do not depend on rendered prose
+- [ ] **REP-03**: System renders deterministic operator-facing text and HTML strategic reports and persists the structured report payload for local review and testing
+
 ## v2 Requirements
 
 ### Platform Expansion
@@ -87,10 +93,13 @@
 | OPER-01 | Phase 5 | Pending |
 | OPER-02 | Phase 5 | Pending |
 | OPER-03 | Phase 5 | Pending |
+| REP-01 | Phase 8 | Pending |
+| REP-02 | Phase 8 | Pending |
+| REP-03 | Phase 8 | Pending |
 
 **Coverage:**
-- v1 requirements: 21 total
-- Mapped to phases: 21
+- v1 requirements: 24 total
+- Mapped to phases: 24
 - Unmapped: 0 ✓
 
 ---
