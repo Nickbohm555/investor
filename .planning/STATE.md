@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 status: unknown
 stopped_at: Phase 1 execution complete; ready for verification or Phase 2 planning
-last_updated: "2026-03-31T05:48:07.169Z"
+last_updated: "2026-03-31T05:54:31.036Z"
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 12
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** The system must produce trustworthy daily recommendations on schedule and carry approved ideas into a safe broker-review path without brittle manual steps.
-**Current focus:** Phase 01 complete — ready for verification or Phase 2 planning
+**Current focus:** Phase 02 — quiver-research-and-ranking
 
 ## Current Position
 
-Phase: 01 (durable-workflow-foundation) — COMPLETE
-Plan: 3 of 3
+Phase: 02 (quiver-research-and-ranking) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -63,6 +63,8 @@ Plan: 3 of 3
 - [Phase 01]: Runtime bootstrap falls back to a no-op checkpointer on non-Postgres URLs so SQLite tests can verify invoke/resume behavior without pretending to be a live checkpoint backend. — Keeps local tests honest while preserving the PostgresSaver seam for production-backed runtimes.
 - [Phase 01]: Integration coverage recreates the app against the same database URL instead of simulating restart state in-memory, so restart safety is tested at the API boundary. — A real second app instance is the shortest path to proving persisted invoke/resume behavior.
 - [Phase 01]: Postgres URLs are normalized to the psycopg driver in the session layer so the documented smoke command can use the repo required URL shape. — Keeps verification commands aligned with the repo documentation and declared dependency.
+- [Phase 02]: Normalize all Quiver rows into uppercase per-ticker bundles before synthesis. — This keeps duplicate collapse deterministic across congress, insider, contract, and lobbying datasets.
+- [Phase 02]: Treat government contracts and lobbying as contextual signals by default. — They contribute evidence and summaries, but should not behave like unconditional buy signals before ranking.
 
 ### Pending Todos
 
@@ -76,6 +78,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31T05:48:07.167Z
-Stopped at: Phase 1 execution complete; ready for verification or Phase 2 planning
+Last session: 2026-03-31T05:54:31.036Z
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None
