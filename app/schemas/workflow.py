@@ -10,3 +10,8 @@ class Recommendation(BaseModel):
 
 class ResearchResult(BaseModel):
     recommendations: list[Recommendation]
+
+
+class RecommendationEmail(BaseModel):
+    subject: str
+    body: str
