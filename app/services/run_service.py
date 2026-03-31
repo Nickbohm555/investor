@@ -163,6 +163,9 @@ class RunService:
             repository = RunRepository(session)
             return repository.get_run(run_id)
 
+    def get_latest_report_baseline(self, *, exclude_run_id: str) -> dict | None:
+        return None
+
     def list_recommendations(self, run_id: str) -> list[Recommendation]:
         with self.session_factory() as session:
             repository = RunRepository(session)

@@ -41,6 +41,9 @@ class RunRepository:
     def get_run(self, run_id: str) -> Optional[RunRecord]:
         return self.session.get(RunRecord, run_id)
 
+    def get_latest_delivered_report_run(self, *, exclude_run_id: str) -> RunRecord | None:
+        return None
+
     def list_recommendations(self, run_id: str) -> list[RecommendationRecord]:
         return (
             self.session.query(RecommendationRecord)

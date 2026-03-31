@@ -1,4 +1,5 @@
 import httpx
+from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 
 from app.agents.research import ResearchNode
@@ -159,6 +160,125 @@ def test_manual_trigger_persists_public_approval_links(tmp_path, monkeypatch):
     assert stored.state_payload["research_trace"][0]["tool_name"] == "get_live_congress_trading"
     assert stored.state_payload["research_tool_call_count"] == 1
     assert stored.state_payload["investigated_tickers"] == ["NVDA"]
+
+
+def test_trigger_persists_strategic_report_and_baseline_run_id(tmp_path, monkeypatch):
+    app = _build_app(tmp_path, monkeypatch)
+    client = TestClient(app)
+
+    with Session(app.state.session_factory.kw["bind"]) as session:
+        session.add(
+            RunRecord(
+                run_id="run-prev",
+                status="completed",
+                trigger_source="manual",
+                approval_status="approve",
+                current_step="completed",
+                created_at=datetime.utcnow() - timedelta(days=1),
+                updated_at=datetime.utcnow() - timedelta(days=1),
+                state_payload={
+                    "strategic_report": {"run_id": "run-prev"},
+                    "email_body": "Strategic Insight Report",
+                    "finalized_outcome": {
+                        "outcome": "candidates",
+                        "recommendations": [
+                            {
+                                "ticker": "AMD",
+                                "action": "buy",
+                                "conviction_score": 0.7,
+                                "supporting_evidence": ["Insider buy"],
+                                "opposing_evidence": [],
+                                "risk_notes": ["Execution"],
+                                "source_summary": ["AI demand"],
+                                "broker_eligible": True,
+                            }
+                        ],
+                    },
+                },
+            )
+        )
+        session.commit()
+
+    response = client.post("/runs/trigger")
+
+    assert response.status_code == 202
+    run_id = response.json()["run_id"]
+
+    with Session(app.state.session_factory.kw["bind"]) as session:
+        stored = session.get(RunRecord, run_id)
+
+    assert stored is not None
+    assert "strategic_report" in stored.state_payload
+    assert "baseline_run_id" in stored.state_payload
+    assert "email_body" in stored.state_payload
+
+
+def test_trigger_ignores_undelivered_runs_when_selecting_baseline(tmp_path, monkeypatch):
+    app = _build_app(tmp_path, monkeypatch)
+    client = TestClient(app)
+
+    with Session(app.state.session_factory.kw["bind"]) as session:
+        session.add_all(
+            [
+                RunRecord(
+                    run_id="run-prev",
+                    status="completed",
+                    trigger_source="manual",
+                    approval_status="approve",
+                    current_step="completed",
+                    created_at=datetime.utcnow() - timedelta(days=2),
+                    updated_at=datetime.utcnow() - timedelta(days=2),
+                    state_payload={
+                        "strategic_report": {"run_id": "run-prev"},
+                        "email_body": "Strategic Insight Report",
+                        "finalized_outcome": {
+                            "outcome": "candidates",
+                            "recommendations": [
+                                {
+                                    "ticker": "AMD",
+                                    "action": "buy",
+                                    "conviction_score": 0.7,
+                                    "supporting_evidence": ["Insider buy"],
+                                    "opposing_evidence": [],
+                                    "risk_notes": ["Execution"],
+                                    "source_summary": ["AI demand"],
+                                    "broker_eligible": True,
+                                }
+                            ],
+                        },
+                    },
+                ),
+                RunRecord(
+                    run_id="run-newer-undelivered",
+                    status="awaiting_human_review",
+                    trigger_source="manual",
+                    approval_status="pending",
+                    current_step="awaiting_review",
+                    created_at=datetime.utcnow() - timedelta(hours=1),
+                    updated_at=datetime.utcnow() - timedelta(hours=1),
+                    state_payload={
+                        "strategic_report": {"run_id": "run-newer-undelivered"},
+                        "email_body": "Strategic Insight Report",
+                        "finalized_outcome": {
+                            "outcome": "candidates",
+                            "recommendations": [],
+                        },
+                    },
+                ),
+            ]
+        )
+        session.commit()
+
+    response = client.post("/runs/trigger")
+
+    assert response.status_code == 202
+    run_id = response.json()["run_id"]
+
+    with Session(app.state.session_factory.kw["bind"]) as session:
+        stored = session.get(RunRecord, run_id)
+
+    assert stored is not None
+    assert stored.state_payload["baseline_run_id"] == "run-prev"
 
 
 def test_approval_callback_resumes_a_paused_run(persisted_run):

@@ -200,7 +200,7 @@ def test_workflow_email_uses_signed_links_from_state():
     paused = engine.start_run(run_id="run-123", quiver_client=StubQuiverClient())
 
     sent_message = mail_provider.calls[0]
-    assert "Ranked Candidates" in paused["state_payload"]["email_body"]
+    assert "Immediate Actions" in paused["state_payload"]["email_body"]
     assert "https://investor.example.com/approval/" in paused["state_payload"]["email_body"]
     assert "run-123:approve" not in paused["state_payload"]["email_body"]
     assert "https://investor.example.com/approval/" in sent_message["text_body"]
