@@ -120,7 +120,7 @@ class CompiledInvestorWorkflow:
         persisted_state = {key: value for key, value in state.items() if key != "quiver_client"}
         return {
             **persisted_state,
-            "status": "awaiting_human_review",
+            "status": "awaiting_review",
             "email_body": message.body,
         }
 
