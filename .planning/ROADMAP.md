@@ -106,12 +106,13 @@ Plans:
 1. Runtime orchestration no longer depends on LangGraph naming, configuration, or checkpointer concepts
 2. Approval and rejection execute through app-owned persisted workflow steps instead of replaying a paused state payload
 3. Restart-safe trigger, approval, and broker-prestage flows remain covered by tests after the cutover
-**Plans**: 3 plans
+**Plans**: 4 plans
 
 Plans:
-- [ ] 06-01-PLAN.md — Establish the app-owned workflow engine contract and merge the existing Alembic branch split
-- [ ] 06-02-PLAN.md — Cut trigger and approval execution over to persisted app-owned workflow steps
-- [ ] 06-03-PLAN.md — Remove LangGraph dependencies, env surface, and operator docs language
+- [ ] 06-01-PLAN.md — Establish the final workflow-engine API and merge the existing Alembic branch split
+- [ ] 06-02-PLAN.md — Remove `thread_id`, add the Phase 6 schema migration, and implement the persisted engine core
+- [ ] 06-03-PLAN.md — Wire trigger and approval execution onto the persisted workflow engine with restart-safe integration coverage
+- [ ] 06-04-PLAN.md — Remove LangGraph dependencies, env surface, and operator docs language
 
 ### Phase 7: Build A Loop-Based Quiver Agent
 **Goal**: Research runs as a bounded loop-and-tools agent that decides what Quiver evidence to inspect next instead of relying on a single prompt pass.  Look at the how-to-build-a-agent in go in ../ folder for inspiration for how to build agents. 
