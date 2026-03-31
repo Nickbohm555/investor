@@ -19,18 +19,18 @@ created: 2026-03-31
 |----------|-------|
 | **Framework** | `pytest` |
 | **Config file** | `pyproject.toml` |
-| **Quick run command** | `python -m pytest tests/integration/test_hitl_resume.py tests/services/test_persistence.py tests/services/test_broker_policy.py tests/api/test_routes.py -q` |
+| **Quick run command** | `python -m pytest tests/api/test_routes.py tests/graph/test_workflow.py tests/services/test_persistence.py -q` |
 | **Full suite command** | `python -m pytest -q` |
-| **Estimated runtime** | ~45 seconds |
+| **Estimated runtime** | ~25 seconds |
 
 ---
 
 ## Sampling Rate
 
-- **After every task commit:** Run `python -m pytest tests/integration/test_hitl_resume.py tests/services/test_persistence.py tests/services/test_broker_policy.py tests/api/test_routes.py -q`
+- **After every task commit:** Run the task's exact `<automated>` command from the map below.
 - **After every plan wave:** Run `python -m pytest -q`
 - **Before `$gsd-verify-work`:** Full suite must be green
-- **Max feedback latency:** 45 seconds
+- **Max feedback latency:** 25 seconds
 
 ---
 
@@ -76,7 +76,7 @@ created: 2026-03-31
 - [ ] Sampling continuity: no 3 consecutive tasks without automated verify
 - [ ] Wave 0 covers all MISSING references
 - [ ] No watch-mode flags
-- [ ] Feedback latency < 45s
+- [ ] Feedback latency < 25s
 - [x] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** approved 2026-03-31
