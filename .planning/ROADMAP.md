@@ -61,7 +61,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Build the scheduled trigger path, schedule-key persistence, and repo-managed cron scripts
+- [x] 03-01-PLAN.md — Build the scheduled trigger path, schedule-key persistence, and repo-managed cron scripts
 - [ ] 03-02-PLAN.md — Add SMTP provider delivery, branch-aware memo rendering, and signed public approval links
 - [ ] 03-03-PLAN.md — Wire duplicate-safe scheduled delivery logging and expand integration verification/docs
 
@@ -104,6 +104,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Durable Workflow Foundation | 3/3 | Complete   | 2026-03-31 |
 | 2. Quiver Research And Ranking | 3/3 | Complete | 2026-03-31 |
-| 3. Scheduling And Email Delivery | 0/3 | Not started | - |
+| 3. Scheduling And Email Delivery | 1/3 | In Progress | - |
 | 4. HITL And Broker Prestage | 0/3 | Not started | - |
 | 5. Operational Readiness | 0/2 | Not started | - |

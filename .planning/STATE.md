@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 status: unknown
 stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-03-31T06:07:05.628Z"
+last_updated: "2026-03-31T14:02:17Z"
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 12
-  completed_plans: 6
+  completed_plans: 7
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** The system must produce trustworthy daily recommendations on schedule and carry approved ideas into a safe broker-review path without brittle manual steps.
-**Current focus:** Phase 03 planning or Phase 02 verification
+**Current focus:** Phase 03 — scheduling-and-email-delivery
 
 ## Current Position
 
-Phase: 02 (quiver-research-and-ranking) — COMPLETE
-Plan: 3 of 3
+Phase: 03 (scheduling-and-email-delivery) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -71,6 +71,8 @@ Plan: 3 of 3
 - [Phase 02]: Inject prompt building into ResearchNode. — Tests and workflow integration can assert payload wiring while keeping the node responsible only for prompt invocation and output validation.
 - [Phase 02]: Keep ranking, broker-eligibility pruning, and downgrade rules in Python after research validation. — This preserves deterministic output order and branch selection even when the research model varies.
 - [Phase 02]: Persist paused workflow state payloads on the run record. — The trigger path and later resume flows need access to evidence bundles and finalized outcomes beyond the in-memory invoke response.
+- [Phase 03]: Keep scheduled-run dedupe in the application/database path and keep cron responsible only for invoking the route and logging outcomes. — This preserves duplicate safety across cron, retries, and future trigger paths without relying on shell locking.
+- [Phase 03]: Use the shared StaticPool SQLite harness to prove scheduled duplicate handling against the same unique-constraint seam used by app code. — This keeps duplicate-branch coverage deterministic without pretending to be PostgreSQL-only logic.
 
 ### Pending Todos
 
@@ -84,5 +86,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-31T06:07:05.628Z
-Stopped at: Completed 02-03-PLAN.md
+Stopped at: Completed 03-01-PLAN.md
 Resume file: None
