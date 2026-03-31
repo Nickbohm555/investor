@@ -1,29 +1,35 @@
 import os
 from typing import Optional
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
-
-from app.db.models import Base
-from app.db.session import get_session_factory
-from app.main import create_app
-
 
 os.environ.setdefault("INVESTOR_APP_SECRET", "test-secret")
 os.environ.setdefault("INVESTOR_DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("INVESTOR_SCHEDULED_TRIGGER_TOKEN", "test-scheduled-token")
 os.environ.setdefault("INVESTOR_SCHEDULE_TRIGGER_URL", "http://127.0.0.1:8000/runs/trigger/scheduled")
 os.environ.setdefault("INVESTOR_CRON_LOG_PATH", "logs/cron/daily-trigger.log")
-os.environ.setdefault("INVESTOR_SMTP_HOST", "smtp.example.com")
+os.environ.setdefault("INVESTOR_SMTP_HOST", "localhost")
 os.environ.setdefault("INVESTOR_SMTP_PORT", "587")
 os.environ.setdefault("INVESTOR_SMTP_USERNAME", "investor-user")
-os.environ.setdefault("INVESTOR_SMTP_PASSWORD", "change-me")
-os.environ.setdefault("INVESTOR_SMTP_FROM_EMAIL", "investor@example.com")
-os.environ.setdefault("INVESTOR_DAILY_MEMO_TO_EMAIL", "operator@example.com")
-os.environ.setdefault("INVESTOR_EXTERNAL_BASE_URL", "https://investor.example.com")
+os.environ.setdefault("INVESTOR_SMTP_PASSWORD", "smtp-password")
+os.environ.setdefault("INVESTOR_SMTP_FROM_EMAIL", "investor@test.local")
+os.environ.setdefault("INVESTOR_DAILY_MEMO_TO_EMAIL", "operator@test.local")
+os.environ.setdefault("INVESTOR_EXTERNAL_BASE_URL", "https://investor.test.local")
+os.environ.setdefault("INVESTOR_QUIVER_BASE_URL", "https://api.quiverquant.com")
+os.environ.setdefault("INVESTOR_QUIVER_API_KEY", "quiver-test-key")
 os.environ.setdefault("INVESTOR_BROKER_MODE", "paper")
 os.environ.setdefault("INVESTOR_ALPACA_BASE_URL", "https://paper-api.alpaca.markets")
 os.environ.setdefault("INVESTOR_ALPACA_API_KEY", "alpaca-test-key")
+os.environ.setdefault("INVESTOR_OPENAI_API_KEY", "openai-test-key")
+os.environ.setdefault("INVESTOR_OPENAI_BASE_URL", "https://api.openai.example/v1")
+os.environ.setdefault("INVESTOR_OPENAI_MODEL", "gpt-4.1-mini")
+
+from app.db.models import Base
+from app.db.session import get_session_factory
+from app.agents.research import ResearchNode
+from app.main import create_app
 
 
 class MailProviderSpy:
@@ -54,9 +60,39 @@ class StubAlpacaClient:
         return self._asset
 
 
+class StubResearchLLM:
+    def invoke(self, payload: dict[str, str]) -> str:
+        return (
+            '{"outcome":"candidates","recommendations":['
+            '{"ticker":"NVDA","action":"buy","conviction_score":0.81,"supporting_evidence":["Congress buy","Insider buy"],'
+            '"opposing_evidence":[],"risk_notes":["Volatile"],'
+            '"source_summary":["Congress and insider signals aligned"],"broker_eligible":true}'
+            ']}'
+        )
+
+
+def build_quiver_transport() -> httpx.MockTransport:
+    payloads = {
+        "/beta/live/congresstrading": [{"Ticker": "NVDA", "Transaction": "Purchase"}],
+        "/beta/live/insiders": [{"Ticker": "NVDA", "Transaction": "Buy"}],
+        "/beta/live/govcontracts": [{"Ticker": "NVDA", "Agency": "NASA", "Amount": "1000"}],
+        "/beta/live/lobbying": [{"Ticker": "NVDA", "Client": "Example Client", "Issue": "Semiconductors"}],
+    }
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json=payloads[request.url.path])
+
+    return httpx.MockTransport(handler)
+
+
 @pytest.fixture
 def client() -> TestClient:
-    return TestClient(create_app())
+    return TestClient(
+        create_app(
+            research_node=ResearchNode(llm=StubResearchLLM()),
+            quiver_transport=build_quiver_transport(),
+        )
+    )
 
 
 @pytest.fixture
@@ -85,6 +121,8 @@ def app_factory(tmp_path, monkeypatch):
             session_factory=session_factory,
             mail_provider=mail_provider or MailProviderSpy(),
             alpaca_client_factory=alpaca_client_factory or (lambda broker_mode: StubAlpacaClient()),
+            research_node=ResearchNode(llm=StubResearchLLM()),
+            quiver_transport=build_quiver_transport(),
         )
         return app
 

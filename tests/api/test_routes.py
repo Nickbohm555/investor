@@ -1,5 +1,7 @@
+import httpx
 from sqlalchemy.orm import Session
 
+from app.agents.research import ResearchNode
 from app.db.models import ApprovalEventRecord, RecommendationRecord, RunRecord
 from fastapi.testclient import TestClient
 
@@ -31,25 +33,58 @@ class StubAlpacaClient:
         return {"symbol": "NVDA", "tradable": True, "fractionable": True}
 
 
+class StubResearchLLM:
+    def invoke(self, payload: dict[str, str]) -> str:
+        return (
+            '{"outcome":"candidates","recommendations":['
+            '{"ticker":"NVDA","action":"buy","conviction_score":0.81,"supporting_evidence":["Congress buy","Insider buy"],'
+            '"opposing_evidence":[],"risk_notes":["Volatile"],'
+            '"source_summary":["Congress and insider signals aligned"],"broker_eligible":true}'
+            ']}'
+        )
+
+
+def _build_quiver_transport() -> httpx.MockTransport:
+    payloads = {
+        "/beta/live/congresstrading": [{"Ticker": "NVDA", "Transaction": "Purchase"}],
+        "/beta/live/insiders": [{"Ticker": "NVDA", "Transaction": "Buy"}],
+        "/beta/live/govcontracts": [{"Ticker": "NVDA", "Agency": "NASA", "Amount": "1000"}],
+        "/beta/live/lobbying": [{"Ticker": "NVDA", "Client": "Example Client", "Issue": "Semiconductors"}],
+    }
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json=payloads[request.url.path])
+
+    return httpx.MockTransport(handler)
+
+
 def _build_app(tmp_path, monkeypatch):
     database_url = f"sqlite+pysqlite:///{tmp_path / 'investor.db'}"
     monkeypatch.setenv("INVESTOR_DATABASE_URL", database_url)
     app = create_app(
         mail_provider=MailProviderSpy(),
         alpaca_client_factory=lambda broker_mode: StubAlpacaClient(),
+        research_node=ResearchNode(llm=StubResearchLLM()),
+        quiver_transport=_build_quiver_transport(),
     )
     return app
 
 
 def test_app_starts_with_test_settings():
-    app = create_app()
+    app = create_app(
+        research_node=ResearchNode(llm=StubResearchLLM()),
+        quiver_transport=_build_quiver_transport(),
+    )
     app.state.mail_provider = MailProviderSpy()
 
     assert app is not None
 
 
 def test_health_route_returns_ok():
-    app = create_app()
+    app = create_app(
+        research_node=ResearchNode(llm=StubResearchLLM()),
+        quiver_transport=_build_quiver_transport(),
+    )
     app.state.mail_provider = MailProviderSpy()
     client = TestClient(app)
     response = client.get("/health")

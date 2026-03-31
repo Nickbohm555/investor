@@ -36,9 +36,38 @@ def _explicit_settings(**overrides) -> Settings:
     return Settings.model_validate(values)
 
 
+def _placeholder_settings() -> Settings:
+    return Settings.model_validate(
+        {
+            "app_secret": "change-me",
+            "database_url": "sqlite+pysqlite:///./investor.db",
+            "smtp_host": "smtp.example.com",
+            "smtp_port": 587,
+            "smtp_username": "investor-user",
+            "smtp_password": "change-me",
+            "smtp_from_email": "investor@example.com",
+            "daily_memo_to_email": "operator@example.com",
+            "external_base_url": "https://investor.example.com",
+            "schedule_cron_expression": "30 8 * * 1-5",
+            "schedule_trigger_url": "http://127.0.0.1:8000/runs/trigger/scheduled",
+            "scheduled_trigger_token": "change-me-scheduled-trigger",
+            "cron_log_path": "logs/cron/daily-trigger.log",
+            "quiver_base_url": "https://example.test",
+            "quiver_api_key": "secret",
+            "broker_mode": "paper",
+            "alpaca_base_url": "https://paper-api.alpaca.markets",
+            "alpaca_api_key": "secret",
+            "openai_api_key": "replace-with-openai-api-key",
+            "openai_base_url": "https://api.openai.com/v1",
+            "openai_model": "gpt-4.1-mini",
+            "approval_token_ttl_seconds": 900,
+        }
+    )
+
+
 def test_create_app_rejects_placeholder_operational_values():
     with pytest.raises(ValueError) as excinfo:
-        create_app(settings=Settings())
+        create_app(settings=_placeholder_settings())
 
     message = str(excinfo.value)
     assert "INVESTOR_APP_SECRET must not equal change-me" in message
