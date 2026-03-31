@@ -184,3 +184,70 @@ def test_record_approval_event_rejects_duplicate_token_ids():
 
     with pytest.raises(IntegrityError):
         service.record_approval_event("run-123", decision="approve", token_id="token-123")
+
+
+def test_run_service_persists_completed_lifecycle_with_approval_event_and_transitions():
+    session_factory = get_session_factory("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(session_factory.kw["bind"])
+    service = RunService(session_factory)
+
+    service.create_pending_run(
+        run_id="run-123",
+        thread_id="thread-123",
+        status="triggered",
+        current_step="research",
+        trigger_source="manual",
+    )
+    service.store_recommendations(
+        "run-123",
+        [
+            Recommendation(
+                ticker="NVDA",
+                action="buy",
+                conviction_score=0.82,
+                rationale="Durable infrastructure demand remains strong.",
+            )
+        ],
+    )
+    service.mark_status(
+        "run-123",
+        to_status="awaiting_human_review",
+        current_step="approval",
+        reason="Recommendations ready for operator review",
+    )
+    approval_state = service.apply_approval_decision(
+        "run-123",
+        decision="approve",
+        token_id="token-approve-123",
+    )
+    service.mark_status(
+        "run-123",
+        to_status="completed",
+        current_step="completed",
+        reason="Approved run handed off successfully",
+        approval_status="approved",
+    )
+
+    assert approval_state["status"] == "approved"
+
+    with session_factory() as session:
+        run = session.get(RunRecord, "run-123")
+        recommendations = session.query(RecommendationRecord).filter_by(run_id="run-123").all()
+        approval_events = session.query(ApprovalEventRecord).filter_by(run_id="run-123").all()
+        transitions = (
+            session.query(StateTransitionRecord)
+            .filter_by(run_id="run-123")
+            .order_by(StateTransitionRecord.id.asc())
+            .all()
+        )
+
+    assert run is not None
+    assert run.status == "completed"
+    assert run.approval_status == "approved"
+    assert len(recommendations) == 1
+    assert len(approval_events) == 1
+    assert [transition.to_status for transition in transitions] == [
+        "awaiting_human_review",
+        "approved",
+        "completed",
+    ]

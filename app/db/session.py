@@ -24,6 +24,8 @@ def _create_engine(database_url: str):
             connect_args={"check_same_thread": False},
             poolclass=StaticPool,
         )
+    if database_url.startswith("postgresql://"):
+        database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
     return create_engine(database_url, future=True)
 
 

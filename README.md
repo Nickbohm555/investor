@@ -12,7 +12,8 @@ Local-first Python service for a LangGraph-driven investing workflow.
 
 ## Verification
 
-- Run `pytest -v`.
+- Run `pytest tests/services/test_persistence.py tests/api/test_routes.py tests/integration/test_durable_workflow.py -q`.
+- Run `docker compose up -d postgres && INVESTOR_DATABASE_URL=postgresql://investor:investor@localhost:5432/investor INVESTOR_LANGGRAPH_CHECKPOINTER_URL=postgresql://investor:investor@localhost:5432/investor pytest tests/integration/test_durable_workflow.py -q`.
 - Check `GET /health` returns `{"status": "ok"}`.
 - Trigger a run with `POST /runs/trigger`.
 - Approve via the signed `/approval/{token}` callback and confirm the returned payload includes an Alpaca handoff artifact.
