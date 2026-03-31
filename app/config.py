@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = "investor"
     app_env: str = "development"
+    database_url: str = "sqlite+pysqlite:///./investor.db"
 
     model_config = SettingsConfigDict(
         env_file=".env",
