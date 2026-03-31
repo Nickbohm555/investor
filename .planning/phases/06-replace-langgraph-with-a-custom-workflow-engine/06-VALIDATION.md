@@ -44,7 +44,7 @@ created: 2026-03-31
 | 06-02-01 | 02 | 2 | SC-01, SC-02 | persistence | `python -m pytest tests/services/test_persistence.py -q` | ✅ | ⬜ pending |
 | 06-02-02 | 02 | 2 | SC-01, SC-02 | unit + persistence | `python -m pytest tests/graph/test_workflow.py tests/services/test_persistence.py -q` | ✅ | ⬜ pending |
 | 06-03-01 | 03 | 3 | SC-02 | api | `python -m pytest tests/api/test_routes.py -q` | ✅ | ⬜ pending |
-| 06-03-02 | 03 | 3 | SC-02, SC-03 | integration | `python -m pytest tests/integration/test_hitl_resume.py tests/integration/test_broker_prestage.py -q` | ✅ | ⬜ pending |
+| 06-03-02 | 03 | 3 | SC-02, SC-03 | api + integration | `python -m pytest tests/api/test_routes.py tests/integration/test_hitl_resume.py tests/integration/test_broker_prestage.py -q` | ✅ | ⬜ pending |
 | 06-04-01 | 04 | 4 | SC-01, SC-03 | ops | `python -m pytest tests/ops/test_dry_run.py -q` | ✅ | ⬜ pending |
 | 06-04-02 | 04 | 4 | SC-01, SC-03 | ops + docs | `python -m pytest tests/ops/test_operational_docs.py tests/ops/test_dry_run.py -q` | ✅ | ⬜ pending |
 
