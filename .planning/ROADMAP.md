@@ -112,7 +112,7 @@ Plans:
 - [ ] TBD (run `$gsd-plan-phase 6` to break down)
 
 ### Phase 7: Build A Loop-Based Quiver Agent
-**Goal**: Research runs as a bounded loop-and-tools agent that decides what Quiver evidence to inspect next instead of relying on a single prompt pass
+**Goal**: Research runs as a bounded loop-and-tools agent that decides what Quiver evidence to inspect next instead of relying on a single prompt pass.  Look at the how-to-build-a-agent in go in ../ folder for inspiration for how to build agents. 
 **Depends on**: Phase 6
 **Requirements**: TBD
 **Success Criteria** (what must be TRUE):
