@@ -14,7 +14,8 @@ tech-stack:
   added: []
   patterns: [restart-safe dual-app integration proof, scheduled duplicate suppression verification]
 key-files:
-  created: [tests/integration/test_scheduled_submission_flow.py]
+  created:
+    - tests/integration/test_scheduled_submission_flow.py
   modified: []
 key-decisions:
   - "Reuse the restart-safe dual-app pattern so scheduled trigger, approval callback, and execution confirmation are all proven against persisted database state."
@@ -70,6 +71,8 @@ None.
 ## Next Phase Readiness
 - The merged Phase 9 scope is now covered by deterministic route, ops, and integration tests.
 - Phase 11 still has one independent unfinished plan: `11-01` schedule configuration hardening.
+
+## Self-Check: PASSED
 
 ---
 *Phase: 11-scheduling-reliability-and-end-to-end-execution-proof*

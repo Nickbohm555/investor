@@ -155,8 +155,7 @@ Plans:
 **Plans**: 0 plans
 
 Plans:
-- [ ] Superseded on 2026-03-31 — scope folded into Phase 11
-
+- [x] Superseded on 2026-03-31 — scope folded into Phase 11
 ### Phase 10: Trading Safety Rails And Paper/Live Verification
 **Goal**: Superseded and merged into Phase 11 planning
 **Depends on**: Phase 8
@@ -168,8 +167,7 @@ Plans:
 **Plans**: 0 plans
 
 Plans:
-- [ ] Superseded on 2026-03-31 — scope folded into Phase 11
-
+- [x] Superseded on 2026-03-31 — scope folded into Phase 11
 ### Phase 11: Scheduling Reliability And End-To-End Execution Proof
 **Goal**: Scheduling and operational wiring are reliable enough to run the full approved execution flow at the intended market-open cadence
 **Depends on**: Phase 8
@@ -181,7 +179,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 11-01-PLAN.md — Replace hard-coded cron timing with a repo-configured 7:00am ET install/status contract
+- [x] 11-01-PLAN.md — Replace hard-coded cron timing with a repo-configured 7:00am ET install/status contract
 - [x] 11-02-PLAN.md — Wire the repo-local proof path through the existing execution confirmation and submission seams
 - [x] 11-03-PLAN.md — Add scheduled-to-submitted integration proof and reconcile any remaining lifecycle gaps
 
@@ -216,5 +214,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 8. Upgrade Outputs To Strategic Insight Reports | 3/3 | Complete | 2026-03-31 |
 | 9. Execution Confirmation And Alpaca Order Submission | 0/0 | Merged into Phase 11 | — |
 | 10. Trading Safety Rails And Paper/Live Verification | 0/0 | Merged into Phase 11 | — |
-| 11. Scheduling Reliability And End-To-End Execution Proof | 0/3 | Planned | — |
+| 11. Scheduling Reliability And End-To-End Execution Proof | 3/3 | Complete   | 2026-04-01 |
 | 12. System Diagram And README Architecture Capture | 0/2 | Planned | — |

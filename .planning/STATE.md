@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: phase_in_progress
-stopped_at: Phase 11 plan 03 complete
-last_updated: "2026-04-01T01:02:30Z"
+status: ready_to_plan
+stopped_at: Phase 11 complete
+last_updated: "2026-04-01T01:17:55.963Z"
 progress:
   total_phases: 12
-  completed_phases: 8
-  total_plans: 27
-  completed_plans: 26
+  completed_phases: 9
+  total_plans: 29
+  completed_plans: 27
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** The system must produce trustworthy daily recommendations on schedule and carry approved ideas into a safe broker-review path without brittle manual steps.
-**Current focus:** Phase 11 in progress — remaining plan 11-01 schedule configuration hardening
+**Current focus:** Phase 12 ready to plan — system-diagram-and-readme-architecture-capture
 
 ## Current Position
 
-Phase: 11 in progress — scheduling-reliability-and-end-to-end-execution-proof
-Plan: 11-01 pending; 11-02 and 11-03 complete
+Phase: 12 ready to plan — system-diagram-and-readme-architecture-capture
+Plan: Not started
 
 ## Performance Metrics
 
@@ -85,6 +85,7 @@ Plan: 11-01 pending; 11-02 and 11-03 complete
 - [Phase 05]: Operator docs are now locked by automated drift tests and document the dry run as the canonical local workflow proof. — This keeps README and `.env.example` aligned with the implemented runtime surface.
 - [Phase 08]: Select baseline comparisons only from prior completed runs that already persisted both a strategic report and finalized outcome payload. — This keeps change detection tied to structured delivered data instead of rendered email text or in-flight runs.
 - [Phase 08]: Persist `strategic_report` and `baseline_run_id` directly on paused workflow state alongside `finalized_outcome`. — Review, approval, and future tooling can inspect the same structured source of truth without recomputing the report.
+- [Phase 11]: Anchor the managed cron block to 7:00am ET through shared schedule expression and timezone defaults. — This keeps cron install, status, docs, and env defaults aligned on one operator-visible contract even on non-ET hosts.
 
 ### Pending Todos
 
