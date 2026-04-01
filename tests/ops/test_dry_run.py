@@ -7,7 +7,7 @@ import sys
 DRY_RUN_COMMAND = "python -m app.ops.dry_run"
 
 
-def test_dry_run_executes_scheduled_trigger_through_approval_and_prestage():
+def test_dry_run_executes_scheduled_trigger_through_approval_and_submission():
     result = subprocess.run(
         [sys.executable, "-m", "app.ops.dry_run"],
         capture_output=True,
@@ -19,7 +19,10 @@ def test_dry_run_executes_scheduled_trigger_through_approval_and_prestage():
     payload = json.loads(result.stdout)
     assert payload["trigger_status"] == "started"
     assert payload["approval_status"] == "broker_prestaged"
+    assert payload["execution_status"] == "submitted"
     assert payload["artifact_count"] >= 1
+    assert payload["submitted_order_count"] >= 1
+    assert payload["submitted_client_order_ids"]
     assert payload["approval_url"]
     assert payload["run_id"]
     assert payload["research_tool_call_count"] >= 2
@@ -42,6 +45,7 @@ def test_dry_run_prints_operator_summary_json():
     assert set(payload) >= {
         "trigger_status",
         "approval_status",
+        "execution_status",
         "run_id",
         "approval_url",
         "artifact_count",
@@ -49,4 +53,6 @@ def test_dry_run_prints_operator_summary_json():
         "research_tool_call_count",
         "research_stop_reason",
         "investigated_tickers",
+        "submitted_order_count",
+        "submitted_client_order_ids",
     }
