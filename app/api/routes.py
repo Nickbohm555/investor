@@ -167,3 +167,20 @@ def review_token(token: str, request: Request) -> dict:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
 
     return {"status": result["status"], "run_id": payload.run_id}
+
+
+@router.post("/runs/{run_id}/execute")
+def execute_run(run_id: str, request: Request) -> dict[str, object]:
+    try:
+        result = request.app.state.workflow_engine.advance_run(
+            run_id=run_id,
+            event="execution:confirm",
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+    return {
+        "status": result["status"],
+        "run_id": run_id,
+        "submitted_order_count": result["submitted_order_count"],
+    }

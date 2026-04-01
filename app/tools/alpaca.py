@@ -27,3 +27,30 @@ class AlpacaClient:
         response = self._client.get(f"/v2/assets/{symbol}")
         response.raise_for_status()
         return response.json()
+
+    def submit_order(
+        self,
+        *,
+        symbol: str,
+        side: str,
+        order_type: str,
+        time_in_force: str,
+        client_order_id: str,
+        notional: str | None = None,
+        qty: str | None = None,
+    ) -> dict:
+        payload = {
+            "symbol": symbol,
+            "side": side,
+            "type": order_type,
+            "time_in_force": time_in_force,
+            "client_order_id": client_order_id,
+        }
+        if notional is not None:
+            payload["notional"] = notional
+        if qty is not None:
+            payload["qty"] = qty
+
+        response = self._client.post("/v2/orders", json=payload)
+        response.raise_for_status()
+        return response.json()

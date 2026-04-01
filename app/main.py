@@ -50,6 +50,7 @@ def create_app(
         research_node=research_node,
         settings=settings,
         mail_provider=mail_provider,
+        alpaca_client_factory=alpaca_client_factory,
     )
     broker_prestage_service = broker_prestage_service or BrokerPrestageService(
         session_factory=session_factory,

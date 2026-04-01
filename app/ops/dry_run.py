@@ -97,11 +97,22 @@ class StubResearchLLM:
 
 
 class StubAlpacaClient:
+    def __init__(self) -> None:
+        self.submitted_orders: list[dict[str, object]] = []
+
     def get_account(self) -> dict:
         return {"buying_power": "1000.00", "trading_blocked": False}
 
     def get_asset(self, symbol: str) -> dict:
         return {"symbol": symbol, "tradable": True, "fractionable": True}
+
+    def submit_order(self, **kwargs) -> dict:
+        self.submitted_orders.append(kwargs)
+        return {
+            "id": f"order-{len(self.submitted_orders)}",
+            "client_order_id": kwargs["client_order_id"],
+            "status": "accepted",
+        }
 
 
 def _build_settings(database_url: str) -> Settings:
@@ -197,13 +208,14 @@ def main() -> int:
         session_factory = get_session_factory(database_url)
         Base.metadata.create_all(bind=session_factory.kw["bind"])
         mail_provider = MailProviderSpy()
+        alpaca_client = StubAlpacaClient()
         app = create_app(
             settings=settings,
             session_factory=session_factory,
             mail_provider=mail_provider,
             research_node=ResearchNode(llm=StubResearchLLM()),
             quiver_transport=_build_quiver_transport(),
-            alpaca_client_factory=lambda broker_mode: StubAlpacaClient(),
+            alpaca_client_factory=lambda broker_mode: alpaca_client,
         )
 
         with TestClient(app) as client:
@@ -221,6 +233,9 @@ def main() -> int:
             approval_response = client.get(approval_path)
             approval_payload = approval_response.json()
             log_lines.append(f"approval callback returned {approval_payload['status']}")
+            execute_response = client.post(f"/runs/{run_id}/execute")
+            execute_payload = execute_response.json()
+            log_lines.append(f"execution callback returned {execute_payload['status']}")
 
         with Session(session_factory.kw["bind"]) as session:
             stored_run = session.get(RunRecord, run_id)
@@ -236,12 +251,17 @@ def main() -> int:
                 {
                     "trigger_status": trigger_payload["status"],
                     "approval_status": approval_payload["status"],
+                    "execution_status": execute_payload["status"],
                     "run_id": run_id,
                     "approval_url": approval_url,
                     "artifact_count": artifact_count,
                     "research_tool_call_count": stored_run.state_payload["research_tool_call_count"],
                     "research_stop_reason": stored_run.state_payload["research_stop_reason"],
                     "investigated_tickers": stored_run.state_payload["investigated_tickers"],
+                    "submitted_order_count": execute_payload["submitted_order_count"],
+                    "submitted_client_order_ids": [
+                        order["client_order_id"] for order in stored_run.state_payload["submitted_orders"]
+                    ],
                     "log_lines": log_lines,
                 }
             )

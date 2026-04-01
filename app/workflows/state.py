@@ -6,7 +6,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel
 
-WorkflowEvent = Literal["approval:approve", "approval:reject"]
+WorkflowEvent = Literal["approval:approve", "approval:reject", "execution:confirm"]
 
 
 def _serialize_value(value: Any) -> Any:
