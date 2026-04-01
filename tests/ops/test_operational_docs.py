@@ -88,3 +88,17 @@ def test_docs_lock_et_schedule_contract_language():
     assert "INVESTOR_SCHEDULE_TIMEZONE=America/New_York" in env_text
     assert "7:00am ET" in readme_text
     assert "INVESTOR_SCHEDULE_TIMEZONE" in readme_text
+
+
+def test_readme_contains_system_architecture_section_and_truthful_boundary():
+    readme_text = Path("README.md").read_text()
+
+    assert "## System Architecture" in readme_text
+    assert "docs/architecture/system-diagram.png" in readme_text
+    assert "broker_prestaged" in readme_text
+    assert "direct order submission" in readme_text
+
+
+def test_architecture_source_and_export_assets_exist():
+    assert Path("docs/architecture/system-diagram.excalidraw").is_file()
+    assert Path("docs/architecture/system-diagram.png").is_file()
