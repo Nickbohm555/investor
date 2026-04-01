@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready_to_plan
-stopped_at: Phase 11 complete
-last_updated: "2026-04-01T01:17:55.963Z"
+status: ready_to_verify
+stopped_at: Phase 12 complete
+last_updated: "2026-04-01T01:30:24Z"
 progress:
   total_phases: 12
-  completed_phases: 9
+  completed_phases: 10
   total_plans: 29
-  completed_plans: 27
+  completed_plans: 29
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** The system must produce trustworthy daily recommendations on schedule and carry approved ideas into a safe broker-review path without brittle manual steps.
-**Current focus:** Phase 12 ready to plan — system-diagram-and-readme-architecture-capture
+**Current focus:** Phase 12 complete — system-diagram-and-readme-architecture-capture
 
 ## Current Position
 
-Phase: 12 ready to plan — system-diagram-and-readme-architecture-capture
-Plan: Not started
+Phase: 12 (system-diagram-and-readme-architecture-capture) — COMPLETE
+Plan: 2 of 2 complete
 
 ## Performance Metrics
 
@@ -86,6 +86,7 @@ Plan: Not started
 - [Phase 08]: Select baseline comparisons only from prior completed runs that already persisted both a strategic report and finalized outcome payload. — This keeps change detection tied to structured delivered data instead of rendered email text or in-flight runs.
 - [Phase 08]: Persist `strategic_report` and `baseline_run_id` directly on paused workflow state alongside `finalized_outcome`. — Review, approval, and future tooling can inspect the same structured source of truth without recomputing the report.
 - [Phase 11]: Anchor the managed cron block to 7:00am ET through shared schedule expression and timezone defaults. — This keeps cron install, status, docs, and env defaults aligned on one operator-visible contract even on non-ET hosts.
+- [Phase 12]: Keep architecture docs anchored to the repo-owned Excalidraw source and the `broker_prestaged` runtime boundary. — This keeps the README screenshot derived from one editable asset and avoids presenting direct order submission as current architecture.
 
 ### Pending Todos
 
@@ -107,6 +108,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31T16:16:00Z
-Stopped at: Phase 05 complete
+Last session: 2026-04-01T01:30:24Z
+Stopped at: Phase 12 complete
 Resume file: None

@@ -194,8 +194,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 12-01-PLAN.md — Lock the live architecture inventory and create the repo-owned Excalidraw source asset
-- [ ] 12-02-PLAN.md — Export the README screenshot, wire the architecture section, and add drift guards
+- [x] 12-01-PLAN.md — Lock the live architecture inventory and create the repo-owned Excalidraw source asset
+- [x] 12-02-PLAN.md — Export the README screenshot, wire the architecture section, and add drift guards
 
 ## Progress
 
@@ -215,4 +215,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 9. Execution Confirmation And Alpaca Order Submission | 0/0 | Merged into Phase 11 | — |
 | 10. Trading Safety Rails And Paper/Live Verification | 0/0 | Merged into Phase 11 | — |
 | 11. Scheduling Reliability And End-To-End Execution Proof | 3/3 | Complete   | 2026-04-01 |
-| 12. System Diagram And README Architecture Capture | 0/2 | Planned | — |
+| 12. System Diagram And README Architecture Capture | 2/2 | Complete | 2026-04-01 |
