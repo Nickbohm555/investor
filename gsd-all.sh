@@ -96,11 +96,10 @@ fi
 
 if [[ "$mode" == "plan" ]]; then
   for phase in "${phases[@]}"; do
-    "${runner[@]}" codex exec --dangerously-bypass-approvals-and-sandbox -C "$repo" - <<EOF &
+    "${runner[@]}" codex exec --dangerously-bypass-approvals-and-sandbox -C "$repo" - <<EOF
 Use \$gsd-plan-phase $(echo "$phase" | xargs)
 EOF
   done
-  wait
 
   if [[ "$push_enabled" == true ]]; then
     echo "Pushing branch after planning..."
