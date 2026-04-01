@@ -182,8 +182,8 @@ Plans:
 
 Plans:
 - [ ] 11-01-PLAN.md — Replace hard-coded cron timing with a repo-configured 7:00am ET install/status contract
-- [ ] 11-02-PLAN.md — Wire the repo-local proof path through the existing execution confirmation and submission seams
-- [ ] 11-03-PLAN.md — Add scheduled-to-submitted integration proof and reconcile any remaining lifecycle gaps
+- [x] 11-02-PLAN.md — Wire the repo-local proof path through the existing execution confirmation and submission seams
+- [x] 11-03-PLAN.md — Add scheduled-to-submitted integration proof and reconcile any remaining lifecycle gaps
 
 ### Phase 12: System Diagram And README Architecture Capture
 **Goal**: The repo includes a complete, highly legible system diagram that shows all major components and their relationships, plus a README screenshot for quick orientation
