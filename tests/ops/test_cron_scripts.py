@@ -79,6 +79,8 @@ def test_cron_install_is_idempotent_and_status_reports_log_path(tmp_path: Path):
     crontab_text = (tmp_path / "crontab.txt").read_text()
     assert crontab_text.count("# >>> investor daily schedule >>>") == 1
     assert crontab_text.count("# <<< investor daily schedule <<<") == 1
+    assert "CRON_TZ=America/New_York" in crontab_text
+    assert '0 7 * * 1-5 cd "' in crontab_text
     assert "./scripts/cron-trigger.sh >> ./logs/cron/daily-trigger.log 2>&1" in crontab_text
 
     status = subprocess.run(
@@ -91,6 +93,8 @@ def test_cron_install_is_idempotent_and_status_reports_log_path(tmp_path: Path):
     )
 
     assert "managed=present" in status.stdout
+    assert "cron_expression=0 7 * * 1-5" in status.stdout
+    assert "cron_timezone=America/New_York" in status.stdout
     assert "log_path=logs/cron/daily-trigger.log" in status.stdout
 
 
@@ -110,6 +114,8 @@ def test_cron_remove_clears_only_managed_block(tmp_path: Path):
     )
 
     assert "managed=absent" in status.stdout
+    assert "cron_expression=0 7 * * 1-5" in status.stdout
+    assert "cron_timezone=America/New_York" in status.stdout
     assert "log_path=logs/cron/daily-trigger.log" in status.stdout
 
 

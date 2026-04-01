@@ -16,6 +16,7 @@ ENV_KEYS = [
     "INVESTOR_DAILY_MEMO_TO_EMAIL",
     "INVESTOR_EXTERNAL_BASE_URL",
     "INVESTOR_SCHEDULE_CRON_EXPRESSION",
+    "INVESTOR_SCHEDULE_TIMEZONE",
     "INVESTOR_SCHEDULE_TRIGGER_URL",
     "INVESTOR_SCHEDULED_TRIGGER_TOKEN",
     "INVESTOR_CRON_LOG_PATH",
@@ -46,6 +47,7 @@ README_COMMANDS = [
 
 README_CHECKLIST_LINES = [
     "## Dry Run",
+    "## Cron Operations",
     "## Go-Live Checklist",
     "## Acceptance Verification",
     "- SMTP credentials send to the real operator inbox",
@@ -53,6 +55,7 @@ README_CHECKLIST_LINES = [
     "- OpenAI-compatible API key, base URL, and model are configured for ResearchNode",
     "- INVESTOR_EXTERNAL_BASE_URL resolves to the public approval host",
     "- Alpaca paper mode uses https://paper-api.alpaca.markets",
+    "- INVESTOR_SCHEDULE_TIMEZONE is set to America/New_York for the managed 7:00am ET cron install",
     "- Cron is installed with ./scripts/cron-install.sh and verified with ./scripts/cron-status.sh",
 ]
 
@@ -76,3 +79,12 @@ def test_readme_contains_go_live_checklist_sections():
 
     for line in README_CHECKLIST_LINES:
         assert line in readme_text
+
+
+def test_docs_lock_et_schedule_contract_language():
+    env_text = Path(".env.example").read_text()
+    readme_text = Path("README.md").read_text()
+
+    assert "INVESTOR_SCHEDULE_TIMEZONE=America/New_York" in env_text
+    assert "7:00am ET" in readme_text
+    assert "INVESTOR_SCHEDULE_TIMEZONE" in readme_text
