@@ -188,15 +188,16 @@ Plans:
 ### Phase 12: System Diagram And README Architecture Capture
 **Goal**: The repo includes a complete, highly legible system diagram that shows all major components and their relationships, plus a README screenshot for quick orientation
 **Depends on**: Phase 11
-**Requirements**: TBD
+**Requirements**: ARCH-01, ARCH-02, ARCH-03
 **Success Criteria** (what must be TRUE):
 1. An Excalidraw system diagram covers the end-to-end workflow, external services, storage, automation, and operator touchpoints
 2. The layout is deliberately spaced and organized for clear inspection rather than dense or overlapping placement
 3. A screenshot of the diagram is added to the README so the architecture is visible from the repo entry point
-**Plans**: 0 plans
+**Plans**: 2 plans
 
 Plans:
-- [ ] TBD (run `$gsd-plan-phase 12` to break down)
+- [ ] 12-01-PLAN.md — Lock the live architecture inventory and create the repo-owned Excalidraw source asset
+- [ ] 12-02-PLAN.md — Export the README screenshot, wire the architecture section, and add drift guards
 
 ## Progress
 
@@ -216,4 +217,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 9. Execution Confirmation And Alpaca Order Submission | 0/0 | Merged into Phase 11 | — |
 | 10. Trading Safety Rails And Paper/Live Verification | 0/0 | Merged into Phase 11 | — |
 | 11. Scheduling Reliability And End-To-End Execution Proof | 0/3 | Planned | — |
-| 12. System Diagram And README Architecture Capture | 0/0 | Not Planned | — |
+| 12. System Diagram And README Architecture Capture | 0/2 | Planned | — |
