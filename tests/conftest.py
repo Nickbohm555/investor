@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 os.environ.setdefault("INVESTOR_APP_SECRET", "test-secret")
 os.environ.setdefault("INVESTOR_DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("INVESTOR_SCHEDULED_TRIGGER_TOKEN", "test-scheduled-token")
+os.environ.setdefault("INVESTOR_EXECUTION_TRIGGER_TOKEN", "test-execution-token")
 os.environ.setdefault("INVESTOR_SCHEDULE_TRIGGER_URL", "http://127.0.0.1:8000/runs/trigger/scheduled")
 os.environ.setdefault("INVESTOR_CRON_LOG_PATH", "logs/cron/daily-trigger.log")
 os.environ.setdefault("INVESTOR_SMTP_HOST", "localhost")

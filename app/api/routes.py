@@ -170,7 +170,14 @@ def review_token(token: str, request: Request) -> dict:
 
 
 @router.post("/runs/{run_id}/execute")
-def execute_run(run_id: str, request: Request) -> dict[str, object]:
+def execute_run(
+    run_id: str,
+    request: Request,
+    execution_trigger: Optional[str] = Header(default=None, alias="X-Investor-Execution-Trigger"),
+) -> dict[str, object]:
+    if execution_trigger != request.app.state.settings.execution_trigger_token:
+        raise HTTPException(status_code=401, detail="Invalid execution trigger token")
+
     try:
         result = request.app.state.workflow_engine.advance_run(
             run_id=run_id,

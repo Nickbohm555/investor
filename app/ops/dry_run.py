@@ -132,6 +132,7 @@ def _build_settings(database_url: str) -> Settings:
             "schedule_cron_expression": "30 8 * * 1-5",
             "schedule_trigger_url": "http://127.0.0.1:8000/runs/trigger/scheduled",
             "scheduled_trigger_token": "dry-run-trigger-token",
+            "execution_trigger_token": "dry-run-execution-token",
             "cron_log_path": "logs/cron/daily-trigger.log",
             "quiver_base_url": "https://api.quiverquant.com",
             "quiver_api_key": "dry-run-quiver-key",
@@ -179,6 +180,7 @@ def _apply_env_overrides(settings: Settings) -> None:
         "INVESTOR_SCHEDULE_CRON_EXPRESSION": settings.schedule_cron_expression,
         "INVESTOR_SCHEDULE_TRIGGER_URL": settings.schedule_trigger_url,
         "INVESTOR_SCHEDULED_TRIGGER_TOKEN": settings.scheduled_trigger_token,
+        "INVESTOR_EXECUTION_TRIGGER_TOKEN": settings.execution_trigger_token,
         "INVESTOR_CRON_LOG_PATH": settings.cron_log_path,
         "INVESTOR_QUIVER_BASE_URL": settings.quiver_base_url,
         "INVESTOR_QUIVER_API_KEY": settings.quiver_api_key,
@@ -233,7 +235,10 @@ def main() -> int:
             approval_response = client.get(approval_path)
             approval_payload = approval_response.json()
             log_lines.append(f"approval callback returned {approval_payload['status']}")
-            execute_response = client.post(f"/runs/{run_id}/execute")
+            execute_response = client.post(
+                f"/runs/{run_id}/execute",
+                headers={"X-Investor-Execution-Trigger": settings.execution_trigger_token},
+            )
             execute_payload = execute_response.json()
             log_lines.append(f"execution callback returned {execute_payload['status']}")
 

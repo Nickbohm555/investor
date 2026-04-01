@@ -52,6 +52,10 @@ def _build_restart_safe_apps(app_factory, tmp_path, *, account: dict, asset: dic
     return first_app, second_app, alpaca_client
 
 
+def _execute_headers(app) -> dict[str, str]:
+    return {"X-Investor-Execution-Trigger": app.state.settings.execution_trigger_token}
+
+
 def test_scheduled_trigger_to_submitted_order_flow(
     app_factory,
     tmp_path,
@@ -76,7 +80,7 @@ def test_scheduled_trigger_to_submitted_order_flow(
 
     second_client = TestClient(second_app)
     approval_response = second_client.get(urlsplit(approval_url).path)
-    execute_response = second_client.post(f"/runs/{run_id}/execute")
+    execute_response = second_client.post(f"/runs/{run_id}/execute", headers=_execute_headers(second_app))
 
     assert approval_response.status_code == 200
     assert execute_response.status_code == 200
@@ -120,7 +124,7 @@ def test_duplicate_scheduled_trigger_does_not_resubmit_orders(
     approval_url = mail_provider.sent_messages[-1]["text_body"].split("Approve: ", 1)[1].splitlines()[0].strip()
 
     approval_response = client.get(urlsplit(approval_url).path)
-    first_execute = client.post(f"/runs/{run_id}/execute")
+    first_execute = client.post(f"/runs/{run_id}/execute", headers=_execute_headers(app))
     duplicate_trigger = client.post(
         "/runs/trigger/scheduled",
         headers={"X-Investor-Scheduled-Trigger": app.state.settings.scheduled_trigger_token},
