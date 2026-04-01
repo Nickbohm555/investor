@@ -108,6 +108,8 @@ def test_app_starts_with_test_settings():
     app.state.mail_provider = MailProviderSpy()
 
     assert app is not None
+    assert app.state.runtime.settings is app.state.settings
+    assert app.state.runtime.approval_service is app.state.approval_service
 
 
 def test_health_route_returns_ok():

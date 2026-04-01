@@ -63,7 +63,6 @@ def test_approval_advances_persisted_workflow_step(app_factory, tmp_path):
     service = ApprovalService(
         session_factory=second_app.state.session_factory,
         workflow_engine=second_app.state.workflow_engine,
-        research_node=second_app.state.research_node,
         prestage_service=lambda run_id, recommendation_ids, broker_mode: [],
     )
     result = service.apply_review_decision(payload, token_id=payload.token_id)
@@ -100,7 +99,6 @@ def test_reject_finalizes_without_broker_side_effects(app_factory, tmp_path):
     service = ApprovalService(
         session_factory=second_app.state.session_factory,
         workflow_engine=second_app.state.workflow_engine,
-        research_node=second_app.state.research_node,
         prestage_service=lambda run_id, recommendation_ids, broker_mode: broker_calls.append(
             (run_id, tuple(recommendation_ids), broker_mode)
         ),
@@ -125,7 +123,6 @@ def test_duplicate_approval_returns_explicit_error(app_factory, tmp_path):
     service = ApprovalService(
         session_factory=second_app.state.session_factory,
         workflow_engine=second_app.state.workflow_engine,
-        research_node=second_app.state.research_node,
         prestage_service=lambda run_id, recommendation_ids, broker_mode: [],
     )
 
@@ -150,7 +147,6 @@ def test_stale_or_missing_run_returns_explicit_error(app_factory, tmp_path):
     service = ApprovalService(
         session_factory=second_app.state.session_factory,
         workflow_engine=second_app.state.workflow_engine,
-        research_node=second_app.state.research_node,
     )
 
     with pytest.raises(MissingRunError):

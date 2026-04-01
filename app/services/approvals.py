@@ -37,7 +37,6 @@ class MissingRunError(ValueError):
 class ApprovalService:
     session_factory: sessionmaker[Session]
     workflow_engine: object
-    research_node: object
     prestage_service: Optional[Callable[..., object]] = None
     broker_mode: str = "paper"
 
@@ -83,17 +82,3 @@ class ApprovalService:
             "run_id": payload.run_id,
             "status": result["status"],
         }
-
-
-_default_service: ApprovalService | None = None
-
-
-def configure_approval_service(service: ApprovalService) -> None:
-    global _default_service
-    _default_service = service
-
-
-def apply_review_decision(payload: ApprovalTokenPayload, token_id: str) -> dict:
-    if _default_service is None:
-        raise RuntimeError("Approval service is not configured")
-    return _default_service.apply_review_decision(payload, token_id=token_id)
