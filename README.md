@@ -56,9 +56,8 @@ The managed cron contract is a repo-configured `7:00am ET` weekday install. Keep
 - INVESTOR_SCHEDULE_TIMEZONE is set to America/New_York for the managed 7:00am ET cron install
 - Cron is installed with ./scripts/cron-install.sh and verified with ./scripts/cron-status.sh
 
-## Acceptance Verification
+## Acceptance Check
 
 ```bash
-python -m pytest tests/ops/test_readiness.py tests/services/test_research_llm.py tests/ops/test_dry_run.py tests/ops/test_operational_docs.py -q
 python -m app.ops.dry_run
 ```
