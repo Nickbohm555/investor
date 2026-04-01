@@ -2,6 +2,14 @@
 
 Local-first Python service for an app-owned investing workflow.
 
+## System Architecture
+
+![System diagram for the investor runtime](docs/architecture/system-diagram.png)
+
+The diagram shows the live operator and automation paths: manual and scheduled triggers enter the FastAPI app, the workflow gathers Quiver evidence, uses the OpenAI-compatible research model, delivers the SMTP memo, and resumes through the approval link. Durable records for runs, recommendations, approval events, state transitions, and broker artifacts stay visible because restart safety is part of the implemented contract.
+
+The current approved path ends at `broker_prestaged`, where broker artifacts are persisted and ready for broker review. The README and diagram intentionally stop there rather than presenting direct order submission as the current architecture. Use `python -m app.ops.dry_run` as the fastest proof path that the trigger, memo, approval, and broker-prestage flow still line up.
+
 ## Setup
 
 ```bash

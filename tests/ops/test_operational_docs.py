@@ -46,6 +46,7 @@ README_COMMANDS = [
 ]
 
 README_CHECKLIST_LINES = [
+    "## System Architecture",
     "## Dry Run",
     "## Cron Operations",
     "## Go-Live Checklist",
