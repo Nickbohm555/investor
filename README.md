@@ -36,6 +36,8 @@ uvicorn app.main:app --reload
 ./scripts/cron-remove.sh
 ```
 
+The managed cron contract is a repo-configured `7:00am ET` weekday install. Keep `INVESTOR_SCHEDULE_CRON_EXPRESSION=0 7 * * 1-5` and `INVESTOR_SCHEDULE_TIMEZONE=America/New_York` aligned unless you intentionally want a different cadence. `./scripts/cron-status.sh` prints the active cron expression, timezone, and log path so the installed block matches the repo config.
+
 ## Go-Live Checklist
 
 - SMTP credentials send to the real operator inbox
@@ -43,6 +45,7 @@ uvicorn app.main:app --reload
 - OpenAI-compatible API key, base URL, and model are configured for ResearchNode
 - INVESTOR_EXTERNAL_BASE_URL resolves to the public approval host
 - Alpaca paper mode uses https://paper-api.alpaca.markets
+- INVESTOR_SCHEDULE_TIMEZONE is set to America/New_York for the managed 7:00am ET cron install
 - Cron is installed with ./scripts/cron-install.sh and verified with ./scripts/cron-status.sh
 
 ## Acceptance Verification
