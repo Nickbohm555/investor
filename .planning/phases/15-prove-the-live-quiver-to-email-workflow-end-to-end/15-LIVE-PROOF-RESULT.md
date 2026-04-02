@@ -1,0 +1,16 @@
+run_id: <pending>
+scheduled_trigger_status: <pending>
+approval_probe_url: <pending>
+approval_probe_status_code: <pending>
+memo_delivered_to: <pending>
+approval_link_host: <pending>
+approval_callback_status: <pending>
+current_step: <pending>
+approval_status: <pending>
+scheduled_trigger_log_line: <pending>
+memo_delivery_log_line: <pending>
+final_run_status: <pending>
+approval_event_count: <pending>
+state_transition_count: <pending>
+broker_artifact_count: <pending>
+remaining_manual_steps: <pending>
