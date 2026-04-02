@@ -277,10 +277,12 @@ Plans:
 2. A replayable evaluation harness scores candidate, watchlist, and no-action quality against saved live or fixture-backed research cases
 3. Prompt, budget, and ranking changes are justified by measured evaluation deltas instead of ad hoc tweaking
 4. Operator-facing output better explains evidence freshness, conflicts, and missing confirmation before approval
-**Plans:** 0 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 16 to break down)
+- [ ] 16-01-PLAN.md — Add the documented bill-summary Quiver tool and persist rationale-aware follow-up traces
+- [ ] 16-02-PLAN.md — Build a replayable evaluation harness for candidate, watchlist, and no-action quality
+- [ ] 16-03-PLAN.md — Tune shortlist and prompt behavior from measured eval deltas and surface freshness/conflict cues
 
 ### Phase 17: Harden live-run approval, observability, and replay operations
 

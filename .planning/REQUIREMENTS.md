@@ -50,6 +50,13 @@
 - [ ] **REP-02**: System classifies output into deterministic `immediate`, `defer`, and `research` operator buckets with rationale fields that do not depend on rendered prose
 - [ ] **REP-03**: System renders deterministic operator-facing text and HTML strategic reports and persists the structured report payload for local review and testing
 
+### Quiver Research Adaptation
+
+- [ ] **QRA-01**: The bounded research loop can use a broader documented Quiver follow-up surface and persists why each follow-up investigation was chosen
+- [ ] **QRA-02**: The repo includes replayable evaluation cases that score candidate, watchlist, and no-action quality without requiring live Quiver access
+- [ ] **QRA-03**: Prompt, budget, shortlist, or ranking changes are compared with measured evaluation deltas before becoming the new default behavior
+- [ ] **QRA-04**: Operator-facing research output explains evidence freshness, conflicts, and missing confirmation more clearly before approval
+
 ## v2 Requirements
 
 ### Platform Expansion
@@ -96,10 +103,14 @@
 | REP-01 | Phase 8 | Pending |
 | REP-02 | Phase 8 | Pending |
 | REP-03 | Phase 8 | Pending |
+| QRA-01 | Phase 16 | Pending |
+| QRA-02 | Phase 16 | Pending |
+| QRA-03 | Phase 16 | Pending |
+| QRA-04 | Phase 16 | Pending |
 
 **Coverage:**
-- v1 requirements: 24 total
-- Mapped to phases: 24
+- v1 requirements: 28 total
+- Mapped to phases: 28
 - Unmapped: 0 ✓
 
 ---
