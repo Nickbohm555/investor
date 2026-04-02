@@ -18,6 +18,8 @@ This roadmap turns the current investor prototype into an env-ready local app by
 - [x] **Phase 6: Replace LangGraph With A Custom Workflow Engine** - Remove graph/checkpointer semantics and own workflow persistence, approval, and transitions directly (completed 2026-03-31)
 - [x] **Phase 7: Build A Loop-Based Quiver Agent** - Replace one-shot research generation with an iterative tool-using Quiver agent (completed 2026-03-31)
 - [x] **Phase 8: Upgrade Outputs To Strategic Insight Reports** - Turn daily output into decision-quality insight reports with change-aware rationale (completed 2026-03-31)
+- [ ] **Phase 13: Replace Host Cron Scripts With A Docker-Native Scheduler** - Move scheduling off host crontab management and into a container-native scheduler path
+- [ ] **Phase 14: Deepen Watchlist Explanations And Follow-Up Guidance** - Make watchlist items explain uncertainty, missing evidence, and next investigation steps in more detail
 
 ## Phase Details
 
@@ -200,7 +202,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -216,3 +218,25 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 10. Trading Safety Rails And Paper/Live Verification | 0/0 | Merged into Phase 11 | — |
 | 11. Scheduling Reliability And End-To-End Execution Proof | 3/3 | Complete   | 2026-04-01 |
 | 12. System Diagram And README Architecture Capture | 2/2 | Complete | 2026-04-01 |
+| 13. Replace Host Cron Scripts With A Docker-Native Scheduler | 0/0 | Not Started | — |
+| 14. Deepen Watchlist Explanations And Follow-Up Guidance | 0/0 | Not Started | — |
+
+### Phase 13: Replace host cron scripts with a docker-native scheduler
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 12
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 13 to break down)
+
+### Phase 14: Deepen watchlist explanations and follow-up guidance
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 13
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 14 to break down)

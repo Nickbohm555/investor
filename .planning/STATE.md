@@ -6,7 +6,7 @@ status: ready_to_verify
 stopped_at: Phase 12 complete
 last_updated: "2026-04-01T01:30:24Z"
 progress:
-  total_phases: 12
+  total_phases: 14
   completed_phases: 10
   total_plans: 29
   completed_plans: 29
@@ -101,6 +101,8 @@ None yet.
 - Phase 10 added: Trading safety rails and paper/live verification
 - Phase 11 added: Scheduling reliability and end-to-end execution proof
 - Phase 12 added: System diagram and README architecture capture
+- Phase 13 added: Replace host cron scripts with a docker-native scheduler
+- Phase 14 added: Deepen watchlist explanations and follow-up guidance
 
 ### Blockers/Concerns
 
