@@ -2,6 +2,14 @@
 
 Local-first Python service for an app-owned investing workflow.
 
+## Why This Project Exists
+
+This project exists to keep an investing workflow owned by the app instead of hidden inside manual operator steps, spreadsheets, or third-party automation glue. The goal is to make the loop inspectable, restart-safe, and operationally simple: research happens in one place, decisions are reviewed through an explicit approval step, and broker handoff artifacts are stored so the current state is always visible.
+
+## What This Project Does
+
+The service runs a structured investing loop from trigger to broker prestage. A manual or scheduled trigger starts a run, the workflow gathers Quiver evidence, uses the configured OpenAI-compatible model to produce research and a recommendation, renders and sends the operator memo, waits for approval through the callback link, and then persists the broker-ready artifacts. In the current implementation, the app is focused on getting reliably to `broker_prestaged` rather than silently placing live orders.
+
 ## System Architecture
 
 ![System diagram for the investor runtime](docs/architecture/system-diagram.png)
