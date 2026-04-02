@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready_to_verify
-stopped_at: Phase 12 complete
-last_updated: "2026-04-02T06:03:32Z"
+status: unknown
+stopped_at: Completed 14-01-PLAN.md
+last_updated: "2026-04-02T06:10:09.957Z"
 progress:
   total_phases: 14
-  completed_phases: 10
+  completed_phases: 11
   total_plans: 35
-  completed_plans: 32
+  completed_plans: 33
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** The system must produce trustworthy daily recommendations on schedule and carry approved ideas into a safe broker-review path without brittle manual steps.
-**Current focus:** Phase 13 complete — replace-host-cron-scripts-with-a-docker-native-scheduler
+**Current focus:** Phase 14 — deepen-watchlist-explanations-and-follow-up-guidance
 
 ## Current Position
 
-Phase: 13 (replace-host-cron-scripts-with-a-docker-native-scheduler) — COMPLETE
-Plan: 3 of 3
+Phase: 14 (deepen-watchlist-explanations-and-follow-up-guidance) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -89,6 +89,8 @@ Plan: 3 of 3
 - [Phase 12]: Keep architecture docs anchored to the repo-owned Excalidraw source and the `broker_prestaged` runtime boundary. — This keeps the README screenshot derived from one editable asset and avoids presenting direct order submission as current architecture.
 - [Phase 13]: Rebuild scheduler coverage around the existing dry-run doubles and scheduled-trigger route, then let the app container own Supercronic while Compose exposes only `postgres`, `migrate`, and `app`. — This preserves the proven dedupe/runtime seam while moving scheduler operations into Docker-native repo assets.
 - [Phase 13]: Container migrations need explicit Alembic config, psycopg URL normalization, and a widened `alembic_version.version_num` before the Docker runtime can reach app startup. — The repo's historical revision IDs and `psycopg` dependency require bootstrap logic that the old host-run migration path hid.
+- [Phase 14]: Persist watchlist guidance as explicit named fields on both watchlist candidates and research-queue report items instead of deriving everything from generic uncertainty text. — Later prompt, workflow, and rendering work now consume durable structured values rather than reconstructing explanation detail from prose.
+- [Phase 14]: Keep no-action output on the same research_queue contract by supplying deterministic fallback watchlist guidance values rather than creating a second report shape. — The shared contract preserves one operator-visible report surface across watchlist and no-action outcomes.
 
 ### Pending Todos
 
@@ -112,6 +114,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T01:30:24Z
-Stopped at: Phase 12 complete
+Last session: 2026-04-02T06:09:34.798Z
+Stopped at: Completed 14-01-PLAN.md
 Resume file: None
