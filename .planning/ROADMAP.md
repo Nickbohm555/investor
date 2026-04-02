@@ -260,10 +260,12 @@ Plans:
 1. A real run using your Quiver auth, configured OpenAI-compatible model, and SMTP path completes and sends a memo to `INVESTOR_DAILY_MEMO_TO_EMAIL` for the target operator inbox (`nickbohm555@gmail.com` for the live proof)
 2. The delivered memo contains a working approval link against the configured external base URL, and the callback reaches the expected persisted run state
 3. Repo docs and logs capture the exact live-proof workflow, failure modes, and remaining manual steps required after delivery
-**Plans:** 0 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 15 to break down)
+- [ ] 15-01-PLAN.md — Add live-proof CLI checks for preflight, scheduled trigger, and persisted run inspection
+- [ ] 15-02-PLAN.md — Document the live proof runbook, reachability setup, and proof record template
+- [ ] 15-03-PLAN.md — Execute the live proof, capture operator validation, and record persisted approval results
 
 ### Phase 16: Deepen Quiver signal coverage and agent evaluation
 
