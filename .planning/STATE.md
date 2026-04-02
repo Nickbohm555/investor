@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 ## Current Position
 
 Phase: 17 (harden-live-run-approval-observability-and-replay-operations) — EXECUTING
-Plan: 2 of 4
+Plan: 17-02 next (2 of 4 unfinished)
 
 ## Performance Metrics
 
