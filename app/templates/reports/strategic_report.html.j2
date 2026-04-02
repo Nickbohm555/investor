@@ -38,8 +38,10 @@
 {% for item in report.research_queue %}
   <li>
     <strong>{{ item.ticker }}</strong> | {{ item.thesis }}<br>
-    Uncertainty: {{ item.uncertainty }}<br>
-    Follow-up: {{ item.follow_up_questions | join('; ') }}<br>
+    Why Not Actionable Yet: {{ item.watchlist_reason }}<br>
+    Missing Evidence: {{ item.missing_evidence | join('; ') if item.missing_evidence else 'None.' }}<br>
+    Open Questions: {{ item.unresolved_questions | join('; ') if item.unresolved_questions else 'None.' }}<br>
+    Next Checks: {{ item.next_steps | join('; ') if item.next_steps else 'None.' }}<br>
     Action: {{ item.operator_action }}
   </li>
 {% endfor %}

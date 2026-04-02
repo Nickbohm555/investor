@@ -21,6 +21,20 @@ class _MailProviderSpy:
         )
 
 
+class _QuiverClientStub:
+    def get_live_congress_trading(self):
+        return []
+
+    def get_live_insider_trading(self):
+        return []
+
+    def get_live_government_contracts(self):
+        return []
+
+    def get_live_lobbying(self):
+        return []
+
+
 class _ResearchNodeStub:
     def __init__(self, outcome) -> None:
         self._outcome = outcome
@@ -49,12 +63,12 @@ def _invoke(outcome, run_id: str) -> dict:
         research_node=_ResearchNodeStub(outcome),
         settings=_settings(),
         mail_provider=_MailProviderSpy(),
-        evidence_builder=lambda quiver_client: [],
+        evidence_builder=lambda **kwargs: [],
     )
     return workflow.invoke(
         {
             "run_id": run_id,
-            "quiver_client": object(),
+            "quiver_client": _QuiverClientStub(),
         }
     )
 

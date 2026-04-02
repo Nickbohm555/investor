@@ -28,8 +28,10 @@ Research Queue
 {% if report.research_queue %}
 {% for item in report.research_queue %}
 - {{ item.ticker }} | {{ item.thesis }}
-  Uncertainty: {{ item.uncertainty }}
-  Follow-up: {{ item.follow_up_questions | join('; ') }}
+  Why Not Actionable Yet: {{ item.watchlist_reason }}
+  Missing Evidence: {{ item.missing_evidence | join('; ') if item.missing_evidence else 'None.' }}
+  Open Questions: {{ item.unresolved_questions | join('; ') if item.unresolved_questions else 'None.' }}
+  Next Checks: {{ item.next_steps | join('; ') if item.next_steps else 'None.' }}
   Action: {{ item.operator_action }}
 {% endfor %}
 {% else %}
