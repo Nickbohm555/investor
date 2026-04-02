@@ -24,3 +24,9 @@ def test_readme_removes_host_cron_workflow_language() -> None:
     assert "logs/cron/daily-trigger.log" not in readme_text
     assert "scheduler service" not in readme_text
     assert "app container owns the scheduler process" in readme_text
+
+
+def test_readme_mentions_shared_research_queue_guidance_sections() -> None:
+    readme_text = (PROJECT_ROOT / "README.md").read_text()
+
+    assert "Watchlist and no-action items now explain why the idea is not actionable, what evidence is missing, which questions remain unresolved, and what to check on the next session." in readme_text
