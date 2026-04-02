@@ -218,7 +218,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 10. Trading Safety Rails And Paper/Live Verification | 0/0 | Merged into Phase 11 | — |
 | 11. Scheduling Reliability And End-To-End Execution Proof | 3/3 | Complete   | 2026-04-01 |
 | 12. System Diagram And README Architecture Capture | 2/2 | Complete | 2026-04-01 |
-| 13. Replace Host Cron Scripts With A Docker-Native Scheduler | 0/0 | Not Started | — |
+| 13. Replace Host Cron Scripts With A Docker-Native Scheduler | 1/3 | In Progress | — |
 | 14. Deepen Watchlist Explanations And Follow-Up Guidance | 0/0 | Not Started | — |
 
 ### Phase 13: Replace host cron scripts with a docker-native scheduler
@@ -229,7 +229,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 **Plans:** 3 plans
 
 Plans:
-- [ ] 13-01-PLAN.md — Restore the missing scheduling test harness and add the base app-container scheduler assets
+- [x] 13-01-PLAN.md — Restore the missing scheduling test harness and add the base app-container scheduler assets
 - [ ] 13-02-PLAN.md — Wire the three-service Compose runtime so the app container owns scheduling and preserve dedupe behavior
 - [ ] 13-03-PLAN.md — Remove the host cron operator path and lock docs to the app-managed Docker scheduler workflow
 

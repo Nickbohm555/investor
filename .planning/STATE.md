@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready_to_verify
+status: executing
 stopped_at: Phase 12 complete
-last_updated: "2026-04-01T01:30:24Z"
+last_updated: "2026-04-02T05:51:55Z"
 progress:
   total_phases: 14
   completed_phases: 10
-  total_plans: 29
-  completed_plans: 29
+  total_plans: 35
+  completed_plans: 30
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** The system must produce trustworthy daily recommendations on schedule and carry approved ideas into a safe broker-review path without brittle manual steps.
-**Current focus:** Phase 12 complete — system-diagram-and-readme-architecture-capture
+**Current focus:** Phase 13 — replace-host-cron-scripts-with-a-docker-native-scheduler
 
 ## Current Position
 
-Phase: 12 (system-diagram-and-readme-architecture-capture) — COMPLETE
-Plan: 2 of 2 complete
+Phase: 13 (replace-host-cron-scripts-with-a-docker-native-scheduler) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -87,6 +87,7 @@ Plan: 2 of 2 complete
 - [Phase 08]: Persist `strategic_report` and `baseline_run_id` directly on paused workflow state alongside `finalized_outcome`. — Review, approval, and future tooling can inspect the same structured source of truth without recomputing the report.
 - [Phase 11]: Anchor the managed cron block to 7:00am ET through shared schedule expression and timezone defaults. — This keeps cron install, status, docs, and env defaults aligned on one operator-visible contract even on non-ET hosts.
 - [Phase 12]: Keep architecture docs anchored to the repo-owned Excalidraw source and the `broker_prestaged` runtime boundary. — This keeps the README screenshot derived from one editable asset and avoids presenting direct order submission as current architecture.
+- [Phase 13]: Rebuild scheduler coverage around the existing dry-run doubles and scheduled-trigger route, then let the app container own Supercronic while Compose exposes only `postgres`, `migrate`, and `app`. — This preserves the proven dedupe/runtime seam while moving scheduler operations into Docker-native repo assets.
 
 ### Pending Todos
 
