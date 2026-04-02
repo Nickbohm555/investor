@@ -12,7 +12,7 @@ RUN apt-get update \
     && curl -fsSLo /usr/local/bin/supercronic "https://github.com/aptible/supercronic/releases/download/${SUPERCRONIC_VERSION}/supercronic-linux-amd64" \
     && chmod +x /usr/local/bin/supercronic
 
-COPY pyproject.toml README.md ./
+COPY pyproject.toml README.md alembic.ini ./
 COPY app ./app
 COPY ops ./ops
 

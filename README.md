@@ -61,13 +61,11 @@ Editable source: `docs/architecture/flow-steps/06-execution-order-submission.exc
 ## Setup
 
 ```bash
-pip install -e .
 cp .env.example .env
-docker compose up -d postgres
-alembic upgrade head
+docker compose up -d --build
 ```
 
-Normal runtime composition now depends on the configured Quiver and OpenAI-compatible credentials rather than the old stubbed defaults.
+Normal runtime composition now depends on the configured Quiver and OpenAI-compatible credentials rather than the old stubbed defaults. The app container owns the scheduler process; the app container owns the weekday scheduler process through the repo-managed scripts in `ops/scheduler/`.
 
 ## Dry Run
 
@@ -77,22 +75,19 @@ python -m app.ops.dry_run
 
 Use `python -m app.ops.dry_run` as the canonical no-hidden-manual-work proof path. It runs scheduled trigger, memo generation, approval callback, and broker prestage locally by injecting deterministic doubles instead of the normal live adapters.
 
-## Run The Service
+## Docker Operations
 
 ```bash
-uvicorn app.main:app --reload
+docker compose logs -f migrate app
 ```
 
-## Cron Operations
+Use the combined `migrate` and `app` logs as the primary scheduler observability path. The scheduler bootstrap prints the rendered crontab to stdout, and the scheduled-trigger wrapper emits the exact `scheduled_trigger result=...` lines into the `app` container logs.
 
 ```bash
-./scripts/cron-install.sh
-./scripts/cron-status.sh
-./scripts/cron-trigger.sh
-./scripts/cron-remove.sh
+docker compose down -v
 ```
 
-The managed cron contract is a repo-configured `7:00am ET` weekday install. Keep `INVESTOR_SCHEDULE_CRON_EXPRESSION=0 7 * * 1-5` and `INVESTOR_SCHEDULE_TIMEZONE=America/New_York` aligned unless you intentionally want a different cadence. `./scripts/cron-status.sh` prints the active cron expression, timezone, and log path so the installed block matches the repo config.
+Keep `INVESTOR_SCHEDULE_CRON_EXPRESSION=0 7 * * 1-5` and `INVESTOR_SCHEDULE_TIMEZONE=America/New_York` aligned unless you intentionally want a different cadence.
 
 ## Go-Live Checklist
 
@@ -101,11 +96,14 @@ The managed cron contract is a repo-configured `7:00am ET` weekday install. Keep
 - OpenAI-compatible API key, base URL, and model are configured for ResearchNode
 - INVESTOR_EXTERNAL_BASE_URL resolves to the public approval host
 - Alpaca paper mode uses https://paper-api.alpaca.markets
-- INVESTOR_SCHEDULE_TIMEZONE is set to America/New_York for the managed 7:00am ET cron install
-- Cron is installed with ./scripts/cron-install.sh and verified with ./scripts/cron-status.sh
+- INVESTOR_SCHEDULE_TIMEZONE is set to America/New_York for the managed 7:00am ET scheduler
+- docker compose up -d --build starts postgres, migrate, and app successfully
+- docker compose logs -f migrate app shows the rendered crontab and scheduled trigger output
 
 ## Acceptance Check
 
 ```bash
-python -m app.ops.dry_run
+docker compose up -d --build
+docker compose logs -f migrate app
+docker compose down -v
 ```
