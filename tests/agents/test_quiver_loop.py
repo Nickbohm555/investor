@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import json
 
-from app.agents.quiver_loop import QuiverLoopAgent
-from app.schemas.quiver import TickerEvidenceBundle
+from datetime import datetime, timezone
+
+from app.agents.quiver_loop import QuiverLoopAgent, default_shortlist_selector
+from app.schemas.quiver import SignalRecord, TickerEvidenceBundle
 from app.schemas.research_agent import ResearchAgentBudget
 
 
@@ -52,6 +54,17 @@ def _bundle() -> TickerEvidenceBundle:
         supporting_signals=[],
         contradictory_signals=[],
         source_summary=["Initial evidence bundle."],
+    )
+
+
+def _signal(ticker: str, direction: str, observed_at: datetime) -> SignalRecord:
+    return SignalRecord(
+        signal_type="congress",
+        ticker=ticker,
+        observed_at=observed_at,
+        direction=direction,  # type: ignore[arg-type]
+        magnitude_note=f"{ticker} {direction}",
+        source_note=f"{ticker} {direction}",
     )
 
 
@@ -140,3 +153,28 @@ def test_quiver_loop_persists_model_rationale_for_follow_up_tool_calls() -> None
         "Conflicting signals remain, so inspect legislation that could validate the thesis before finalizing."
     )
     assert result.trace[0].tool_name == "get_live_bill_summaries"
+
+
+def test_default_shortlist_selector_prefers_fresher_less_conflicted_bundles() -> None:
+    bundles = [
+        TickerEvidenceBundle(
+            ticker="STALE",
+            supporting_signals=[_signal("STALE", "positive", datetime(2026, 3, 1, tzinfo=timezone.utc))],
+            contradictory_signals=[_signal("STALE", "negative", datetime(2026, 4, 1, tzinfo=timezone.utc))],
+            source_summary=["Mixed and stale."],
+            freshness_summary="Latest signal: 2026-04-01. Dated signals: 2 of 2.",
+            conflict_summary="Supporting: 1. Contradictory: 1.",
+        ),
+        TickerEvidenceBundle(
+            ticker="FRESH",
+            supporting_signals=[_signal("FRESH", "positive", datetime(2026, 4, 2, tzinfo=timezone.utc))],
+            contradictory_signals=[],
+            source_summary=["Fresh and aligned."],
+            freshness_summary="Latest signal: 2026-04-02. Dated signals: 1 of 1.",
+            conflict_summary="Supporting: 1. Contradictory: 0.",
+        ),
+    ]
+
+    shortlisted = default_shortlist_selector(bundles, max_seed_tickers=1)
+
+    assert [bundle.ticker for bundle in shortlisted] == ["FRESH"]

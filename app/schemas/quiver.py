@@ -17,12 +17,21 @@ class CongressionalTrade(QuiverRowModel):
     ticker: str = Field(alias="Ticker")
     transaction: str = Field(alias="Transaction")
     representative: Optional[str] = Field(default=None, alias="Representative")
+    filed: Optional[str] = Field(default=None, alias="Filed")
+    traded: Optional[str] = Field(default=None, alias="Traded")
+    trade_size_usd: Optional[str] = Field(default=None, alias="Trade_Size_USD")
+    party: Optional[str] = Field(default=None, alias="Party")
+    chamber: Optional[str] = Field(default=None, alias="Chamber")
 
 
 class InsiderTrade(QuiverRowModel):
     ticker: str = Field(alias="Ticker")
     transaction: str = Field(alias="Transaction")
     insider_name: Optional[str] = Field(default=None, alias="InsiderName")
+    date: Optional[str] = Field(default=None, alias="Date")
+    file_date: Optional[str] = Field(default=None, alias="fileDate")
+    shares: Optional[str] = Field(default=None, alias="Shares")
+    price_per_share: Optional[str] = Field(default=None, alias="PricePerShare")
 
 
 class GovernmentContractAward(QuiverRowModel):
@@ -36,6 +45,10 @@ class LobbyingDisclosure(QuiverRowModel):
     ticker: str = Field(alias="Ticker")
     client: Optional[str] = Field(default=None, alias="Client")
     issue: Optional[str] = Field(default=None, alias="Issue")
+    date: Optional[str] = Field(default=None, alias="Date")
+    amount: Optional[str] = Field(default=None, alias="Amount")
+    specific_issue: Optional[str] = Field(default=None, alias="Specific_Issue")
+    registrant: Optional[str] = Field(default=None, alias="Registrant")
 
 
 class BillSummary(QuiverRowModel):
@@ -67,3 +80,6 @@ class TickerEvidenceBundle(BaseModel):
     supporting_signals: List[SignalRecord] = Field(default_factory=list)
     contradictory_signals: List[SignalRecord] = Field(default_factory=list)
     source_summary: List[str] = Field(default_factory=list)
+    freshness_summary: str = ""
+    conflict_summary: str = ""
+    latest_signal_at: Optional[datetime] = None

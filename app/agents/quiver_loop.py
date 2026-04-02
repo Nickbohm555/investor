@@ -34,11 +34,24 @@ def default_shortlist_selector(
     return sorted(
         evidence_bundles,
         key=lambda bundle: (
-            -len(bundle.supporting_signals),
+            -_bundle_priority(bundle),
+            -(bundle.latest_signal_at.timestamp() if bundle.latest_signal_at else 0.0),
             len(bundle.contradictory_signals),
             bundle.ticker,
         ),
     )[:max_seed_tickers]
+
+
+def _bundle_priority(bundle: TickerEvidenceBundle) -> int:
+    diversity = len(
+        {
+            signal.signal_type
+            for signal in bundle.supporting_signals + bundle.contradictory_signals
+        }
+    )
+    freshness_bonus = 1 if bundle.latest_signal_at is not None else 0
+    net_signal_score = len(bundle.supporting_signals) - len(bundle.contradictory_signals)
+    return (freshness_bonus * 100) + (net_signal_score * 10) + diversity
 
 
 class QuiverLoopAgent:

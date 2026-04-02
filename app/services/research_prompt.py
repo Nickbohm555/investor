@@ -44,7 +44,9 @@ def build_seed_research_brief(
             f"Ticker: {bundle.ticker}\n"
             f"Supporting signals: {supporting}\n"
             f"Contradictory signals: {contradictory}\n"
-            f"Source summaries: {summaries}"
+            f"Source summaries: {summaries}\n"
+            f"Freshness summary: {bundle.freshness_summary or 'Unknown'}\n"
+            f"Conflict summary: {bundle.conflict_summary or 'Unknown'}"
         )
 
     return f"Run ID: {run_id}\n{account_lines}\n\n" + "\n\n".join(bundle_lines)
@@ -68,7 +70,8 @@ def build_final_research_payload(
             "Return JSON only. Choose exactly one outcome value from candidates, watchlist, or no_action. "
             "Every recommendation-like item must include supporting_evidence, opposing_evidence, risk_notes, "
             "and source_summary arrays. Every watchlist item must include watchlist_reason, missing_evidence, "
-            "unresolved_questions, and next_steps."
+            "unresolved_questions, and next_steps. For watchlist and no_action outputs, explicitly call out "
+            "stale evidence, conflicting signals, and missing confirmation before approval."
         ),
         "user": f"{payload}\n\nResearch trace summary:\n{trace_summary}",
     }
