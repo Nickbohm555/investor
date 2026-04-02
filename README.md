@@ -40,6 +40,12 @@ Editable source: `docs/architecture/flow-steps/03-research-agent-quiver-loop.exc
 
 ![Research agent and Quiver loop flow](docs/architecture/flow-steps/03-research-agent-quiver-loop.png)
 
+## Quiver Research Flow
+
+![Quiver research flow](docs/architecture/quiver-research-flow.png)
+
+The live Quiver research loop makes four distinct calls before the model decides what deserves follow-up investigation. `/beta/live/congresstrading` supplies the broad unusual legislative trade signal, `/beta/live/insiders` adds ticker-specific corporate insider confirmation, `/beta/live/govcontracts` adds contract-backed demand / revenue context, and `/beta/live/lobbying` adds policy/regulatory interest context. Those feeds become evidence bundles, shortlist seeds, follow-up investigation, and final recommendations rather than one undifferentiated Quiver blob.
+
 ### 4. Strategic Report + Email Delivery
 
 Editable source: `docs/architecture/flow-steps/04-report-email-delivery.excalidraw`
