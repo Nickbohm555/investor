@@ -235,10 +235,12 @@ Plans:
 
 ### Phase 14: Deepen watchlist explanations and follow-up guidance
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Watchlist and no-action reports explain why ideas are not yet actionable, what evidence is missing, and what to investigate next through persisted structured report fields and rendered memo sections
+**Requirements**: WLG-01, WLG-02, WLG-03
 **Depends on:** Phase 13
-**Plans:** 0 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 14 to break down)
+- [ ] 14-01-PLAN.md — Restore report tests and upgrade the watchlist/report schema contract with explicit guidance fields
+- [ ] 14-02-PLAN.md — Enrich the research prompt and deterministic builder for explicit watchlist guidance
+- [ ] 14-03-PLAN.md — Render, persist, and document the richer watchlist guidance with verification coverage
