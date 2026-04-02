@@ -21,7 +21,7 @@ This roadmap turns the current investor prototype into an env-ready local app by
 - [x] **Phase 13: Replace Host Cron Scripts With A Docker-Native Scheduler** - Move scheduling off host crontab management and into a container-native scheduler path (completed 2026-04-02)
 - [x] **Phase 14: Deepen Watchlist Explanations And Follow-Up Guidance** - Make watchlist items explain uncertainty, missing evidence, and next investigation steps in more detail (completed 2026-04-02)
 - [ ] **Phase 15: Prove The Live Quiver-To-Email Workflow End To End** - Run the real Quiver, LLM, email, and approval-link path with live credentials and capture an operator-proof runbook
-- [ ] **Phase 16: Deepen Quiver Signal Coverage And Agent Evaluation** - Expand the research surface and tune the Quiver agent against a repeatable evaluation harness
+- [x] **Phase 16: Deepen Quiver Signal Coverage And Agent Evaluation** - Expand the research surface and tune the Quiver agent against a repeatable evaluation harness (completed 2026-04-02)
 - [ ] **Phase 17: Harden Live-Run Approval, Observability, And Replay Operations** - Make live runs easier to debug, replay, and operate safely once real traffic starts
 
 ## Phase Details
@@ -224,7 +224,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 13. Replace Host Cron Scripts With A Docker-Native Scheduler | 3/3 | Complete | 2026-04-02 |
 | 14. Deepen Watchlist Explanations And Follow-Up Guidance | 3/3 | Complete   | 2026-04-02 |
 | 15. Prove The Live Quiver-To-Email Workflow End To End | 0/0 | Not started | — |
-| 16. Deepen Quiver Signal Coverage And Agent Evaluation | 0/0 | Not started | — |
+| 16. Deepen Quiver Signal Coverage And Agent Evaluation | 3/3 | Complete | 2026-04-02 |
 | 17. Harden Live-Run Approval, Observability, And Replay Operations | 0/0 | Not started | — |
 
 ### Phase 13: Replace host cron scripts with a docker-native scheduler
@@ -280,9 +280,9 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 16-01-PLAN.md — Add the documented bill-summary Quiver tool and persist rationale-aware follow-up traces
-- [ ] 16-02-PLAN.md — Build a replayable evaluation harness for candidate, watchlist, and no-action quality
-- [ ] 16-03-PLAN.md — Tune shortlist and prompt behavior from measured eval deltas and surface freshness/conflict cues
+- [x] 16-01-PLAN.md — Add the documented bill-summary Quiver tool and persist rationale-aware follow-up traces
+- [x] 16-02-PLAN.md — Build a replayable evaluation harness for candidate, watchlist, and no-action quality
+- [x] 16-03-PLAN.md — Tune shortlist and prompt behavior from measured eval deltas and surface freshness/conflict cues
 
 ### Phase 17: Harden live-run approval, observability, and replay operations
 
