@@ -1,0 +1,2 @@
+CRON_TZ=America/New_York
+${INVESTOR_SCHEDULE_CRON_EXPRESSION:-0 7 * * 1-5} /app/ops/scheduler/trigger-scheduled.sh
