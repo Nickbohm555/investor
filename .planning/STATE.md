@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 status: unknown
 stopped_at: Completed 14-01-PLAN.md
-last_updated: "2026-04-02T06:10:09.957Z"
+last_updated: "2026-04-02T06:13:48.023Z"
 progress:
   total_phases: 14
   completed_phases: 11
   total_plans: 35
-  completed_plans: 33
+  completed_plans: 34
 ---
 
 # Project State
@@ -53,6 +53,7 @@ Plan: 2 of 3
 | Phase 04 P01 | 7 min | 2 tasks | 7 files |
 | Phase 04 P02 | 8 min | 2 tasks | 11 files |
 | Phase 04 P03 | 14 min | 2 tasks | 8 files |
+| Phase 14 P02 | 4 min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -91,6 +92,8 @@ Plan: 2 of 3
 - [Phase 13]: Container migrations need explicit Alembic config, psycopg URL normalization, and a widened `alembic_version.version_num` before the Docker runtime can reach app startup. — The repo's historical revision IDs and `psycopg` dependency require bootstrap logic that the old host-run migration path hid.
 - [Phase 14]: Persist watchlist guidance as explicit named fields on both watchlist candidates and research-queue report items instead of deriving everything from generic uncertainty text. — Later prompt, workflow, and rendering work now consume durable structured values rather than reconstructing explanation detail from prose.
 - [Phase 14]: Keep no-action output on the same research_queue contract by supplying deterministic fallback watchlist guidance values rather than creating a second report shape. — The shared contract preserves one operator-visible report surface across watchlist and no-action outcomes.
+- [Phase 14]: Keep the legacy and final prompt paths on one shared system prompt so watchlist guidance requirements cannot drift between code paths. — Both prompt entry points now enforce the same schema contract, reducing silent drift between loop-agent and legacy prompt usage.
+- [Phase 14]: Once prompt-supplied watchlist guidance exists, the builder should fall back to summary-derived defaults only when those structured fields are absent. — Prompt-owned guidance should win; deterministic fallbacks remain only as safety nets when the structured fields are empty.
 
 ### Pending Todos
 
