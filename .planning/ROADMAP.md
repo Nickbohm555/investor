@@ -223,13 +223,15 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ### Phase 13: Replace host cron scripts with a docker-native scheduler
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** The scheduled workflow runs from the shipped Docker Compose stack, triggers the existing scheduled route on schedule, and remains duplicate-safe and observable without host crontab management
+**Requirements**: TBD-13-01, TBD-13-02, TBD-13-03
 **Depends on:** Phase 12
-**Plans:** 0 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 13 to break down)
+- [ ] 13-01-PLAN.md — Restore the missing scheduling test harness and add the base Docker/Supercronic assets
+- [ ] 13-02-PLAN.md — Wire the four-service Compose runtime to the existing scheduled route and preserve dedupe behavior
+- [ ] 13-03-PLAN.md — Remove the host cron operator path and lock docs to the Compose-native scheduler workflow
 
 ### Phase 14: Deepen watchlist explanations and follow-up guidance
 
