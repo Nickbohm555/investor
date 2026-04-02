@@ -7,6 +7,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 PHASE_15_DIR = PROJECT_ROOT / ".planning/phases/15-prove-the-live-quiver-to-email-workflow-end-to-end"
 PHASE_15_RUNBOOK = PHASE_15_DIR / "15-LIVE-PROOF-RUNBOOK.md"
 PHASE_15_RESULT = PHASE_15_DIR / "15-LIVE-PROOF-RESULT.md"
+QUIVER_RESEARCH_FLOW_CONTRACT = PROJECT_ROOT / "docs/architecture/quiver-research-flow-contract.md"
+QUIVER_RESEARCH_FLOW_EXCALIDRAW = PROJECT_ROOT / "docs/architecture/quiver-research-flow.excalidraw"
+QUIVER_RESEARCH_FLOW_PNG = PROJECT_ROOT / "docs/architecture/quiver-research-flow.png"
 
 
 def test_readme_requires_docker_native_scheduler_commands() -> None:
@@ -82,3 +85,31 @@ def test_phase_15_result_template_requires_operator_visible_proof_fields() -> No
     assert "state_transition_count:" in result_text
     assert "broker_artifact_count:" in result_text
     assert "remaining_manual_steps:" in result_text
+
+
+def test_readme_links_quiver_research_flow_asset() -> None:
+    readme_text = (PROJECT_ROOT / "README.md").read_text()
+
+    assert "## Quiver Research Flow" in readme_text
+    assert "docs/architecture/quiver-research-flow.png" in readme_text
+
+
+def test_quiver_research_flow_assets_exist() -> None:
+    assert QUIVER_RESEARCH_FLOW_EXCALIDRAW.exists()
+    assert QUIVER_RESEARCH_FLOW_PNG.exists()
+
+
+def test_quiver_research_flow_docs_name_the_exact_four_live_endpoints() -> None:
+    readme_text = (PROJECT_ROOT / "README.md").read_text()
+    contract_text = QUIVER_RESEARCH_FLOW_CONTRACT.read_text()
+    excalidraw_text = QUIVER_RESEARCH_FLOW_EXCALIDRAW.read_text()
+
+    for content in (readme_text, contract_text, excalidraw_text):
+        assert "/beta/live/congresstrading" in content
+        assert "/beta/live/insiders" in content
+        assert "/beta/live/govcontracts" in content
+        assert "/beta/live/lobbying" in content
+        assert "broad unusual legislative trade signal" in content
+        assert "ticker-specific corporate insider confirmation" in content
+        assert "contract-backed demand / revenue context" in content
+        assert "policy/regulatory interest context" in content
