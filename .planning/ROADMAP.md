@@ -289,7 +289,8 @@ Plans:
 1. Operators can distinguish Quiver, LLM, SMTP, approval-link, and broker-side failures from persisted run records and logs without code spelunking
 2. A specific live run can be replayed or re-driven with preserved evidence and trace context for debugging and quality review
 3. Secrets handling, runbooks, and safety checks are good enough to keep iterating on live credentials without leaking or silently misrouting approvals
-4. The repo contains an accurate Excalidraw diagram showing how the research agent pulls data from Quiver, processes follow-up investigation steps, and reaches report output, and the README links or embeds that architecture detail
+4. The repo contains a deliberately spaced, easy-to-read Excalidraw diagram showing how the research agent pulls data from Quiver, which specific API calls are used, and why each call exists in the research flow
+5. The Excalidraw is exported to a screenshot asset, and the README embeds or links that screenshot with a clear explanation of the Quiver API calls and their purpose
 **Plans:** 0 plans
 
 Plans:
