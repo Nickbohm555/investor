@@ -293,7 +293,10 @@ Plans:
 3. Secrets handling, runbooks, and safety checks are good enough to keep iterating on live credentials without leaking or silently misrouting approvals
 4. The repo contains a deliberately spaced, easy-to-read Excalidraw diagram showing how the research agent pulls data from Quiver, which specific API calls are used, and why each call exists in the research flow
 5. The Excalidraw is exported to a screenshot asset, and the README embeds or links that screenshot with a clear explanation of the Quiver API calls and their purpose
-**Plans:** 0 plans
+**Plans:** 4 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 17 to break down)
+- [ ] 17-01-PLAN.md — Create the durable operation-event ledger and redaction helpers
+- [ ] 17-02-PLAN.md — Instrument Quiver, LLM, SMTP, approval, and broker seams to persist correlated operation events
+- [ ] 17-03-PLAN.md — Add live-run inspect, replay, re-drive, and safety tooling with linked-run lineage
+- [ ] 17-04-PLAN.md — Document the real Quiver research flow with a repo-owned diagram, PNG export, and README section
