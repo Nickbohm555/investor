@@ -4,9 +4,9 @@ milestone: v1.0
 milestone_name: milestone
 status: ready_to_verify
 stopped_at: Completed 14-03-PLAN.md
-last_updated: "2026-04-02T06:18:35.150Z"
+last_updated: "2026-04-02T11:15:00.000Z"
 progress:
-  total_phases: 14
+  total_phases: 17
   completed_phases: 12
   total_plans: 35
   completed_plans: 35
@@ -19,7 +19,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** The system must produce trustworthy daily recommendations on schedule and carry approved ideas into a safe broker-review path without brittle manual steps.
-**Current focus:** Phase 14 complete — deepen-watchlist-explanations-and-follow-up-guidance
+**Current focus:** Phase 14 complete — roadmap extended with live Quiver proof, agent-eval, and live-ops hardening follow-up phases
 
 ## Current Position
 
@@ -112,10 +112,14 @@ None yet.
 - Phase 12 added: System diagram and README architecture capture
 - Phase 13 added: Replace host cron scripts with a docker-native scheduler
 - Phase 14 added: Deepen watchlist explanations and follow-up guidance
+- Phase 15 added: Prove the live Quiver-to-email workflow end to end
+- Phase 16 added: Deepen Quiver signal coverage and agent evaluation
+- Phase 17 added: Harden live-run approval, observability, and replay operations
 
 ### Blockers/Concerns
 
 - The Docker-native smoke path now reaches app startup, but the final host bind on `8000` could not be proven on this machine because the unrelated `web-agent-backend-1` container already owns `0.0.0.0:8000`.
+- A true end-to-end live proof still needs non-Quiver credentials and infrastructure that are not present in `keys.txt`: SMTP delivery settings, an OpenAI-compatible model key/base URL, and a reachable `INVESTOR_EXTERNAL_BASE_URL` for approval callbacks.
 
 ## Session Continuity
 

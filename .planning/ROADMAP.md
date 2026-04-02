@@ -18,8 +18,11 @@ This roadmap turns the current investor prototype into an env-ready local app by
 - [x] **Phase 6: Replace LangGraph With A Custom Workflow Engine** - Remove graph/checkpointer semantics and own workflow persistence, approval, and transitions directly (completed 2026-03-31)
 - [x] **Phase 7: Build A Loop-Based Quiver Agent** - Replace one-shot research generation with an iterative tool-using Quiver agent (completed 2026-03-31)
 - [x] **Phase 8: Upgrade Outputs To Strategic Insight Reports** - Turn daily output into decision-quality insight reports with change-aware rationale (completed 2026-03-31)
-- [ ] **Phase 13: Replace Host Cron Scripts With A Docker-Native Scheduler** - Move scheduling off host crontab management and into a container-native scheduler path
+- [x] **Phase 13: Replace Host Cron Scripts With A Docker-Native Scheduler** - Move scheduling off host crontab management and into a container-native scheduler path (completed 2026-04-02)
 - [x] **Phase 14: Deepen Watchlist Explanations And Follow-Up Guidance** - Make watchlist items explain uncertainty, missing evidence, and next investigation steps in more detail (completed 2026-04-02)
+- [ ] **Phase 15: Prove The Live Quiver-To-Email Workflow End To End** - Run the real Quiver, LLM, email, and approval-link path with live credentials and capture an operator-proof runbook
+- [ ] **Phase 16: Deepen Quiver Signal Coverage And Agent Evaluation** - Expand the research surface and tune the Quiver agent against a repeatable evaluation harness
+- [ ] **Phase 17: Harden Live-Run Approval, Observability, And Replay Operations** - Make live runs easier to debug, replay, and operate safely once real traffic starts
 
 ## Phase Details
 
@@ -202,7 +205,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -220,6 +223,9 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 12. System Diagram And README Architecture Capture | 2/2 | Complete | 2026-04-01 |
 | 13. Replace Host Cron Scripts With A Docker-Native Scheduler | 3/3 | Complete | 2026-04-02 |
 | 14. Deepen Watchlist Explanations And Follow-Up Guidance | 3/3 | Complete   | 2026-04-02 |
+| 15. Prove The Live Quiver-To-Email Workflow End To End | 0/0 | Not started | — |
+| 16. Deepen Quiver Signal Coverage And Agent Evaluation | 0/0 | Not started | — |
+| 17. Harden Live-Run Approval, Observability, And Replay Operations | 0/0 | Not started | — |
 
 ### Phase 13: Replace host cron scripts with a docker-native scheduler
 
@@ -244,3 +250,47 @@ Plans:
 - [x] 14-01-PLAN.md — Restore report tests and upgrade the watchlist/report schema contract with explicit guidance fields
 - [x] 14-02-PLAN.md — Enrich the research prompt and deterministic builder for explicit watchlist guidance
 - [x] 14-03-PLAN.md — Render, persist, and document the richer watchlist guidance with verification coverage
+
+### Phase 15: Prove the live Quiver-to-email workflow end to end
+
+**Goal:** The repo can complete one real operator-visible run from live Quiver data through delivered email to the configured operator inbox and approval callback without mock transports or undocumented manual glue
+**Requirements**: LQE-01, LQE-02, LQE-03
+**Depends on:** Phase 14
+**Success Criteria** (what must be TRUE):
+1. A real run using your Quiver auth, configured OpenAI-compatible model, and SMTP path completes and sends a memo to `INVESTOR_DAILY_MEMO_TO_EMAIL` for the target operator inbox (`nickbohm555@gmail.com` for the live proof)
+2. The delivered memo contains a working approval link against the configured external base URL, and the callback reaches the expected persisted run state
+3. Repo docs and logs capture the exact live-proof workflow, failure modes, and remaining manual steps required after delivery
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 15 to break down)
+
+### Phase 16: Deepen Quiver signal coverage and agent evaluation
+
+**Goal:** The research agent improves based on documented Quiver capabilities and measured output quality instead of intuition, with broader signal coverage and repeatable evaluation loops
+**Requirements**: QRA-01, QRA-02, QRA-03, QRA-04
+**Depends on:** Phase 15
+**Success Criteria** (what must be TRUE):
+1. The Quiver agent uses a broader, explicitly documented signal surface and persists why each follow-up investigation was chosen
+2. A replayable evaluation harness scores candidate, watchlist, and no-action quality against saved live or fixture-backed research cases
+3. Prompt, budget, and ranking changes are justified by measured evaluation deltas instead of ad hoc tweaking
+4. Operator-facing output better explains evidence freshness, conflicts, and missing confirmation before approval
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 16 to break down)
+
+### Phase 17: Harden live-run approval, observability, and replay operations
+
+**Goal:** Live operator runs are debuggable, replayable, and safe to operate once real credentials and delivery paths are in use, with a repo-owned diagram and README explanation of the real Quiver research flow
+**Requirements**: OPS-01, OPS-02, OPS-03, ARCH-OPS-04
+**Depends on:** Phase 16
+**Success Criteria** (what must be TRUE):
+1. Operators can distinguish Quiver, LLM, SMTP, approval-link, and broker-side failures from persisted run records and logs without code spelunking
+2. A specific live run can be replayed or re-driven with preserved evidence and trace context for debugging and quality review
+3. Secrets handling, runbooks, and safety checks are good enough to keep iterating on live credentials without leaking or silently misrouting approvals
+4. The repo contains an accurate Excalidraw diagram showing how the research agent pulls data from Quiver, processes follow-up investigation steps, and reaches report output, and the README links or embeds that architecture detail
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 17 to break down)
