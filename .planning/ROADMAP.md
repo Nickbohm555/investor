@@ -19,7 +19,7 @@ This roadmap turns the current investor prototype into an env-ready local app by
 - [x] **Phase 7: Build A Loop-Based Quiver Agent** - Replace one-shot research generation with an iterative tool-using Quiver agent (completed 2026-03-31)
 - [x] **Phase 8: Upgrade Outputs To Strategic Insight Reports** - Turn daily output into decision-quality insight reports with change-aware rationale (completed 2026-03-31)
 - [ ] **Phase 13: Replace Host Cron Scripts With A Docker-Native Scheduler** - Move scheduling off host crontab management and into a container-native scheduler path
-- [ ] **Phase 14: Deepen Watchlist Explanations And Follow-Up Guidance** - Make watchlist items explain uncertainty, missing evidence, and next investigation steps in more detail
+- [x] **Phase 14: Deepen Watchlist Explanations And Follow-Up Guidance** - Make watchlist items explain uncertainty, missing evidence, and next investigation steps in more detail (completed 2026-04-02)
 
 ## Phase Details
 
@@ -219,7 +219,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 11. Scheduling Reliability And End-To-End Execution Proof | 3/3 | Complete   | 2026-04-01 |
 | 12. System Diagram And README Architecture Capture | 2/2 | Complete | 2026-04-01 |
 | 13. Replace Host Cron Scripts With A Docker-Native Scheduler | 3/3 | Complete | 2026-04-02 |
-| 14. Deepen Watchlist Explanations And Follow-Up Guidance | 2/3 | In Progress|  |
+| 14. Deepen Watchlist Explanations And Follow-Up Guidance | 3/3 | Complete   | 2026-04-02 |
 
 ### Phase 13: Replace host cron scripts with a docker-native scheduler
 
@@ -238,9 +238,9 @@ Plans:
 **Goal:** Watchlist and no-action reports explain why ideas are not yet actionable, what evidence is missing, and what to investigate next through persisted structured report fields and rendered memo sections
 **Requirements**: WLG-01, WLG-02, WLG-03
 **Depends on:** Phase 13
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
-- [ ] 14-01-PLAN.md — Restore report tests and upgrade the watchlist/report schema contract with explicit guidance fields
-- [ ] 14-02-PLAN.md — Enrich the research prompt and deterministic builder for explicit watchlist guidance
-- [ ] 14-03-PLAN.md — Render, persist, and document the richer watchlist guidance with verification coverage
+- [x] 14-01-PLAN.md — Restore report tests and upgrade the watchlist/report schema contract with explicit guidance fields
+- [x] 14-02-PLAN.md — Enrich the research prompt and deterministic builder for explicit watchlist guidance
+- [x] 14-03-PLAN.md — Render, persist, and document the richer watchlist guidance with verification coverage

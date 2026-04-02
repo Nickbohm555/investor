@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-stopped_at: Completed 14-01-PLAN.md
-last_updated: "2026-04-02T06:13:48.023Z"
+status: ready_to_verify
+stopped_at: Completed 14-03-PLAN.md
+last_updated: "2026-04-02T06:18:35.150Z"
 progress:
   total_phases: 14
-  completed_phases: 11
+  completed_phases: 12
   total_plans: 35
-  completed_plans: 34
+  completed_plans: 35
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** The system must produce trustworthy daily recommendations on schedule and carry approved ideas into a safe broker-review path without brittle manual steps.
-**Current focus:** Phase 14 — deepen-watchlist-explanations-and-follow-up-guidance
+**Current focus:** Phase 14 complete — deepen-watchlist-explanations-and-follow-up-guidance
 
 ## Current Position
 
-Phase: 14 (deepen-watchlist-explanations-and-follow-up-guidance) — EXECUTING
-Plan: 2 of 3
+Phase: 14 (deepen-watchlist-explanations-and-follow-up-guidance) — COMPLETE
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -94,6 +94,8 @@ Plan: 2 of 3
 - [Phase 14]: Keep no-action output on the same research_queue contract by supplying deterministic fallback watchlist guidance values rather than creating a second report shape. — The shared contract preserves one operator-visible report surface across watchlist and no-action outcomes.
 - [Phase 14]: Keep the legacy and final prompt paths on one shared system prompt so watchlist guidance requirements cannot drift between code paths. — Both prompt entry points now enforce the same schema contract, reducing silent drift between loop-agent and legacy prompt usage.
 - [Phase 14]: Once prompt-supplied watchlist guidance exists, the builder should fall back to summary-derived defaults only when those structured fields are absent. — Prompt-owned guidance should win; deterministic fallbacks remain only as safety nets when the structured fields are empty.
+- [Phase 14]: Keep watchlist and no-action guidance inside one shared Research Queue section with neutral labels instead of branching to separate output formats. — One shared report surface keeps the operator memo stable while still exposing richer structured detail.
+- [Phase 14]: Verify the persisted workflow payload through the existing report.model_dump(mode="python") path rather than adding duplicate persistence-specific code. — The current workflow seam already persists the strategic report payload, so tests should prove that path instead of introducing redundant logic.
 
 ### Pending Todos
 
@@ -117,6 +119,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-02T06:09:34.798Z
-Stopped at: Completed 14-01-PLAN.md
+Last session: 2026-04-02T06:18:35.150Z
+Stopped at: Completed 14-03-PLAN.md
 Resume file: None
