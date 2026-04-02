@@ -3,7 +3,11 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from app.schemas.quiver import SignalRecord, TickerEvidenceBundle
-from app.services.research_prompt import build_final_research_payload, build_research_prompt_payload
+from app.services.research_prompt import (
+    build_final_research_payload,
+    build_quiver_loop_system_prompt,
+    build_research_prompt_payload,
+)
 
 
 def _bundle() -> TickerEvidenceBundle:
@@ -46,3 +50,10 @@ def test_build_research_prompt_payload_keeps_json_only_watchlist_contract() -> N
     assert "Return JSON only." in payload["system"]
     assert "Every watchlist item must include watchlist_reason, missing_evidence, unresolved_questions, and next_steps." in payload["system"]
     assert "candidates, watchlist, or no_action." in payload["system"]
+
+
+def test_build_quiver_loop_system_prompt_mentions_bill_summaries_and_rationale_instruction() -> None:
+    system_prompt = build_quiver_loop_system_prompt(max_steps=4, max_tool_calls=3)
+
+    assert "get_live_bill_summaries" in system_prompt
+    assert "explain why each follow-up tool call is needed before using it" in system_prompt

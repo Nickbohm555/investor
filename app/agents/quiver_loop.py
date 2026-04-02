@@ -110,16 +110,19 @@ class QuiverLoopAgent:
                 function_payload = tool_call["function"]
                 tool_name = function_payload["name"]
                 tool_args = json.loads(function_payload.get("arguments") or "{}")
-                ticker = str(tool_args.get("ticker") or "").upper()
-                tool_result = self._execute_tool(quiver_client, tool_name, ticker)
+                tool_result, tracked_value, tracks_ticker = self._execute_tool(
+                    quiver_client,
+                    tool_name,
+                    tool_args,
+                )
                 tool_call_count += 1
-                if ticker and ticker not in investigated_tickers:
-                    investigated_tickers.append(ticker)
+                if tracks_ticker and tracked_value and tracked_value not in investigated_tickers:
+                    investigated_tickers.append(tracked_value)
                 trace.append(
                     AgentTraceStep(
                         step_index=step_index,
                         action="tool_call",
-                        rationale=f"Executed {tool_name} for {ticker}.",
+                        rationale=str(assistant_message.get("content") or f"Executed {tool_name}."),
                         tool_name=tool_name,
                         tool_args=tool_args,
                         result_summary=f"{len(tool_result)} row(s) returned.",
@@ -172,25 +175,72 @@ class QuiverLoopAgent:
                 "type": "function",
                 "function": {
                     "name": tool_name,
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "ticker": {"type": "string"},
-                        },
-                        "required": ["ticker"],
-                    },
+                    "parameters": config["parameters"],
                 },
             }
-            for tool_name in (
-                "get_live_congress_trading",
-                "get_live_insider_trading",
-                "get_live_government_contracts",
-                "get_live_lobbying",
-            )
+            for tool_name, config in self._tool_registry().items()
         ]
 
-    def _execute_tool(self, quiver_client, tool_name: str, ticker: str):
-        return getattr(quiver_client, tool_name)(ticker=ticker)
+    def _tool_registry(self) -> Dict[str, Dict[str, object]]:
+        return {
+            "get_live_congress_trading": {
+                "parameters": {
+                    "type": "object",
+                    "properties": {"ticker": {"type": "string"}},
+                    "required": ["ticker"],
+                },
+                "arg_name": "ticker",
+                "normalize": lambda value: str(value or "").upper(),
+                "tracks_ticker": True,
+            },
+            "get_live_insider_trading": {
+                "parameters": {
+                    "type": "object",
+                    "properties": {"ticker": {"type": "string"}},
+                    "required": ["ticker"],
+                },
+                "arg_name": "ticker",
+                "normalize": lambda value: str(value or "").upper(),
+                "tracks_ticker": True,
+            },
+            "get_live_government_contracts": {
+                "parameters": {
+                    "type": "object",
+                    "properties": {"ticker": {"type": "string"}},
+                    "required": ["ticker"],
+                },
+                "arg_name": "ticker",
+                "normalize": lambda value: str(value or "").upper(),
+                "tracks_ticker": True,
+            },
+            "get_live_lobbying": {
+                "parameters": {
+                    "type": "object",
+                    "properties": {"ticker": {"type": "string"}},
+                    "required": ["ticker"],
+                },
+                "arg_name": "ticker",
+                "normalize": lambda value: str(value or "").upper(),
+                "tracks_ticker": True,
+            },
+            "get_live_bill_summaries": {
+                "parameters": {
+                    "type": "object",
+                    "properties": {"query": {"type": "string"}},
+                    "required": ["query"],
+                },
+                "arg_name": "query",
+                "normalize": lambda value: str(value or ""),
+                "tracks_ticker": False,
+            },
+        }
+
+    def _execute_tool(self, quiver_client, tool_name: str, tool_args: Dict[str, object]):
+        config = self._tool_registry()[tool_name]
+        arg_name = str(config["arg_name"])
+        normalize = config["normalize"]
+        value = normalize(tool_args.get(arg_name))
+        return getattr(quiver_client, tool_name)(**{arg_name: value}), value, bool(config["tracks_ticker"])
 
     def _serialize_row(self, row) -> Dict[str, object]:
         if hasattr(row, "model_dump"):

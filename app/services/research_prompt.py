@@ -9,7 +9,8 @@ def build_quiver_loop_system_prompt(*, max_steps: int, max_tool_calls: int) -> s
     return (
         "You are the investor research loop. Operate as a serial tool user and issue "
         "one tool call at a time. Available tools: get_live_congress_trading, "
-        "get_live_insider_trading, get_live_government_contracts, get_live_lobbying. "
+        "get_live_insider_trading, get_live_government_contracts, get_live_lobbying, "
+        "get_live_bill_summaries. explain why each follow-up tool call is needed before using it. "
         f"Max steps: {max_steps}. Max tool calls: {max_tool_calls}. "
         "Stop when evidence is sufficient, when no ticker remains worth investigating, "
         "or when a budget limit is reached."

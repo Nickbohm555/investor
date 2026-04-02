@@ -5,7 +5,7 @@ from typing import List, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
-SignalType = Literal["congress", "insider", "gov_contract", "lobbying"]
+SignalType = Literal["congress", "insider", "gov_contract", "lobbying", "bill"]
 SignalDirection = Literal["positive", "negative", "mixed", "neutral"]
 
 
@@ -36,6 +36,19 @@ class LobbyingDisclosure(QuiverRowModel):
     ticker: str = Field(alias="Ticker")
     client: Optional[str] = Field(default=None, alias="Client")
     issue: Optional[str] = Field(default=None, alias="Issue")
+
+
+class BillSummary(QuiverRowModel):
+    title: str = Field(alias="Title")
+    congress: Optional[str] = Field(default=None, alias="Congress")
+    number: Optional[str] = Field(default=None, alias="Number")
+    origin_chamber: Optional[str] = Field(default=None, alias="originChamber")
+    current_chamber: Optional[str] = Field(default=None, alias="currentChamber")
+    bill_type: Optional[str] = Field(default=None, alias="billType")
+    summary: Optional[str] = Field(default=None, alias="Summary")
+    url: Optional[str] = Field(default=None, alias="URL")
+    last_action: Optional[str] = Field(default=None, alias="lastAction")
+    last_action_date: Optional[str] = Field(default=None, alias="lastActionDate")
 
 
 class SignalRecord(BaseModel):
