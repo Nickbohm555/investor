@@ -1,6 +1,4 @@
 from __future__ import annotations
-
-import os
 from pathlib import Path
 
 import pytest
@@ -25,7 +23,6 @@ def app_with_runtime(tmp_path: Path) -> tuple[object, sessionmaker, MailProvider
     database_url = f"sqlite+pysqlite:///{tmp_path / 'investor.db'}"
     settings = _build_settings(database_url)
     _apply_env_overrides(settings)
-    os.environ["INVESTOR_SCHEDULE_TIMEZONE"] = settings.schedule_timezone
     session_factory = get_session_factory(database_url)
     Base.metadata.create_all(bind=session_factory.kw["bind"])
     mail_provider = MailProviderSpy()
