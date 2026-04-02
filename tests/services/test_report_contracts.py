@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import List
+
 import app.schemas.research as research_schema
 from app.schemas.reports import ResearchNeededItem
 
@@ -13,7 +15,7 @@ def test_watchlist_outcome_items_expose_explicit_guidance_fields() -> None:
     assert watchlist_candidate.model_fields["missing_evidence"].default_factory() == []
     assert watchlist_candidate.model_fields["unresolved_questions"].default_factory() == []
     assert watchlist_candidate.model_fields["next_steps"].default_factory() == []
-    assert research_schema.WatchlistOutcome.model_fields["items"].annotation == list[watchlist_candidate]
+    assert research_schema.WatchlistOutcome.model_fields["items"].annotation == List[watchlist_candidate]
 
 
 def test_research_needed_item_exposes_named_watchlist_guidance_fields() -> None:

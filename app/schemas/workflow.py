@@ -1,6 +1,11 @@
 from pydantic import BaseModel, Field
 
-from app.schemas.research import CandidateOutcome, CandidateRecommendation, ResearchOutcome
+from app.schemas.research import (
+    CandidateOutcome,
+    CandidateRecommendation,
+    ResearchOutcome,
+    WatchlistCandidate,
+)
 from app.schemas.reports import StrategicInsightReport
 
 
@@ -46,5 +51,6 @@ __all__ = [
     "ResearchResult",
     "StrategicInsightReport",
     "StructuredResearchResult",
+    "WatchlistCandidate",
     "WatchlistItem",
 ]

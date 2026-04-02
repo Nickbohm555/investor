@@ -6,7 +6,13 @@ from app.schemas.reports import (
     ResearchNeededItem,
     StrategicInsightReport,
 )
-from app.schemas.research import CandidateOutcome, CandidateRecommendation, NoActionOutcome, ResearchOutcome, WatchlistOutcome
+from app.schemas.research import (
+    CandidateOutcome,
+    CandidateRecommendation,
+    NoActionOutcome,
+    ResearchOutcome,
+    WatchlistOutcome,
+)
 from app.services.report_compare import compare_candidates
 
 
@@ -70,9 +76,14 @@ def build_strategic_insight_report(
             ResearchNeededItem(
                 ticker=item.ticker.upper(),
                 thesis=_build_thesis(item),
-                uncertainty=_build_uncertainty(item=item, fallback=outcome.summary),
-                follow_up_questions=item.opposing_evidence or [outcome.summary],
-                operator_action="Collect more Quiver evidence before approval.",
+                watchlist_reason=item.watchlist_reason
+                or (item.opposing_evidence[0] if item.opposing_evidence else outcome.summary),
+                missing_evidence=item.missing_evidence or item.risk_notes or [outcome.summary],
+                unresolved_questions=item.unresolved_questions
+                or item.opposing_evidence
+                or [outcome.summary],
+                next_steps=item.next_steps or ["Review the next Quiver refresh before approval."],
+                operator_action="Do not approve yet. Resolve the listed evidence gaps first.",
             )
             for item in outcome.items
         ]
@@ -91,9 +102,11 @@ def build_strategic_insight_report(
             ResearchNeededItem(
                 ticker=run_id.upper(),
                 thesis=outcome.summary,
-                uncertainty=outcome.summary,
-                follow_up_questions=outcome.reasons or [outcome.summary],
-                operator_action="Collect more Quiver evidence before approval.",
+                watchlist_reason=outcome.summary,
+                missing_evidence=outcome.reasons or [outcome.summary],
+                unresolved_questions=[],
+                next_steps=["Wait for materially new Quiver evidence before reconsidering."],
+                operator_action="Wait for materially new evidence before reconsidering.",
             )
         ]
         return _build_report(
@@ -166,9 +179,3 @@ def _build_defer_reason(candidate: CandidateRecommendation) -> str:
     if candidate.conviction_score < 0.75:
         return "Conviction below immediate threshold of 0.75."
     return "Re-check on the next market session."
-
-
-def _build_uncertainty(*, item: CandidateRecommendation, fallback: str) -> str:
-    if item.opposing_evidence:
-        return item.opposing_evidence[0]
-    return fallback

@@ -16,6 +16,13 @@ class CandidateRecommendation(BaseModel):
     broker_eligible: bool = True
 
 
+class WatchlistCandidate(CandidateRecommendation):
+    watchlist_reason: str = ""
+    missing_evidence: list[str] = Field(default_factory=list)
+    unresolved_questions: list[str] = Field(default_factory=list)
+    next_steps: list[str] = Field(default_factory=list)
+
+
 class CandidateOutcome(BaseModel):
     outcome: Literal["candidates"]
     recommendations: List[CandidateRecommendation]
@@ -24,7 +31,7 @@ class CandidateOutcome(BaseModel):
 class WatchlistOutcome(BaseModel):
     outcome: Literal["watchlist"]
     summary: str
-    items: List[CandidateRecommendation]
+    items: List[WatchlistCandidate]
 
 
 class NoActionOutcome(BaseModel):

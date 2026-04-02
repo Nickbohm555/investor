@@ -27,8 +27,10 @@ class ResearchNeededItem(BaseModel):
     bucket: Literal["research"] = "research"
     ticker: str
     thesis: str = ""
-    uncertainty: str = ""
-    follow_up_questions: List[str] = Field(default_factory=list)
+    watchlist_reason: str = ""
+    missing_evidence: List[str] = Field(default_factory=list)
+    unresolved_questions: List[str] = Field(default_factory=list)
+    next_steps: List[str] = Field(default_factory=list)
     operator_action: str = ""
 
 
