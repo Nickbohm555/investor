@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import tempfile
 from types import SimpleNamespace
 
 import httpx
@@ -208,74 +209,76 @@ def test_trigger_scheduled_posts_to_configured_route_with_repo_token_header(monk
 
 
 def test_inspect_run_reports_persisted_status_and_related_counts() -> None:
-    session_factory = get_session_factory("sqlite+pysqlite:///:memory:")
-    Base.metadata.create_all(bind=session_factory.kw["bind"])
-    settings = _build_settings(database_url="sqlite+pysqlite:///:memory:")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        database_url = f"sqlite+pysqlite:///{tmpdir}/live-proof.db"
+        session_factory = get_session_factory(database_url)
+        Base.metadata.create_all(bind=session_factory.kw["bind"])
+        settings = _build_settings(database_url=database_url)
 
-    with Session(session_factory.kw["bind"]) as session:
-        session.add(
-            RunRecord(
-                run_id="run-1234abcd",
-                status="awaiting_review",
-                trigger_source="scheduled",
-                approval_status="pending",
-                current_step="approval",
-                schedule_key="2026-04-02",
-                replay_of_run_id=None,
-                state_payload={"finalized_outcome": {"action": "buy"}},
+        with Session(session_factory.kw["bind"]) as session:
+            session.add(
+                RunRecord(
+                    run_id="run-1234abcd",
+                    status="awaiting_review",
+                    trigger_source="scheduled",
+                    approval_status="pending",
+                    current_step="approval",
+                    schedule_key="2026-04-02",
+                    replay_of_run_id=None,
+                    state_payload={"finalized_outcome": {"action": "buy"}},
+                )
             )
-        )
-        session.add(
-            RecommendationRecord(
-                run_id="run-1234abcd",
-                ticker="NVDA",
-                action="buy",
-                rationale="Signals aligned",
+            session.add(
+                RecommendationRecord(
+                    run_id="run-1234abcd",
+                    ticker="NVDA",
+                    action="buy",
+                    rationale="Signals aligned",
+                )
             )
-        )
-        session.add(
-            ApprovalEventRecord(
-                run_id="run-1234abcd",
-                decision="approve",
-                token_id="token-1",
+            session.add(
+                ApprovalEventRecord(
+                    run_id="run-1234abcd",
+                    decision="approve",
+                    token_id="token-1",
+                )
             )
-        )
-        session.add(
-            StateTransitionRecord(
-                run_id="run-1234abcd",
-                from_status="triggered",
-                to_status="awaiting_review",
-                reason="Workflow advanced",
+            session.add(
+                StateTransitionRecord(
+                    run_id="run-1234abcd",
+                    from_status="triggered",
+                    to_status="awaiting_review",
+                    reason="Workflow advanced",
+                )
             )
-        )
-        session.flush()
-        recommendation_id = session.execute(select(RecommendationRecord.id)).scalar_one()
-        session.add(
-            BrokerArtifactRecord(
-                run_id="run-1234abcd",
-                recommendation_id=recommendation_id,
-                broker_mode="paper",
-                symbol="NVDA",
-                side="buy",
-                order_type="market",
-                time_in_force="day",
-                qty="1",
-                notional=None,
-                client_order_id="run-1234abcd-1-paper",
-                status="draft_ready",
-                policy_snapshot_json={"mode": "paper"},
+            session.flush()
+            recommendation_id = session.execute(select(RecommendationRecord.id)).scalar_one()
+            session.add(
+                BrokerArtifactRecord(
+                    run_id="run-1234abcd",
+                    recommendation_id=recommendation_id,
+                    broker_mode="paper",
+                    symbol="NVDA",
+                    side="buy",
+                    order_type="market",
+                    time_in_force="day",
+                    qty="1",
+                    notional=None,
+                    client_order_id="run-1234abcd-1-paper",
+                    status="draft_ready",
+                    policy_snapshot_json={"mode": "paper"},
+                )
             )
-        )
-        session.commit()
+            session.commit()
 
-    result = live_proof._inspect_run(settings, "run-1234abcd")
+        result = live_proof._inspect_run(settings, "run-1234abcd")
 
-    assert result == {
-        "run_id": "run-1234abcd",
-        "status": "awaiting_review",
-        "current_step": "approval",
-        "approval_status": "pending",
-        "approval_event_count": 1,
-        "state_transition_count": 1,
-        "broker_artifact_count": 1,
-    }
+        assert result == {
+            "run_id": "run-1234abcd",
+            "status": "awaiting_review",
+            "current_step": "approval",
+            "approval_status": "pending",
+            "approval_event_count": 1,
+            "state_transition_count": 1,
+            "broker_artifact_count": 1,
+        }
