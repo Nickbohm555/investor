@@ -18,7 +18,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
+      - path: .env.example
+        required: false
     command: alembic upgrade head
     depends_on:
       postgres:
@@ -28,7 +32,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
+      - path: .env.example
+        required: false
     command: /app/ops/docker/start-app-runtime.sh
     depends_on:
       postgres:

@@ -32,3 +32,12 @@ def test_scheduler_runtime_targets_existing_route() -> None:
     assert "/app/ops/scheduler/trigger-scheduled.sh" in crontab_text
     assert "/runs/trigger/scheduled" in trigger_script_text
     assert "X-Investor-Scheduled-Trigger" in trigger_script_text
+
+
+def test_docker_runtime_defaults_use_compose_service_addresses() -> None:
+    env_example_text = (PROJECT_ROOT / ".env.example").read_text()
+
+    assert "INVESTOR_DATABASE_URL=postgresql://investor:investor@postgres:5432/investor" in env_example_text
+    assert "INVESTOR_SCHEDULE_TRIGGER_URL=http://127.0.0.1:8000/runs/trigger/scheduled" in env_example_text
+    assert "INVESTOR_SCHEDULE_CRON_EXPRESSION=0 7 * * 1-5" in env_example_text
+    assert "INVESTOR_SCHEDULE_TIMEZONE=America/New_York" in env_example_text
