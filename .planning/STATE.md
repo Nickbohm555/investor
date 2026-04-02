@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
+status: ready_to_verify
 stopped_at: Phase 12 complete
-last_updated: "2026-04-02T05:56:04Z"
+last_updated: "2026-04-02T06:03:32Z"
 progress:
   total_phases: 14
   completed_phases: 10
   total_plans: 35
-  completed_plans: 31
+  completed_plans: 32
 ---
 
 # Project State
@@ -19,11 +19,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** The system must produce trustworthy daily recommendations on schedule and carry approved ideas into a safe broker-review path without brittle manual steps.
-**Current focus:** Phase 13 — replace-host-cron-scripts-with-a-docker-native-scheduler
+**Current focus:** Phase 13 complete — replace-host-cron-scripts-with-a-docker-native-scheduler
 
 ## Current Position
 
-Phase: 13 (replace-host-cron-scripts-with-a-docker-native-scheduler) — EXECUTING
+Phase: 13 (replace-host-cron-scripts-with-a-docker-native-scheduler) — COMPLETE
 Plan: 3 of 3
 
 ## Performance Metrics
@@ -88,6 +88,7 @@ Plan: 3 of 3
 - [Phase 11]: Anchor the managed cron block to 7:00am ET through shared schedule expression and timezone defaults. — This keeps cron install, status, docs, and env defaults aligned on one operator-visible contract even on non-ET hosts.
 - [Phase 12]: Keep architecture docs anchored to the repo-owned Excalidraw source and the `broker_prestaged` runtime boundary. — This keeps the README screenshot derived from one editable asset and avoids presenting direct order submission as current architecture.
 - [Phase 13]: Rebuild scheduler coverage around the existing dry-run doubles and scheduled-trigger route, then let the app container own Supercronic while Compose exposes only `postgres`, `migrate`, and `app`. — This preserves the proven dedupe/runtime seam while moving scheduler operations into Docker-native repo assets.
+- [Phase 13]: Container migrations need explicit Alembic config, psycopg URL normalization, and a widened `alembic_version.version_num` before the Docker runtime can reach app startup. — The repo's historical revision IDs and `psycopg` dependency require bootstrap logic that the old host-run migration path hid.
 
 ### Pending Todos
 
@@ -107,7 +108,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- The documented Postgres smoke command could not be proven on this machine because the existing `localhost:5432` service rejected the documented `investor/investor` credentials.
+- The Docker-native smoke path now reaches app startup, but the final host bind on `8000` could not be proven on this machine because the unrelated `web-agent-backend-1` container already owns `0.0.0.0:8000`.
 
 ## Session Continuity
 
