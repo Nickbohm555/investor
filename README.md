@@ -10,6 +10,46 @@ The diagram shows the live operator and automation paths: manual and scheduled t
 
 The current approved path ends at `broker_prestaged`, where broker artifacts are persisted and ready for broker review. The README and diagram intentionally stop there rather than presenting direct order submission as the current architecture. Use `python -m app.ops.dry_run` as the fastest proof path that the trigger, memo, approval, and broker-prestage flow still line up.
 
+## Detailed Flow Diagrams
+
+These step-level diagrams break the runtime into separate, readable stages. Each screenshot has a matching editable `.excalidraw` source in `docs/architecture/flow-steps/`.
+
+### 1. Cron Install + Scheduled Trigger
+
+Editable source: `docs/architecture/flow-steps/01-cron-scheduled-trigger.excalidraw`
+
+![Cron install and scheduled trigger flow](docs/architecture/flow-steps/01-cron-scheduled-trigger.png)
+
+### 2. Scheduled API Ingress + Run Creation
+
+Editable source: `docs/architecture/flow-steps/02-scheduled-api-ingress.excalidraw`
+
+![Scheduled API ingress and run creation flow](docs/architecture/flow-steps/02-scheduled-api-ingress.png)
+
+### 3. Research Agent + Quiver Loop
+
+Editable source: `docs/architecture/flow-steps/03-research-agent-quiver-loop.excalidraw`
+
+![Research agent and Quiver loop flow](docs/architecture/flow-steps/03-research-agent-quiver-loop.png)
+
+### 4. Strategic Report + Email Delivery
+
+Editable source: `docs/architecture/flow-steps/04-report-email-delivery.excalidraw`
+
+![Strategic report and email delivery flow](docs/architecture/flow-steps/04-report-email-delivery.png)
+
+### 5. Approval Callback + Broker Prestage
+
+Editable source: `docs/architecture/flow-steps/05-approval-broker-prestage.excalidraw`
+
+![Approval callback and broker prestage flow](docs/architecture/flow-steps/05-approval-broker-prestage.png)
+
+### 6. Execution Confirmation + Order Submission
+
+Editable source: `docs/architecture/flow-steps/06-execution-order-submission.excalidraw`
+
+![Execution confirmation and order submission flow](docs/architecture/flow-steps/06-execution-order-submission.png)
+
 ## Setup
 
 ```bash
@@ -56,9 +96,8 @@ The managed cron contract is a repo-configured `7:00am ET` weekday install. Keep
 - INVESTOR_SCHEDULE_TIMEZONE is set to America/New_York for the managed 7:00am ET cron install
 - Cron is installed with ./scripts/cron-install.sh and verified with ./scripts/cron-status.sh
 
-## Acceptance Verification
+## Acceptance Check
 
 ```bash
-python -m pytest tests/ops/test_readiness.py tests/services/test_research_llm.py tests/ops/test_dry_run.py tests/ops/test_operational_docs.py -q
 python -m app.ops.dry_run
 ```

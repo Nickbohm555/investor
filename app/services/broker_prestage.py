@@ -99,17 +99,3 @@ class BrokerPrestageService:
                 )
 
         return artifacts
-
-
-_default_service: BrokerPrestageService | None = None
-
-
-def configure_broker_prestage_service(service: BrokerPrestageService) -> None:
-    global _default_service
-    _default_service = service
-
-
-def prestage_approved_recommendations(run_id: str, recommendation_ids: list[int], broker_mode: str) -> list[BrokerArtifact]:
-    if _default_service is None:
-        raise RuntimeError("Broker prestage service is not configured")
-    return _default_service.prestage_approved_recommendations(run_id, recommendation_ids, broker_mode)
