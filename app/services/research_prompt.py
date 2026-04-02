@@ -64,9 +64,10 @@ def build_final_research_payload(
     )
     return {
         "system": (
-            "Return JSON only. Choose exactly one outcome value from candidates, "
-            "watchlist, or no_action. Every recommendation-like item must include "
-            "supporting_evidence, opposing_evidence, risk_notes, and source_summary arrays."
+            "Return JSON only. Choose exactly one outcome value from candidates, watchlist, or no_action. "
+            "Every recommendation-like item must include supporting_evidence, opposing_evidence, risk_notes, "
+            "and source_summary arrays. Every watchlist item must include watchlist_reason, missing_evidence, "
+            "unresolved_questions, and next_steps."
         ),
         "user": f"{payload}\n\nResearch trace summary:\n{trace_summary}",
     }

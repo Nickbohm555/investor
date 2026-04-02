@@ -32,9 +32,9 @@ def test_build_strategic_insight_report_emits_named_watchlist_guidance_fields() 
     payload = report.research_queue[0].model_dump()
 
     assert payload["watchlist_reason"] == "Insider sales picked up."
-    assert payload["missing_evidence"] == ["Need more evidence."]
+    assert payload["missing_evidence"] == ["Signals are mixed."]
     assert payload["unresolved_questions"] == ["Insider sales picked up."]
-    assert payload["next_steps"] == ["Review the next Quiver refresh before approval."]
+    assert payload["next_steps"] == ["Check the next Quiver refresh before approval."]
 
 
 def test_build_strategic_insight_report_keeps_no_action_research_queue_valid_without_watchlist_items() -> None:

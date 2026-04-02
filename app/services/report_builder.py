@@ -78,11 +78,11 @@ def build_strategic_insight_report(
                 thesis=_build_thesis(item),
                 watchlist_reason=item.watchlist_reason
                 or (item.opposing_evidence[0] if item.opposing_evidence else outcome.summary),
-                missing_evidence=item.missing_evidence or item.risk_notes or [outcome.summary],
+                missing_evidence=item.missing_evidence or [outcome.summary],
                 unresolved_questions=item.unresolved_questions
                 or item.opposing_evidence
                 or [outcome.summary],
-                next_steps=item.next_steps or ["Review the next Quiver refresh before approval."],
+                next_steps=item.next_steps or ["Check the next Quiver refresh before approval."],
                 operator_action="Do not approve yet. Resolve the listed evidence gaps first.",
             )
             for item in outcome.items
