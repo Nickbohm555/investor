@@ -29,6 +29,7 @@ def _build_settings(database_url: str = "sqlite+pysqlite:///:memory:") -> Simple
         openai_model="gpt-4.1-mini",
         smtp_host="smtp.example.com",
         smtp_port=587,
+        smtp_security="auto",
         smtp_username="smtp-user",
         smtp_password="smtp-pass",
         smtp_from_email="investor@example.com",
@@ -170,6 +171,147 @@ def test_preflight_reports_quiver_llm_smtp_and_external_url_checks(monkeypatch) 
         "status_code": 404,
         "reachable": True,
     }
+
+
+def test_preflight_reports_blocking_smtp_status_and_non_blocking_approval_reachability(monkeypatch) -> None:
+    settings = _build_settings()
+
+    monkeypatch.setattr(
+        live_proof,
+        "QuiverClient",
+        lambda **kwargs: SimpleNamespace(
+            get_live_congress_trading=lambda ticker=None: [{"Ticker": "NVDA"}],
+            get_live_insider_trading=lambda ticker=None: [{"Ticker": "NVDA"}],
+            get_live_government_contracts=lambda ticker=None: [{"Ticker": "NVDA"}],
+            get_live_lobbying=lambda ticker=None: [{"Ticker": "NVDA"}],
+        ),
+    )
+    monkeypatch.setattr(
+        live_proof,
+        "HttpResearchLLM",
+        lambda **kwargs: SimpleNamespace(
+            complete_with_tools=lambda **call_kwargs: {"tool_calls": [{"id": "call-1"}]}
+        ),
+    )
+    monkeypatch.setattr(
+        live_proof,
+        "_check_smtp",
+        lambda _settings: {"host": settings.smtp_host, "port": settings.smtp_port},
+    )
+    monkeypatch.setattr(
+        live_proof,
+        "_check_reachability",
+        lambda _settings: {
+            "approval_probe_url": "https://investor.example.com/approval/probe",
+            "status_code": 404,
+            "reachable": True,
+        },
+    )
+
+    result = live_proof._run_preflight(settings)
+
+    assert set(result) == {
+        "quiver_checks",
+        "llm_check",
+        "smtp_check",
+        "external_base_url",
+        "reachability_check",
+        "smtp_ready",
+        "approval_reachability_ready",
+        "blocking_failures",
+        "warnings",
+    }
+    assert result["smtp_ready"] is True
+    assert result["approval_reachability_ready"] is True
+    assert result["blocking_failures"] == []
+    assert result["warnings"] == []
+
+
+def test_preflight_does_not_block_on_unreachable_approval_host(monkeypatch) -> None:
+    settings = _build_settings()
+
+    monkeypatch.setattr(
+        live_proof,
+        "QuiverClient",
+        lambda **kwargs: SimpleNamespace(
+            get_live_congress_trading=lambda ticker=None: [{"Ticker": "NVDA"}],
+            get_live_insider_trading=lambda ticker=None: [{"Ticker": "NVDA"}],
+            get_live_government_contracts=lambda ticker=None: [{"Ticker": "NVDA"}],
+            get_live_lobbying=lambda ticker=None: [{"Ticker": "NVDA"}],
+        ),
+    )
+    monkeypatch.setattr(
+        live_proof,
+        "HttpResearchLLM",
+        lambda **kwargs: SimpleNamespace(
+            complete_with_tools=lambda **call_kwargs: {"tool_calls": [{"id": "call-1"}]}
+        ),
+    )
+    monkeypatch.setattr(
+        live_proof,
+        "_check_smtp",
+        lambda _settings: {"host": settings.smtp_host, "port": settings.smtp_port},
+    )
+    monkeypatch.setattr(
+        live_proof,
+        "_check_reachability",
+        lambda _settings: {
+            "approval_probe_url": "https://investor.example.com/approval/probe",
+            "status_code": None,
+            "reachable": False,
+        },
+    )
+
+    result = live_proof._run_preflight(settings)
+
+    assert result["smtp_ready"] is True
+    assert result["approval_reachability_ready"] is False
+    assert result["blocking_failures"] == []
+    assert result["warnings"] == ["approval-link-unreachable"]
+
+
+def test_preflight_surfaces_smtp_transport_mode_diagnostic(monkeypatch) -> None:
+    settings = _build_settings()
+
+    monkeypatch.setattr(
+        live_proof,
+        "QuiverClient",
+        lambda **kwargs: SimpleNamespace(
+            get_live_congress_trading=lambda ticker=None: [{"Ticker": "NVDA"}],
+            get_live_insider_trading=lambda ticker=None: [{"Ticker": "NVDA"}],
+            get_live_government_contracts=lambda ticker=None: [{"Ticker": "NVDA"}],
+            get_live_lobbying=lambda ticker=None: [{"Ticker": "NVDA"}],
+        ),
+    )
+    monkeypatch.setattr(
+        live_proof,
+        "HttpResearchLLM",
+        lambda **kwargs: SimpleNamespace(
+            complete_with_tools=lambda **call_kwargs: {"tool_calls": [{"id": "call-1"}]}
+        ),
+    )
+
+    def fake_check_smtp(_settings):
+        raise ValueError("Unsupported SMTP transport mode")
+
+    monkeypatch.setattr(live_proof, "_check_smtp", fake_check_smtp)
+    monkeypatch.setattr(
+        live_proof,
+        "_check_reachability",
+        lambda _settings: {
+            "approval_probe_url": "https://investor.example.com/approval/probe",
+            "status_code": 404,
+            "reachable": True,
+        },
+    )
+
+    result = live_proof._run_preflight(settings)
+
+    assert result["smtp_check"]["error"] == "Unsupported SMTP transport mode"
+    assert result["smtp_ready"] is False
+    assert result["approval_reachability_ready"] is True
+    assert result["blocking_failures"] == ["smtp"]
+    assert result["warnings"] == []
 
 
 def test_trigger_scheduled_posts_to_configured_route_with_repo_token_header(monkeypatch) -> None:
