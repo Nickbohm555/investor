@@ -312,3 +312,13 @@ Plans:
 
 Plans:
 - [ ] TBD (run /gsd:plan-phase 18 to break down)
+
+### Phase 19: Prove real SMTP memo delivery without approval-link dependency
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 18
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 19 to break down)
