@@ -1,0 +1,15 @@
+run_id: <pending>
+scheduled_trigger_status: <pending>
+memo_delivered_to: <pending>
+approval_link_host: <pending>
+approval_callback_status: skipped-for-phase-19
+smtp_ready: <pending>
+approval_reachability_ready: <pending>
+blocking_failures: <pending>
+warnings: <pending>
+scheduled_trigger_log_line: <pending>
+memo_delivery_log_line: <pending>
+current_step: <pending>
+approval_status: <pending>
+final_run_status: <pending>
+remaining_manual_steps: <pending>

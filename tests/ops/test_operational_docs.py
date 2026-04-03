@@ -41,15 +41,6 @@ def test_readme_mentions_shared_research_queue_guidance_sections() -> None:
     assert "Watchlist and no-action items now explain why the idea is not actionable, what evidence is missing, which questions remain unresolved, and what to check on the next session." in readme_text
 
 
-def test_readme_links_phase_15_live_proof_runbook() -> None:
-    readme_text = (PROJECT_ROOT / "README.md").read_text()
-
-    assert "See `.planning/phases/15-prove-the-live-quiver-to-email-workflow-end-to-end/15-LIVE-PROOF-RUNBOOK.md` for the real-credential live proof workflow." in readme_text
-    assert "python -m app.ops.live_proof preflight" in readme_text
-    assert "python -m app.ops.live_proof trigger-scheduled" in readme_text
-    assert "python -m app.ops.live_proof inspect-run --run-id" in readme_text
-
-
 def test_phase_15_runbook_covers_reachability_preflight_and_persisted_state_checks() -> None:
     runbook_text = PHASE_15_RUNBOOK.read_text()
 

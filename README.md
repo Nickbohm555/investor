@@ -106,7 +106,7 @@ Keep `INVESTOR_SCHEDULE_CRON_EXPRESSION=0 7 * * 1-5` and `INVESTOR_SCHEDULE_TIME
 - INVESTOR_SCHEDULE_TIMEZONE is set to America/New_York for the managed 7:00am ET scheduler
 - docker compose up -d --build starts postgres, migrate, and app successfully
 - docker compose logs -f migrate app shows the rendered crontab and scheduled trigger output
-- See `.planning/phases/15-prove-the-live-quiver-to-email-workflow-end-to-end/15-LIVE-PROOF-RUNBOOK.md` for the real-credential live proof workflow.
+- See `.planning/phases/19-prove-real-smtp-memo-delivery-without-approval-link-dependency/19-LIVE-PROOF-RUNBOOK.md` for the current SMTP delivery proof workflow.
 - The live-proof commands are `python -m app.ops.live_proof preflight`, `python -m app.ops.live_proof trigger-scheduled`, and `python -m app.ops.live_proof inspect-run --run-id <run_id>`.
 
 ## Acceptance Check
