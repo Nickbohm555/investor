@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 14-03-PLAN.md
-last_updated: "2026-04-02T21:55:41.932Z"
+status: blocked
+stopped_at: Blocked after 19-03-PLAN.md
+last_updated: "2026-04-03T21:15:00.000Z"
 progress:
-  total_phases: 17
+  total_phases: 19
   completed_phases: 14
-  total_plans: 45
-  completed_plans: 41
+  total_plans: 48
+  completed_plans: 46
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** The system must produce trustworthy daily recommendations on schedule and carry approved ideas into a safe broker-review path without brittle manual steps.
-**Current focus:** Phase 17 — harden-live-run-approval-observability-and-replay-operations
+**Current focus:** Phase 19 — prove-real-smtp-memo-delivery-without-approval-link-dependency (blocked on Docker and live provider configuration)
 
 ## Current Position
 
-Phase: 17 (harden-live-run-approval-observability-and-replay-operations) — EXECUTING
-Plan: 17-02 next (2 of 4 unfinished)
+Phase: 19 (prove-real-smtp-memo-delivery-without-approval-link-dependency) — BLOCKED
+Plan: 3 of 3 completed; live proof blocked before trigger
 
 ## Performance Metrics
 
@@ -123,6 +123,7 @@ None yet.
 - The Docker-native smoke path now reaches app startup, but the final host bind on `8000` could not be proven on this machine because the unrelated `web-agent-backend-1` container already owns `0.0.0.0:8000`.
 - A true end-to-end live proof still needs non-Quiver credentials and infrastructure that are not present in `keys.txt`: SMTP delivery settings, an OpenAI-compatible model key/base URL, and a reachable `INVESTOR_EXTERNAL_BASE_URL` for approval callbacks.
 - Phase 15 live proof blocked: no live INVESTOR_* credentials loaded and host port 8000 is allocated by web-agent-backend-1, preventing app startup and external callback proof.
+- Phase 19 live SMTP proof blocked: `python -m app.ops.live_proof preflight` fails with `httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known` before SMTP inspection, and `docker compose up -d --build` cannot reach the Docker daemon at `unix:///Users/nickbohm/.docker/run/docker.sock`.
 
 ## Session Continuity
 
