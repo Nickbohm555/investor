@@ -1,7 +1,0 @@
-[    1228ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://ads-api.x.com/12/measurement/dcm_local_id:0
-[    2485ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
-[    2487ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
-[    2488ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
-[   25686ms] Request cancelled
-[   26623ms] Request cancelled
-[   27049ms] Request cancelled
