@@ -1,0 +1,313 @@
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - heading "To view keyboard shortcuts, press question mark View keyboard shortcuts" [level=2] [ref=e3]:
+        - generic [ref=e4]: To view keyboard shortcuts, press question mark
+        - link "View keyboard shortcuts" [ref=e5] [cursor=pointer]:
+          - /url: /i/keyboard_shortcuts
+      - generic:
+        - generic:
+          - button [ref=e8] [cursor=pointer]:
+            - img [ref=e9]
+          - img [ref=e16] [cursor=pointer]
+        - generic:
+          - generic:
+            - generic:
+              - alertdialog "Delete post?":
+                - group [ref=e770]:
+                  - generic [ref=e772]:
+                    - heading "Delete post?" [level=1] [ref=e773]
+                    - generic [ref=e774]: This can’t be undone and it will be removed from your profile, the timeline of any accounts that follow you, and from search results.
+                    - generic [ref=e775]:
+                      - button "Delete" [active] [ref=e776] [cursor=pointer]:
+                        - generic [ref=e779]: Delete
+                      - button "Cancel" [ref=e780] [cursor=pointer]:
+                        - generic [ref=e783]: Cancel
+      - generic [ref=e18]:
+        - button [ref=e784] [cursor=pointer]
+        - button [ref=e785] [cursor=pointer]
+        - banner [ref=e23]:
+          - generic [ref=e25]:
+            - generic [ref=e26]:
+              - heading [level=1] [ref=e786] [cursor=pointer]:
+                - link [ref=e787]:
+                  - /url: /home
+                  - img [ref=e31]
+              - navigation [ref=e788]:
+                - link [ref=e789] [cursor=pointer]:
+                  - /url: /home
+                  - img [ref=e39]
+                - link [ref=e790] [cursor=pointer]:
+                  - /url: /explore
+                  - img [ref=e45]
+                - link [ref=e791] [cursor=pointer]:
+                  - /url: /notifications
+                  - generic [ref=e50]:
+                    - img [ref=e51]
+                    - generic [ref=e135]: "2"
+                - link [ref=e793] [cursor=pointer]:
+                  - /url: /i/connect_people
+                  - img [ref=e57]
+                - link [ref=e794] [cursor=pointer]:
+                  - /url: /i/chat
+                  - img [ref=e63]
+                - link [ref=e795] [cursor=pointer]:
+                  - /url: /i/grok
+                  - img [ref=e69]
+                - link [ref=e797] [cursor=pointer]:
+                  - /url: /BohmNicholas
+                  - img [ref=e76]
+                - button [ref=e798] [cursor=pointer]:
+                  - img [ref=e82]
+              - link [ref=e799] [cursor=pointer]:
+                - /url: /compose/post
+                - img [ref=e88]
+            - button [ref=e800] [cursor=pointer]:
+              - generic [ref=e101]:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img
+        - main [ref=e104]:
+          - generic [ref=e107]:
+            - generic [ref=e801]:
+              - generic [ref=e110]:
+                - generic [ref=e116] [cursor=pointer]:
+                  - button [ref=e802]:
+                    - img [ref=e120]
+                  - heading [level=2] [ref=e803]: Post
+                  - link [ref=e139]:
+                    - /url: /BohmNicholas/thread/2039835887148654954
+                    - img [ref=e141]
+                - generic:
+                  - generic:
+                    - status:
+                      - button:
+                        - generic:
+                          - img
+                          - generic: See new posts
+              - region [ref=e804]:
+                - heading [level=1] [ref=e805]: Conversation
+                - generic [ref=e147]:
+                  - generic [ref=e150]:
+                    - article [ref=e807]:
+                      - generic [ref=e153]:
+                        - generic [ref=e157]:
+                          - link [ref=e169] [cursor=pointer]:
+                            - /url: /BohmNicholas
+                          - generic [ref=e174]:
+                            - generic [ref=e177]:
+                              - link [ref=e808] [cursor=pointer]:
+                                - /url: /BohmNicholas
+                                - generic [ref=e181]:
+                                  - generic [ref=e183]: Nicholas Bohm
+                                  - img [ref=e809]
+                              - link [ref=e810] [cursor=pointer]:
+                                - /url: /BohmNicholas
+                                - generic [ref=e193]: "@BohmNicholas"
+                            - generic [ref=e195]:
+                              - button [ref=e811] [cursor=pointer]:
+                                - img [ref=e202]
+                              - button [expanded] [ref=e812] [cursor=pointer]:
+                                - img [ref=e212]
+                        - generic [ref=e215]:
+                          - generic [ref=e217]: "This month I built agent-search, which is basically my attempt at making a more serious graph-based RAG workflow instead of a single retrieve-then-answer pass. The core idea is: 1. take one large question 2. decompose it into subquestions 3. run those subquestions in parallel inside their own workflow branches 4. optionally pause for human review before continuing 5. do semantic search for each branch 6. rerank the retrieved docs so the model is looking at the most relevant evidence 7. answer each branch separately 8. synthesize everything back into one final grounded answer What I liked about building it is that it forced me to think in terms of information flow instead of just call the model harder. A lot of the value is not in the final synthesis node. It is in the structure before that: - decomposition - per-branch retrieval - per-branch query expansion - reranking after similarity search - explicit synthesis at the end I also added a HITL checkpoint because if you’re going to decompose a question, there are real cases where you want to inspect the subquestions before the expensive work starts. Sometimes the decomposition is exactly right. Sometimes it drifts. Having that review point matters. This was partly inspired by Onyx’s open post on agentic search / search architecture, but the broader reason it interested me is that this pattern keeps showing up everywhere right now. You can see versions of the same idea across the industry: - break a big request into smaller questions - run those questions against tools / knowledge systems - consolidate the results into one answer That pattern is clearly real. At the same time, building this made me more skeptical of the hype around parallel sub-agents as a universal answer. The upside is speed and breadth. The downside is context continuity. Once you split work across branches, each branch loses some global context. That tradeoff is not academic, it shows up immediately in design. So for me this project was less I built an agent framework and more I built a concrete system that lets me test where decomposition + parallelism actually help, and where they start to hurt. PyPI:"
+                          - generic [ref=e814]:
+                            - link [ref=e221] [cursor=pointer]:
+                              - /url: https://t.co/l6G5eLIVHf
+                              - img [ref=e226]
+                            - link [ref=e815] [cursor=pointer]:
+                              - /url: https://t.co/l6G5eLIVHf
+                              - generic [ref=e231]:
+                                - generic [ref=e233]: pypi.org
+                                - generic [ref=e235]: agent-search-sdk
+                                - generic [ref=e237]: In-process SDK runtime for agent-search
+                          - generic [ref=e241]:
+                            - link [ref=e816] [cursor=pointer]:
+                              - /url: /BohmNicholas/status/2039835887148654954
+                              - time [ref=e244]: 6:42 PM · Apr 2, 2026
+                            - generic [ref=e245]: ·
+                            - link [ref=e817] [cursor=pointer]:
+                              - /url: /BohmNicholas/status/2039835887148654954/analytics
+                              - generic [ref=e249]: "5"
+                              - generic [ref=e250]: Views
+                          - group [ref=e818]:
+                            - button [ref=e819] [cursor=pointer]:
+                              - generic [ref=e256]:
+                                - img [ref=e259]
+                                - generic [ref=e264]: "1"
+                            - button [ref=e820] [cursor=pointer]:
+                              - img [ref=e270]
+                            - button [ref=e821] [cursor=pointer]:
+                              - img [ref=e281]
+                            - button [ref=e822] [cursor=pointer]:
+                              - img [ref=e292]
+                            - button [ref=e823] [cursor=pointer]:
+                              - img [ref=e304]
+                    - generic [ref=e315]:
+                      - link [ref=e824] [cursor=pointer]:
+                        - /url: /BohmNicholas
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - img
+                      - generic [ref=e332]:
+                        - generic [ref=e345]:
+                          - generic [ref=e347]: Post your reply
+                          - textbox [ref=e825]
+                        - button [disabled] [ref=e826]:
+                          - generic [ref=e356]: Reply
+                  - article [ref=e827] [cursor=pointer]:
+                    - generic [ref=e367]:
+                      - link [ref=e379]:
+                        - /url: /BohmNicholas
+                      - generic [ref=e382]:
+                        - generic [ref=e384]:
+                          - generic [ref=e387]:
+                            - link [ref=e828]:
+                              - /url: /BohmNicholas
+                              - generic [ref=e391]:
+                                - generic [ref=e393]: Nicholas Bohm
+                                - img [ref=e829]
+                            - generic [ref=e400]:
+                              - link [ref=e830]:
+                                - /url: /BohmNicholas
+                                - generic [ref=e403]: "@BohmNicholas"
+                              - generic [ref=e404]: ·
+                              - link [ref=e831]:
+                                - /url: /BohmNicholas/status/2039835889375822049
+                                - time [ref=e407]: 7m
+                          - generic [ref=e409]:
+                            - button [ref=e832]:
+                              - img [ref=e416]
+                            - button [ref=e833]:
+                              - img [ref=e426]
+                        - generic [ref=e429]:
+                          - generic [ref=e430]: "The other project I built recently is web-agent, and this one came from almost the opposite instinct. Instead of making things more elaborate, I wanted to see how far I could get by reducing web search down to the actual essentials. My conclusion was basically: a useful"
+                          - button [ref=e834]: Show more
+                        - generic [ref=e835]:
+                          - link [ref=e837]:
+                            - /url: https://t.co/Pu4uSNfmSc
+                            - generic [ref=e441]:
+                              - generic:
+                                - generic: GitHub - Nickbohm555/web-agent
+                          - link [ref=e838]:
+                            - /url: https://t.co/Pu4uSNfmSc
+                            - text: From github.com
+                        - group [ref=e839]:
+                          - button [ref=e840]:
+                            - img [ref=e453]
+                          - button [ref=e841]:
+                            - img [ref=e464]
+                          - button [ref=e842]:
+                            - img [ref=e475]
+                          - link [ref=e843]:
+                            - /url: /BohmNicholas/status/2039835889375822049/analytics
+                            - generic [ref=e483]:
+                              - img [ref=e486]
+                              - generic [ref=e491]: "5"
+                          - button [ref=e844]:
+                            - img [ref=e497]
+                          - button [ref=e845]:
+                            - img [ref=e506]
+            - generic [ref=e512]:
+              - search [ref=e847]:
+                - generic [ref=e522]:
+                  - img [ref=e524]
+                  - combobox [ref=e848]
+              - complementary [ref=e849]:
+                - heading [level=2] [ref=e850]:
+                  - generic [ref=e535]: Relevant people
+                - list [ref=e536]:
+                  - listitem [ref=e537] [cursor=pointer]:
+                    - generic [ref=e538]:
+                      - link [ref=e548]:
+                        - /url: /BohmNicholas
+                      - generic [ref=e551]:
+                        - generic [ref=e554]:
+                          - link [ref=e851]:
+                            - /url: /BohmNicholas
+                            - generic [ref=e557]:
+                              - generic [ref=e559]: Nicholas Bohm
+                              - img [ref=e852]
+                          - link [ref=e853]:
+                            - /url: /BohmNicholas
+                            - generic [ref=e569]: "@BohmNicholas"
+                        - generic [ref=e570]:
+                          - text: AI Engineer @ PwC. Enjoy building side projects and learning in my free time as well
+                          - link [ref=e854]:
+                            - /url: https://t.co/vWmwRsbjZ3
+                            - text: github.com/Nickbohm555
+              - region [ref=e855]:
+                - heading [level=1] [ref=e856]: Trending now
+                - generic [ref=e576]:
+                  - heading [level=2] [ref=e858]:
+                    - generic [ref=e581]: What’s happening
+                  - link [ref=e859] [cursor=pointer]:
+                    - generic [ref=e585]:
+                      - generic [ref=e586]: The Super Mario Galaxy Movie
+                      - generic [ref=e587]: IN THEATERS NOW
+                      - generic [ref=e589]:
+                        - img [ref=e590]
+                        - generic [ref=e593]: Promoted by The Super Mario Galaxy Movie
+                      - button [ref=e860]:
+                        - img [ref=e600]
+                  - link [ref=e861] [cursor=pointer]:
+                    - generic [ref=e606]:
+                      - generic [ref=e608]: Politics · Trending
+                      - generic [ref=e609]: Pam Bondi
+                      - generic [ref=e610]:
+                        - text: Trending with
+                        - link [ref=e862]:
+                          - /url: /search?q=Tulsi%20Gabbard&src=trend_click&vertical=trends
+                          - text: Tulsi Gabbard
+                      - button [ref=e863]:
+                        - img [ref=e618]
+                  - link [ref=e864] [cursor=pointer]:
+                    - generic [ref=e624]:
+                      - generic [ref=e626]: Trending in United States
+                      - generic [ref=e627]: nettles
+                      - button [ref=e865]:
+                        - img [ref=e634]
+                  - link [ref=e866] [cursor=pointer]:
+                    - generic [ref=e640]:
+                      - generic [ref=e642]: Trending in United States
+                      - generic [ref=e643]: Nerdy
+                      - button [ref=e867]:
+                        - img [ref=e650]
+                  - link [ref=e868] [cursor=pointer]:
+                    - /url: /explore/tabs/for-you
+                    - generic [ref=e656]: Show more
+              - navigation [ref=e869]:
+                - generic [ref=e659]:
+                  - link [ref=e870] [cursor=pointer]:
+                    - /url: https://x.com/tos
+                    - text: Terms of Service
+                  - generic [ref=e661]: "|"
+                - generic [ref=e662]:
+                  - link [ref=e871] [cursor=pointer]:
+                    - /url: https://x.com/privacy
+                    - text: Privacy Policy
+                  - generic [ref=e664]: "|"
+                - generic [ref=e665]:
+                  - link [ref=e872] [cursor=pointer]:
+                    - /url: https://support.x.com/articles/20170514
+                    - text: Cookie Policy
+                  - generic [ref=e667]: "|"
+                - generic [ref=e668]:
+                  - link [ref=e873] [cursor=pointer]:
+                    - /url: https://help.x.com/resources/accessibility
+                    - text: Accessibility
+                  - generic [ref=e670]: "|"
+                - generic [ref=e671]:
+                  - link [ref=e874] [cursor=pointer]:
+                    - /url: https://business.x.com/en/help/troubleshooting/how-twitter-ads-work.html?ref=web-twc-ao-gbl-adsinfo&utm_source=twc&utm_medium=web&utm_campaign=ao&utm_content=adsinfo
+                    - text: Ads info
+                  - generic [ref=e673]: "|"
+                - button [ref=e875] [cursor=pointer]:
+                  - generic [ref=e675]:
+                    - text: More
+                    - img [ref=e676]
+                - generic [ref=e679]: © 2026 X Corp.

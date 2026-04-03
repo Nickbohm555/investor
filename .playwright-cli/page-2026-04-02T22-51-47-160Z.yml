@@ -1,0 +1,598 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic:
+      - generic:
+        - heading "To view keyboard shortcuts, press question mark View keyboard shortcuts" [level=2] [ref=e7]:
+          - generic [ref=e8]: To view keyboard shortcuts, press question mark
+          - link "View keyboard shortcuts" [ref=e9] [cursor=pointer]:
+            - /url: /i/keyboard_shortcuts
+        - generic:
+          - generic:
+            - button [ref=e12] [cursor=pointer]:
+              - img [ref=e13]
+            - img [ref=e20] [cursor=pointer]
+          - alert [ref=e1889]:
+            - generic [ref=e1890]: Your post was sent. You have 1 hour to make any edits.
+            - link [ref=e1892] [cursor=pointer]:
+              - /url: /BohmNicholas/status/2039838217415856176
+              - text: View
+        - generic [ref=e167]:
+          - button "Skip to home timeline" [ref=e1893] [cursor=pointer]
+          - button "Skip to trending" [ref=e1895] [cursor=pointer]
+          - banner [ref=e172]:
+            - generic [ref=e174]:
+              - generic [ref=e175]:
+                - heading "X" [level=1] [ref=e1897] [cursor=pointer]:
+                  - link "X" [ref=e1898]:
+                    - /url: /home
+                    - img [ref=e180]
+                - navigation "Primary" [ref=e1899]:
+                  - link "Home (New unread posts)" [ref=e1900] [cursor=pointer]:
+                    - /url: /home
+                    - generic [ref=e187]:
+                      - img [ref=e1901]
+                      - generic "undefined unread items" [ref=e1904]
+                  - link "Search and explore" [ref=e1905] [cursor=pointer]:
+                    - /url: /explore
+                    - img [ref=e194]
+                  - link "Notifications (2 unread notifications)" [ref=e1906] [cursor=pointer]:
+                    - /url: /notifications
+                    - generic [ref=e199]:
+                      - img [ref=e200]
+                      - generic "2 unread items" [ref=e1907]:
+                        - generic [ref=e204]: "2"
+                  - link "Follow" [ref=e1908] [cursor=pointer]:
+                    - /url: /i/connect_people
+                    - img [ref=e208]
+                  - link "Direct Messages" [ref=e1909] [cursor=pointer]:
+                    - /url: /i/chat
+                    - img [ref=e214]
+                  - link "Grok" [ref=e1910] [cursor=pointer]:
+                    - /url: /i/grok
+                    - generic [ref=e219]:
+                      - img [ref=e220]
+                      - generic "undefined unread items" [ref=e1911]
+                  - link "Profile" [ref=e1912] [cursor=pointer]:
+                    - /url: /BohmNicholas
+                    - img [ref=e227]
+                  - button "More menu items" [ref=e1913] [cursor=pointer]:
+                    - img [ref=e233]
+                - link "Post" [ref=e1914] [cursor=pointer]:
+                  - /url: /compose/post
+                  - img [ref=e239]
+              - button "Account menu" [ref=e1915] [cursor=pointer]:
+                - generic [ref=e252]:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic "Nicholas Bohm":
+                          - img "Nicholas Bohm"
+          - main [ref=e255]:
+            - generic [ref=e1917]:
+              - generic "Home timeline" [ref=e1919]:
+                - generic [ref=e1920]:
+                  - navigation [ref=e1923]:
+                    - generic [ref=e1924]:
+                      - generic:
+                        - button "Previous" [disabled]:
+                          - generic:
+                            - img
+                      - tablist [ref=e1926]:
+                        - tab "For you" [selected] [ref=e1927] [cursor=pointer]:
+                          - generic [ref=e1930]: For you
+                        - tab "Following" [ref=e1932] [cursor=pointer]:
+                          - generic [ref=e1935]: Following
+                      - generic:
+                        - button "Next" [disabled]:
+                          - generic:
+                            - img
+                  - status [ref=e1936]:
+                    - button "New posts are available. Push the period key to go to the them." [ref=e1937] [cursor=pointer]:
+                      - generic [ref=e1938]:
+                        - img [ref=e1939]
+                        - generic [ref=e1950]:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic "Square profile picture":
+                                  - img "Square profile picture"
+                        - generic [ref=e1975]: posted
+                - generic [ref=e1982]:
+                  - link "Nicholas Bohm" [ref=e1991] [cursor=pointer]:
+                    - /url: /BohmNicholas
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic "Nicholas Bohm":
+                            - img "Nicholas Bohm"
+                  - generic [ref=e1994]:
+                    - generic [ref=e2012]:
+                      - generic [ref=e2014]: What’s happening?
+                      - textbox "Post text" [ref=e2016]
+                    - generic [ref=e2023]:
+                      - navigation [ref=e2024]:
+                        - generic [ref=e2025]:
+                          - generic:
+                            - button "Previous" [disabled]:
+                              - generic:
+                                - img
+                          - tablist [ref=e2027]:
+                            - generic [ref=e2028]:
+                              - button "Add photos or video" [ref=e2029] [cursor=pointer]:
+                                - img [ref=e2031]
+                              - button "Choose File" [ref=e2034]
+                            - button "Add a GIF" [ref=e2035] [cursor=pointer]:
+                              - img [ref=e2037]
+                            - button "Generate image" [ref=e2040] [cursor=pointer]:
+                              - img [ref=e2042]
+                            - button "Add poll" [ref=e2045] [cursor=pointer]:
+                              - img [ref=e2047]
+                            - button "Add emoji" [ref=e2051] [cursor=pointer]:
+                              - img [ref=e2053]
+                            - button "Schedule post" [ref=e2056] [cursor=pointer]:
+                              - img [ref=e2058]
+                            - button "Tag location" [disabled] [ref=e2061]:
+                              - img [ref=e2063]
+                            - button "Content disclosure" [ref=e2066] [cursor=pointer]:
+                              - img [ref=e2068]
+                            - button "Bold, (⌘+B)" [ref=e2071] [cursor=pointer]:
+                              - img [ref=e2073]
+                            - button "Italic, (⌘+I)" [ref=e2076] [cursor=pointer]:
+                              - img [ref=e2078]
+                          - generic:
+                            - button "Next" [disabled]:
+                              - generic:
+                                - img
+                      - button "Post" [disabled] [ref=e2082]:
+                        - generic [ref=e2085]: Post
+                - region "Your Home Timeline" [ref=e2088]:
+                  - heading "Your Home Timeline" [level=1] [ref=e2089]
+                  - 'generic "Timeline: Your Home Timeline" [ref=e2090]':
+                    - generic [ref=e2091]:
+                      - button "Show 35 posts" [ref=e2094] [cursor=pointer]:
+                        - generic [ref=e2096]: Show 35 posts
+                      - 'article "Nicholas Bohm Verified account @BohmNicholas Now This month I built agent-search, which is basically my attempt at making a more serious graph-based RAG workflow instead of a single retrieve-then-answer pass. The core idea is: 1. take one large question 2. decompose it into subquestions 3. run those subquestions in parallel… github.com GitHub - Nickbohm555/agent-search: agent-search is a graph-based RAG system and SDK that turns a... From github.com" [ref=e2100] [cursor=pointer]':
+                        - generic [ref=e2106]:
+                          - link [ref=e2118]:
+                            - /url: /BohmNicholas
+                          - generic [ref=e2121]:
+                            - generic [ref=e2123]:
+                              - generic [ref=e2126]:
+                                - link "Nicholas Bohm Verified account" [ref=e2129]:
+                                  - /url: /BohmNicholas
+                                  - generic [ref=e2130]:
+                                    - generic [ref=e2132]: Nicholas Bohm
+                                    - img "Verified account" [ref=e2135]
+                                - generic [ref=e2139]:
+                                  - link "@BohmNicholas" [ref=e2141]:
+                                    - /url: /BohmNicholas
+                                    - generic [ref=e2142]: "@BohmNicholas"
+                                  - generic [ref=e2143]: ·
+                                  - link "Now" [ref=e2145]:
+                                    - /url: /BohmNicholas/status/2039838217415856176
+                                    - time [ref=e2146]: Now
+                              - generic [ref=e2148]:
+                                - button "Grok actions" [ref=e2150]:
+                                  - img [ref=e2155]
+                                - button "More" [ref=e2161]:
+                                  - img [ref=e2165]
+                            - generic [ref=e2168]:
+                              - generic [ref=e2169]: "This month I built agent-search, which is basically my attempt at making a more serious graph-based RAG workflow instead of a single retrieve-then-answer pass. The core idea is: 1. take one large question 2. decompose it into subquestions 3. run those subquestions in parallel…"
+                              - button "Show more" [ref=e2170]
+                            - 'generic "github.com GitHub - Nickbohm555/agent-search: agent-search is a graph-based RAG system and SDK that turns a..." [ref=e2171]':
+                              - 'generic "github.com GitHub - Nickbohm555/agent-search: agent-search is a graph-based RAG system and SDK that turns a..." [ref=e2172]':
+                                - 'link "github.com GitHub - Nickbohm555/agent-search: agent-search is a graph-based RAG system and SDK that turns a..." [ref=e2174]':
+                                  - /url: https://t.co/aYyl4svwho
+                                  - generic [ref=e2180]:
+                                    - generic:
+                                      - generic: "GitHub - Nickbohm555/agent-search: agent-search is a graph-based RAG system and SDK that turns a..."
+                              - link "From github.com" [ref=e2183]:
+                                - /url: https://t.co/aYyl4svwho
+                            - group [ref=e2186]:
+                              - button "0 Replies. Reply" [ref=e2188]:
+                                - img [ref=e2192]
+                              - button "0 reposts. Repost" [ref=e2199]:
+                                - img [ref=e2203]
+                              - button "0 Likes. Like" [ref=e2210]:
+                                - img [ref=e2214]
+                              - link "View post analytics" [ref=e2221]:
+                                - /url: /BohmNicholas/status/2039838217415856176/analytics
+                                - img [ref=e2225]
+                              - button "Bookmark" [ref=e2229]:
+                                - img [ref=e2233]
+                              - button "Share post" [ref=e2238]:
+                                - img [ref=e2242]
+                      - 'article "Omar Sanseviero Verified account @osanseviero 15 hours ago Good account to follow: @googlegemma 43 replies, 47 reposts, 955 likes, 102 bookmarks, 151092 views" [ref=e2248] [cursor=pointer]':
+                        - generic [ref=e2254]:
+                          - link [ref=e2266]:
+                            - /url: /osanseviero
+                          - generic [ref=e2269]:
+                            - generic [ref=e2271]:
+                              - generic [ref=e2274]:
+                                - link "Omar Sanseviero Verified account" [ref=e2277]:
+                                  - /url: /osanseviero
+                                  - generic [ref=e2278]:
+                                    - generic [ref=e2280]: Omar Sanseviero
+                                    - generic [ref=e2282]:
+                                      - img "Verified account" [ref=e2283]
+                                      - link [ref=e2286]
+                                - generic [ref=e2294]:
+                                  - link "@osanseviero" [ref=e2296]:
+                                    - /url: /osanseviero
+                                    - generic [ref=e2297]: "@osanseviero"
+                                  - generic [ref=e2298]: ·
+                                  - link "15 hours ago" [ref=e2300]:
+                                    - /url: /osanseviero/status/2039597123373617306
+                                    - time [ref=e2301]: 15h
+                              - generic [ref=e2303]:
+                                - button "Grok actions" [ref=e2305]:
+                                  - img [ref=e2310]
+                                - button "More" [ref=e2316]:
+                                  - img [ref=e2320]
+                            - generic [ref=e2324]:
+                              - text: "Good account to follow:"
+                              - link "@googlegemma" [ref=e2327]:
+                                - /url: /googlegemma
+                            - group "43 replies, 47 reposts, 955 likes, 102 bookmarks, 151092 views" [ref=e2330]:
+                              - button "43 Replies. Reply" [ref=e2332]:
+                                - generic [ref=e2333]:
+                                  - img [ref=e2336]
+                                  - generic [ref=e2341]: "43"
+                              - button "47 reposts. Repost" [ref=e2343]:
+                                - generic [ref=e2344]:
+                                  - img [ref=e2347]
+                                  - generic [ref=e2352]: "47"
+                              - button "955 Likes. Like" [ref=e2354]:
+                                - generic [ref=e2355]:
+                                  - img [ref=e2358]
+                                  - generic [ref=e2363]: "955"
+                              - link "151092 views. View post analytics" [ref=e2365]:
+                                - /url: /osanseviero/status/2039597123373617306/analytics
+                                - generic [ref=e2366]:
+                                  - img [ref=e2369]
+                                  - generic [ref=e2374]: 151K
+                              - button "Bookmark" [ref=e2376]:
+                                - img [ref=e2380]
+                              - button "Share post" [ref=e2385]:
+                                - img [ref=e2389]
+                      - article "GSR Verified account @GSR_io Good product, good timing, trillions in volume. @alvinhsia shares explains why Hyperliquid's strategy and execution made them an industry giant. Embedded video Play Video 12 replies, 17 reposts, 225 likes, 55 bookmarks, 774400 views" [ref=e2404] [cursor=pointer]:
+                        - generic [ref=e2410]:
+                          - link "Square profile picture" [ref=e2422]:
+                            - /url: /GSR_io
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic "Square profile picture":
+                                    - img "Square profile picture"
+                          - generic [ref=e2425]:
+                            - generic [ref=e2427]:
+                              - generic [ref=e2430]:
+                                - link "GSR Verified account" [ref=e2433]:
+                                  - /url: /GSR_io
+                                  - generic [ref=e2434]:
+                                    - generic [ref=e2436]: GSR
+                                    - img "Verified account" [ref=e2439]
+                                - link "@GSR_io" [ref=e2448]:
+                                  - /url: /GSR_io
+                                  - generic [ref=e2449]: "@GSR_io"
+                              - generic [ref=e2451]:
+                                - generic [ref=e2452]: Ad
+                                - button "More" [ref=e2456]:
+                                  - img [ref=e2460]
+                            - generic [ref=e2463]:
+                              - generic [ref=e2464]:
+                                - text: Good product, good timing, trillions in volume.
+                                - link "@alvinhsia" [ref=e2467]:
+                                  - /url: /alvinhsia
+                                - text: shares explains why Hyperliquid's strategy and execution made them an industry giant.
+                              - button "Show more" [ref=e2468]
+                            - generic [ref=e2485]:
+                              - generic "Embedded video" [ref=e2488]
+                              - button "Play Video" [ref=e2495]:
+                                - img [ref=e2496]
+                            - group "12 replies, 17 reposts, 225 likes, 55 bookmarks, 774400 views" [ref=e2502]:
+                              - button "12 Replies. Reply" [ref=e2504]:
+                                - generic [ref=e2505]:
+                                  - img [ref=e2508]
+                                  - generic [ref=e2513]: "12"
+                              - button "17 reposts. Repost" [ref=e2515]:
+                                - generic [ref=e2516]:
+                                  - img [ref=e2519]
+                                  - generic [ref=e2524]: "17"
+                              - button "225 Likes. Like" [ref=e2526]:
+                                - generic [ref=e2527]:
+                                  - img [ref=e2530]
+                                  - generic [ref=e2535]: "225"
+                              - link "774400 views. View post analytics" [ref=e2537]:
+                                - /url: /GSR_io/status/2030282570949390519/analytics
+                                - generic [ref=e2538]:
+                                  - img [ref=e2541]
+                                  - generic [ref=e2546]: 774K
+                              - button "Bookmark" [ref=e2548]:
+                                - img [ref=e2552]
+                              - button "Share post" [ref=e2557]:
+                                - img [ref=e2561]
+                      - article "Bun Verified account @bunjavascript Apr 1 In the next version of Bun Bun goes ad-supported! $ bun test bun test v1.3.12-free (alb2c3d) • src/utils.test.ts (42) [0.12ms] x src/auth.test.ts > validates token [0.89ms] SPONSORED error in 5. - Performance issues? More common than you think. Ships in unmarked packages. Take the quiz → - steady A error unlocks after ad 246 pass • 1 fail • [8.21s] Run bun upgrade -pro to disable ads. 302 replies, 357 reposts, 6169 likes, 232 bookmarks, 507475 views" [ref=e2567] [cursor=pointer]:
+                        - generic [ref=e2573]:
+                          - link "Square profile picture" [ref=e2585]:
+                            - /url: /bunjavascript
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic "Square profile picture":
+                                    - img "Square profile picture"
+                          - generic [ref=e2588]:
+                            - generic [ref=e2590]:
+                              - generic [ref=e2593]:
+                                - link "Bun Verified account" [ref=e2596]:
+                                  - /url: /bunjavascript
+                                  - generic [ref=e2597]:
+                                    - generic [ref=e2599]: Bun
+                                    - img "Verified account" [ref=e2602]
+                                - generic [ref=e2609]:
+                                  - link "@bunjavascript" [ref=e2611]:
+                                    - /url: /bunjavascript
+                                    - generic [ref=e2612]: "@bunjavascript"
+                                  - generic [ref=e2613]: ·
+                                  - link "Apr 1" [ref=e2615]:
+                                    - /url: /bunjavascript/status/2039223219102859302
+                                    - time [ref=e2616]: Apr 1
+                              - generic [ref=e2618]:
+                                - button "Grok actions" [ref=e2620]:
+                                  - img [ref=e2625]
+                                - button "More" [ref=e2631]:
+                                  - img [ref=e2635]
+                            - generic [ref=e2639]: In the next version of Bun Bun goes ad-supported!
+                            - link "$ bun test bun test v1.3.12-free (alb2c3d) • src/utils.test.ts (42) [0.12ms] x src/auth.test.ts > validates token [0.89ms] SPONSORED error in 5. - Performance issues? More common than you think. Ships in unmarked packages. Take the quiz → - steady A error unlocks after ad 246 pass • 1 fail • [8.21s] Run bun upgrade -pro to disable ads." [ref=e2647]:
+                              - /url: /bunjavascript/status/2039223219102859302/photo/1
+                              - generic "$ bun test bun test v1.3.12-free (alb2c3d) • src/utils.test.ts (42) [0.12ms] x src/auth.test.ts > validates token [0.89ms] SPONSORED error in 5. - Performance issues? More common than you think. Ships in unmarked packages. Take the quiz → - steady A error unlocks after ad 246 pass • 1 fail • [8.21s] Run bun upgrade -pro to disable ads." [ref=e2651]:
+                                - img "$ bun test bun test v1.3.12-free (alb2c3d) • src/utils.test.ts (42) [0.12ms] x src/auth.test.ts > validates token [0.89ms] SPONSORED error in 5. - Performance issues? More common than you think. Ships in unmarked packages. Take the quiz → - steady A error unlocks after ad 246 pass • 1 fail • [8.21s] Run bun upgrade -pro to disable ads." [ref=e2653]
+                            - group "302 replies, 357 reposts, 6169 likes, 232 bookmarks, 507475 views" [ref=e2656]:
+                              - button "302 Replies. Reply" [ref=e2658]:
+                                - generic [ref=e2659]:
+                                  - img [ref=e2662]
+                                  - generic [ref=e2667]: "302"
+                              - button "357 reposts. Repost" [ref=e2669]:
+                                - generic [ref=e2670]:
+                                  - img [ref=e2673]
+                                  - generic [ref=e2678]: "357"
+                              - button "6169 Likes. Like" [ref=e2680]:
+                                - generic [ref=e2681]:
+                                  - img [ref=e2684]
+                                  - generic [ref=e2689]: 6.1K
+                              - link "507475 views. View post analytics" [ref=e2691]:
+                                - /url: /bunjavascript/status/2039223219102859302/analytics
+                                - generic [ref=e2692]:
+                                  - img [ref=e2695]
+                                  - generic [ref=e2700]: 507K
+                              - button "Bookmark" [ref=e2702]:
+                                - img [ref=e2706]
+                              - button "Share post" [ref=e2711]:
+                                - img [ref=e2715]
+                      - article "chiefofautism Verified account @chiefofautism 12 hours ago someone made the most ADDICTIVE game to learn DATA CENTER networking its called Data Center, $6 game, you start with bare floors, buy racks, mount servers, route every cable by hand the INSANE part, every customers traffic shows as colored balls rolling through your cables... Embedded video Play Video 194 replies, 881 reposts, 11222 likes, 6723 bookmarks, 905560 views" [ref=e2721] [cursor=pointer]:
+                        - generic [ref=e2727]:
+                          - link [ref=e2739]:
+                            - /url: /chiefofautism
+                          - generic [ref=e2742]:
+                            - generic [ref=e2744]:
+                              - generic [ref=e2747]:
+                                - link "chiefofautism Verified account" [ref=e2750]:
+                                  - /url: /chiefofautism
+                                  - generic [ref=e2751]:
+                                    - generic [ref=e2753]: chiefofautism
+                                    - generic [ref=e2755]:
+                                      - img "Verified account" [ref=e2756]
+                                      - link [ref=e2759]
+                                - generic [ref=e2767]:
+                                  - link "@chiefofautism" [ref=e2769]:
+                                    - /url: /chiefofautism
+                                    - generic [ref=e2770]: "@chiefofautism"
+                                  - generic [ref=e2771]: ·
+                                  - link "12 hours ago" [ref=e2773]:
+                                    - /url: /chiefofautism/status/2039649697581666466
+                                    - time [ref=e2774]: 12h
+                              - generic [ref=e2776]:
+                                - button "Grok actions" [ref=e2778]:
+                                  - img [ref=e2783]
+                                - button "More" [ref=e2789]:
+                                  - img [ref=e2793]
+                            - generic [ref=e2796]:
+                              - generic [ref=e2797]: someone made the most ADDICTIVE game to learn DATA CENTER networking its called Data Center, $6 game, you start with bare floors, buy racks, mount servers, route every cable by hand the INSANE part, every customers traffic shows as colored balls rolling through your cables...
+                              - button "Show more" [ref=e2798]
+                            - generic [ref=e2815]:
+                              - generic "Embedded video" [ref=e2818]
+                              - button "Play Video" [ref=e2825]:
+                                - img [ref=e2826]
+                            - group "194 replies, 881 reposts, 11222 likes, 6723 bookmarks, 905560 views" [ref=e2832]:
+                              - button "194 Replies. Reply" [ref=e2834]:
+                                - generic [ref=e2835]:
+                                  - img [ref=e2838]
+                                  - generic [ref=e2843]: "194"
+                              - button "881 reposts. Repost" [ref=e2845]:
+                                - generic [ref=e2846]:
+                                  - img [ref=e2849]
+                                  - generic [ref=e2854]: "881"
+                              - button "11222 Likes. Like" [ref=e2856]:
+                                - generic [ref=e2857]:
+                                  - img [ref=e2860]
+                                  - generic [ref=e2865]: 11K
+                              - link "905560 views. View post analytics" [ref=e2867]:
+                                - /url: /chiefofautism/status/2039649697581666466/analytics
+                                - generic [ref=e2868]:
+                                  - img [ref=e2871]
+                                  - generic [ref=e2876]: 905K
+                              - button "Bookmark" [ref=e2878]:
+                                - img [ref=e2882]
+                              - button "Share post" [ref=e2887]:
+                                - img [ref=e2891]
+              - generic "Trending" [ref=e2898]:
+                - generic [ref=e2899]:
+                  - search "Search" [ref=e2904]:
+                    - generic [ref=e2909]:
+                      - img [ref=e2911]
+                      - combobox "Search query" [ref=e2916]
+                  - complementary "Upgrade to Premium+" [ref=e2920]:
+                    - button [ref=e2921] [cursor=pointer]:
+                      - img [ref=e2923]
+                    - generic [ref=e2927]: Upgrade to Premium+
+                    - generic [ref=e2928]: Enjoy additional benefits, zero ads and the largest reply prioritization.
+                    - link "Upgrade to Premium+" [ref=e2929] [cursor=pointer]:
+                      - /url: /i/premium_sign_up
+                      - generic [ref=e2932]: Upgrade to Premium+
+                  - generic [ref=e2936]:
+                    - heading "Today’s News Close" [level=2] [ref=e2938]:
+                      - generic [ref=e2939]: Today’s News
+                      - button "Close" [ref=e2942] [cursor=pointer]:
+                        - img [ref=e2944]
+                    - generic [ref=e2947]:
+                      - link "Astronaut's 3939 PIN Blunder Lights Up Artemis II Launch 21 hours ago · News · 28.2K posts" [ref=e2948] [cursor=pointer]:
+                        - generic [ref=e2951]:
+                          - generic [ref=e2952]: Astronaut's 3939 PIN Blunder Lights Up Artemis II Launch
+                          - generic [ref=e2991]: 21 hours ago · News · 28.2K posts
+                      - link "Artemis II Launches Four Astronauts on First Crewed Moon Mission in 50 Years 2 days ago · News · 375.6K posts" [ref=e2992] [cursor=pointer]:
+                        - generic [ref=e2995]:
+                          - generic [ref=e2996]: Artemis II Launches Four Astronauts on First Crewed Moon Mission in 50 Years
+                          - generic [ref=e3035]: 2 days ago · News · 375.6K posts
+                      - link "Anthony Edwards Ruled Out, Misses NBA 65-Game Threshold Trending now · Sports · 2,369 posts" [ref=e3036] [cursor=pointer]:
+                        - generic [ref=e3039]:
+                          - generic [ref=e3040]: Anthony Edwards Ruled Out, Misses NBA 65-Game Threshold
+                          - generic [ref=e3079]: Trending now · Sports · 2,369 posts
+                  - region "Trending now" [ref=e3081]:
+                    - heading "Trending now" [level=1] [ref=e3082]
+                    - 'generic "Timeline: Trending now" [ref=e3083]':
+                      - generic [ref=e3084]:
+                        - heading "What’s happening" [level=2] [ref=e3088]:
+                          - generic [ref=e3089]: What’s happening
+                        - link "The Super Mario Galaxy Movie IN THEATERS NOW Promoted by The Super Mario Galaxy Movie More" [ref=e3092] [cursor=pointer]:
+                          - generic [ref=e3093]:
+                            - generic [ref=e3094]: The Super Mario Galaxy Movie
+                            - generic [ref=e3095]: IN THEATERS NOW
+                            - generic [ref=e3097]:
+                              - img [ref=e3098]
+                              - generic [ref=e3101]: Promoted by The Super Mario Galaxy Movie
+                            - button "More" [ref=e3104]:
+                              - img [ref=e3108]
+                        - link "Politics · Trending Pam Bondi Trending with Tulsi Gabbard More" [ref=e3113] [cursor=pointer]:
+                          - generic [ref=e3114]:
+                            - generic [ref=e3116]: Politics · Trending
+                            - generic [ref=e3117]: Pam Bondi
+                            - generic [ref=e3118]:
+                              - text: Trending with
+                              - link "Tulsi Gabbard" [ref=e3119]:
+                                - /url: /search?q=Tulsi%20Gabbard&src=trend_click&vertical=trends
+                            - button "More" [ref=e3122]:
+                              - img [ref=e3126]
+                        - link "Music · Trending Gucci Trending with Pooh Shiesty, Big 30 More" [ref=e3131] [cursor=pointer]:
+                          - generic [ref=e3132]:
+                            - generic [ref=e3134]: Music · Trending
+                            - generic [ref=e3135]: Gucci
+                            - generic [ref=e3136]:
+                              - text: Trending with
+                              - link "Pooh Shiesty" [ref=e3137]:
+                                - /url: /search?q=Pooh%20Shiesty&src=trend_click&vertical=trends
+                              - text: ","
+                              - link "Big 30" [ref=e3138]:
+                                - /url: /search?q=Big%2030&src=trend_click&vertical=trends
+                            - button "More" [ref=e3141]:
+                              - img [ref=e3145]
+                        - 'link "Sports · Trending #drwfirstgoal More" [ref=e3150] [cursor=pointer]':
+                          - generic [ref=e3151]:
+                            - generic [ref=e3153]: Sports · Trending
+                            - generic [ref=e3155]: "#drwfirstgoal"
+                            - button "More" [ref=e3158]:
+                              - img [ref=e3162]
+                        - link "Show more" [ref=e3167] [cursor=pointer]:
+                          - /url: /explore/tabs/for-you
+                          - generic [ref=e3168]: Show more
+                  - complementary "Who to follow" [ref=e3171]:
+                    - heading "Who to follow" [level=2] [ref=e3173]:
+                      - generic [ref=e3174]: Who to follow
+                    - list [ref=e3175]:
+                      - listitem [ref=e3176] [cursor=pointer]:
+                        - generic [ref=e3177]:
+                          - link [ref=e3187]:
+                            - /url: /natpanferova
+                          - generic [ref=e3191]:
+                            - generic [ref=e3193]:
+                              - link "Natalia Panferova Verified account" [ref=e3195]:
+                                - /url: /natpanferova
+                                - generic [ref=e3196]:
+                                  - generic [ref=e3198]: Natalia Panferova
+                                  - img "Verified account" [ref=e3201]
+                              - link "@natpanferova" [ref=e3206]:
+                                - /url: /natpanferova
+                                - generic [ref=e3208]: "@natpanferova"
+                            - button "Follow @natpanferova" [ref=e3210]:
+                              - generic [ref=e3213]: Follow
+                      - listitem [ref=e3214] [cursor=pointer]:
+                        - generic [ref=e3215]:
+                          - link [ref=e3225]:
+                            - /url: /mattt
+                          - generic [ref=e3229]:
+                            - generic [ref=e3231]:
+                              - link "Mattt Verified account" [ref=e3233]:
+                                - /url: /mattt
+                                - generic [ref=e3234]:
+                                  - generic [ref=e3236]: Mattt
+                                  - img "Verified account" [ref=e3239]
+                              - link "@mattt" [ref=e3244]:
+                                - /url: /mattt
+                                - generic [ref=e3246]: "@mattt"
+                            - button "Follow @mattt" [ref=e3248]:
+                              - generic [ref=e3251]: Follow
+                      - listitem [ref=e3252] [cursor=pointer]:
+                        - generic [ref=e3253]:
+                          - link [ref=e3263]:
+                            - /url: /CDCgov
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - img
+                          - generic [ref=e3267]:
+                            - generic [ref=e3269]:
+                              - link "CDC Verified account" [ref=e3271]:
+                                - /url: /CDCgov
+                                - generic [ref=e3272]:
+                                  - generic [ref=e3274]: CDC
+                                  - img "Verified account" [ref=e3277]
+                              - link "@CDCgov" [ref=e3282]:
+                                - /url: /CDCgov
+                                - generic [ref=e3284]: "@CDCgov"
+                            - button "Follow @CDCgov" [ref=e3286]:
+                              - generic [ref=e3289]: Follow
+                    - link "Show more" [ref=e3290] [cursor=pointer]:
+                      - /url: /i/connect_people?user_id=1337868198113202177
+                      - generic [ref=e3291]: Show more
+                  - navigation "Footer" [ref=e3293]:
+                    - generic [ref=e3294]:
+                      - link "Terms of Service" [ref=e3295] [cursor=pointer]:
+                        - /url: https://x.com/tos
+                      - generic [ref=e3296]: "|"
+                    - generic [ref=e3297]:
+                      - link "Privacy Policy" [ref=e3298] [cursor=pointer]:
+                        - /url: https://x.com/privacy
+                      - generic [ref=e3299]: "|"
+                    - generic [ref=e3300]:
+                      - link "Cookie Policy" [ref=e3301] [cursor=pointer]:
+                        - /url: https://support.x.com/articles/20170514
+                      - generic [ref=e3302]: "|"
+                    - generic [ref=e3303]:
+                      - link "Accessibility" [ref=e3304] [cursor=pointer]:
+                        - /url: https://help.x.com/resources/accessibility
+                      - generic [ref=e3305]: "|"
+                    - generic [ref=e3306]:
+                      - link "Ads info" [ref=e3307] [cursor=pointer]:
+                        - /url: https://business.x.com/en/help/troubleshooting/how-twitter-ads-work.html?ref=web-twc-ao-gbl-adsinfo&utm_source=twc&utm_medium=web&utm_campaign=ao&utm_content=adsinfo
+                      - generic [ref=e3308]: "|"
+                    - button "More" [ref=e3309] [cursor=pointer]:
+                      - generic [ref=e3310]:
+                        - text: More
+                        - img [ref=e3311]
+                    - generic [ref=e3314]: © 2026 X Corp.
+  - generic:
+    - img
+  - generic:
+    - img
+  - generic:
+    - img

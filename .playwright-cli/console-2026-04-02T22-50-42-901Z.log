@@ -1,0 +1,15 @@
+[    1492ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://ads-api.x.com/12/measurement/dcm_local_id:0
+[    2547ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
+[    4047ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
+[   61960ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
+[   62064ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
+[  362239ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
+[  662363ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
+[  962587ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
+[ 1262223ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
+[ 1562264ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
+[ 1801876ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
+[ 1862267ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
+[ 2162294ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
+[ 2462306ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://x.com/i/api/1.1/promoted_content/log.json:0
+[ 2703325ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://api.x.com/1.1/live_pipeline/update_subscriptions:0
