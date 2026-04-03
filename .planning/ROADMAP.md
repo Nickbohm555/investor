@@ -315,10 +315,12 @@ Plans:
 
 ### Phase 19: Prove real SMTP memo delivery without approval-link dependency
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** The repo can prove one real scheduled-route memo delivery to the operator inbox while treating approval-link reachability as a separately reported, non-blocking status for this phase
+**Requirements**: SMTP-19-01, SMTP-19-02, SMTP-19-03, SMTP-19-04
 **Depends on:** Phase 18
-**Plans:** 0 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 19 to break down)
+- [ ] 19-01-PLAN.md — Split the live-proof contract and harden SMTP transport-mode handling with tests
+- [ ] 19-02-PLAN.md — Move docs and proof artifacts to the Phase 19 SMTP-only proof contract
+- [ ] 19-03-PLAN.md — Execute the real SMTP proof, capture evidence, and verify inbox delivery without requiring callback execution
