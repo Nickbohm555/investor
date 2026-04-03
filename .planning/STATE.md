@@ -115,6 +115,7 @@ None yet.
 - Phase 15 added: Prove the live Quiver-to-email workflow end to end
 - Phase 16 added: Deepen Quiver signal coverage and agent evaluation
 - Phase 17 added: Harden live-run approval, observability, and replay operations
+- Phase 18 added: Restructure research agent around Quiver bearer-auth endpoints and live API validation
 
 ### Blockers/Concerns
 

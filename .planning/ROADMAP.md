@@ -302,3 +302,13 @@ Plans:
 - [ ] 17-02-PLAN.md — Instrument Quiver, LLM, SMTP, approval, and broker seams to persist correlated operation events
 - [ ] 17-03-PLAN.md — Add live-run inspect, replay, re-drive, and safety tooling with linked-run lineage
 - [x] 17-04-PLAN.md — Document the real Quiver research flow with a repo-owned diagram, PNG export, and README section
+
+### Phase 18: Restructure research agent around Quiver bearer-auth endpoints and live API validation
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 17
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 18 to break down)
