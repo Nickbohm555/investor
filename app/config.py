@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite+pysqlite:///./investor.db"
     smtp_host: str = "smtp.example.com"
     smtp_port: int = 587
+    smtp_security: Literal["starttls", "ssl", "auto"] = "auto"
     smtp_username: str = "investor-user"
     smtp_password: str = "change-me"
     smtp_from_email: str = "investor@example.com"

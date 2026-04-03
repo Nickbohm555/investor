@@ -3,8 +3,6 @@ from __future__ import annotations
 import argparse
 import json
 import httpx
-import smtplib
-import ssl
 
 from sqlalchemy import func, select
 
@@ -16,6 +14,7 @@ from app.db.models import (
     StateTransitionRecord,
 )
 from app.db.session import get_session_factory
+from app.services.mail_provider import inspect_smtp_connection
 from app.services.research_llm import HttpResearchLLM
 from app.tools.quiver import QuiverClient
 
@@ -56,17 +55,7 @@ _LLM_TOOL = {
 
 
 def _check_smtp(settings) -> dict[str, object]:
-    uses_starttls = settings.smtp_port == 587
-    with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=30) as client:
-        if uses_starttls:
-            client.starttls(context=ssl.create_default_context())
-        if settings.smtp_username and settings.smtp_password:
-            client.login(settings.smtp_username, settings.smtp_password)
-    return {
-        "host": settings.smtp_host,
-        "port": settings.smtp_port,
-        "uses_starttls": uses_starttls,
-    }
+    return inspect_smtp_connection(settings)
 
 
 def _check_reachability(settings) -> dict[str, object]:
@@ -110,6 +99,23 @@ def _run_preflight(settings):
         tool_choice="auto",
         parallel_tool_calls=False,
     )
+    reachability_check = _check_reachability(settings)
+    approval_reachability_ready = bool(reachability_check["reachable"])
+    warnings = [] if approval_reachability_ready else ["approval-link-unreachable"]
+
+    try:
+        smtp_check = _check_smtp(settings)
+        smtp_ready = True
+        blocking_failures: list[str] = []
+    except ValueError as exc:
+        smtp_check = {
+            "host": settings.smtp_host,
+            "port": settings.smtp_port,
+            "error": str(exc),
+        }
+        smtp_ready = False
+        blocking_failures = ["smtp"]
+
     return {
         "quiver_checks": quiver_checks,
         "llm_check": {
@@ -118,9 +124,13 @@ def _run_preflight(settings):
             "parallel_tool_calls": False,
             "has_tool_calls": bool(message.get("tool_calls")),
         },
-        "smtp_check": _check_smtp(settings),
+        "smtp_check": smtp_check,
         "external_base_url": settings.external_base_url,
-        "reachability_check": _check_reachability(settings),
+        "reachability_check": reachability_check,
+        "smtp_ready": smtp_ready,
+        "approval_reachability_ready": approval_reachability_ready,
+        "blocking_failures": blocking_failures,
+        "warnings": warnings,
     }
 
 

@@ -44,8 +44,6 @@ def test_preflight_reports_quiver_llm_smtp_and_external_url_checks(monkeypatch) 
     settings = _build_settings()
     quiver_calls: list[tuple[str, str | None]] = []
     llm_calls: list[dict[str, object]] = []
-    smtp_events: list[tuple[str, object]] = []
-
     class FakeQuiverClient:
         def __init__(self, *, base_url: str, api_key: str) -> None:
             assert base_url == settings.quiver_base_url
@@ -104,22 +102,6 @@ def test_preflight_reports_quiver_llm_smtp_and_external_url_checks(monkeypatch) 
                 ],
             }
 
-    class FakeSMTP:
-        def __init__(self, host: str, port: int, timeout: int) -> None:
-            smtp_events.append(("connect", (host, port, timeout)))
-
-        def __enter__(self) -> FakeSMTP:
-            return self
-
-        def __exit__(self, exc_type, exc, tb) -> None:
-            return None
-
-        def starttls(self, context) -> None:
-            smtp_events.append(("starttls", context))
-
-        def login(self, username: str, password: str) -> None:
-            smtp_events.append(("login", (username, password)))
-
     def fake_get(url: str, *, follow_redirects: bool = True, timeout: int = 10) -> httpx.Response:
         assert url == "https://investor.example.com/approval/probe"
         assert follow_redirects is True
@@ -128,7 +110,16 @@ def test_preflight_reports_quiver_llm_smtp_and_external_url_checks(monkeypatch) 
 
     monkeypatch.setattr(live_proof, "QuiverClient", FakeQuiverClient)
     monkeypatch.setattr(live_proof, "HttpResearchLLM", FakeResearchLLM)
-    monkeypatch.setattr(live_proof.smtplib, "SMTP", FakeSMTP)
+    monkeypatch.setattr(
+        live_proof,
+        "inspect_smtp_connection",
+        lambda _settings: {
+            "host": "smtp.example.com",
+            "port": 587,
+            "transport_mode": "starttls",
+            "uses_starttls": True,
+        },
+    )
     monkeypatch.setattr(live_proof.httpx, "get", fake_get)
 
     result = live_proof._run_preflight(settings)
@@ -139,6 +130,10 @@ def test_preflight_reports_quiver_llm_smtp_and_external_url_checks(monkeypatch) 
         "smtp_check",
         "external_base_url",
         "reachability_check",
+        "smtp_ready",
+        "approval_reachability_ready",
+        "blocking_failures",
+        "warnings",
     }
     assert set(result["quiver_checks"]) == {
         "congresstrading",
@@ -162,15 +157,19 @@ def test_preflight_reports_quiver_llm_smtp_and_external_url_checks(monkeypatch) 
     assert result["smtp_check"] == {
         "host": "smtp.example.com",
         "port": 587,
+        "transport_mode": "starttls",
         "uses_starttls": True,
     }
-    assert ("login", ("smtp-user", "smtp-pass")) in smtp_events
     assert result["external_base_url"] == "https://investor.example.com"
     assert result["reachability_check"] == {
         "approval_probe_url": "https://investor.example.com/approval/probe",
         "status_code": 404,
         "reachable": True,
     }
+    assert result["smtp_ready"] is True
+    assert result["approval_reachability_ready"] is True
+    assert result["blocking_failures"] == []
+    assert result["warnings"] == []
 
 
 def test_preflight_reports_blocking_smtp_status_and_non_blocking_approval_reachability(monkeypatch) -> None:
