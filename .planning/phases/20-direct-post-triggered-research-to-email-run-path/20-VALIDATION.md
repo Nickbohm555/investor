@@ -38,9 +38,9 @@ created: 2026-04-03
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 20-01-01 | 01 | 0 | PH20-01 | api/integration | `PYTHONPATH=. pytest tests/api/test_manual_trigger.py tests/integration/test_manual_trigger_email_flow.py -q` | ❌ W0 | ⬜ pending |
-| 20-01-02 | 01 | 0 | PH20-02 | ops/unit | `PYTHONPATH=. pytest tests/ops/test_live_proof.py tests/ops/test_manual_post_proof.py -q` | ❌ W0 | ⬜ pending |
-| 20-01-03 | 01 | 1 | PH20-03 | docs/assertion | `PYTHONPATH=. pytest tests/ops/test_operational_docs.py -q` | ✅ | ⬜ pending |
+| 20-01-01 | 01 | 1 | PH20-01 | api/integration | `PYTHONPATH=. pytest tests/api/test_manual_trigger.py tests/integration/test_manual_trigger_email_flow.py -q` | ❌ W0 | ⬜ pending |
+| 20-02-01 | 02 | 1 | PH20-02 | ops/unit | `PYTHONPATH=. pytest tests/ops/test_live_proof.py tests/ops/test_manual_post_proof.py -q` | ❌ W0 | ⬜ pending |
+| 20-03-01 | 03 | 2 | PH20-03 | docs/assertion | `PYTHONPATH=. pytest tests/ops/test_operational_docs.py -q` | ✅ | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
