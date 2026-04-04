@@ -40,15 +40,23 @@ def trigger_run(request: Request) -> dict[str, str]:
     baseline_report = runtime.run_service.get_latest_report_baseline(
         exclude_run_id=run_id,
     )
-    state = runtime.workflow_engine.start_run(
-        run_id=run_id,
-        quiver_client=runtime.create_quiver_client(),
-        baseline_report=baseline_report,
-    )
-    runtime.run_service.store_recommendations(
-        run_id,
-        list(state["state_payload"].get("recommendations", [])),
-    )
+    try:
+        state = runtime.workflow_engine.start_run(
+            run_id=run_id,
+            quiver_client=runtime.create_quiver_client(),
+            baseline_report=baseline_report,
+        )
+        runtime.run_service.store_recommendations(
+            run_id,
+            list(state["state_payload"].get("recommendations", [])),
+        )
+    except Exception as exc:
+        logger.exception("manual_trigger result=failure run_id=%s", run_id)
+        raise HTTPException(
+            status_code=500,
+            detail={"message": "Manual trigger failed", "run_id": run_id},
+        ) from exc
+    logger.info("manual_trigger result=started run_id=%s", run_id)
     return {"status": "started", "run_id": run_id}
 
 
