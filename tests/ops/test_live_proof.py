@@ -21,23 +21,30 @@ from app.ops import live_proof
 
 def _build_settings(database_url: str = "sqlite+pysqlite:///:memory:") -> SimpleNamespace:
     return SimpleNamespace(
+        app_secret="ready-secret",
         database_url=database_url,
         quiver_base_url="https://api.quiver.example",
         quiver_api_key="quiver-key",
+        broker_mode="paper",
+        alpaca_base_url="https://paper-api.alpaca.markets",
+        alpaca_api_key="alpaca-key",
         openai_base_url="https://llm.example/v1",
         openai_api_key="openai-key",
         openai_model="gpt-4.1-mini",
-        smtp_host="smtp.example.com",
+        smtp_host="smtp.mail.test",
         smtp_port=587,
         smtp_security="auto",
         smtp_username="smtp-user",
         smtp_password="smtp-pass",
-        smtp_from_email="investor@example.com",
-        daily_memo_to_email="operator@example.com",
-        external_base_url="https://investor.example.com",
+        smtp_from_email="investor@test.local",
+        daily_memo_to_email="operator@test.local",
+        external_base_url="https://investor.test.local",
         manual_trigger_url="http://127.0.0.1:8000/runs/trigger",
         schedule_trigger_url="http://127.0.0.1:8000/runs/trigger/scheduled",
         scheduled_trigger_token="scheduled-trigger-token",
+        research_agent_max_steps=4,
+        research_agent_max_tool_calls=3,
+        research_agent_max_seed_tickers=2,
     )
 
 
@@ -104,7 +111,7 @@ def test_preflight_reports_quiver_llm_smtp_and_external_url_checks(monkeypatch) 
             }
 
     def fake_get(url: str, *, follow_redirects: bool = True, timeout: int = 10) -> httpx.Response:
-        assert url == "https://investor.example.com/approval/probe"
+        assert url == f"{settings.external_base_url}/approval/probe"
         assert follow_redirects is True
         assert timeout == 10
         return httpx.Response(404, request=httpx.Request("GET", url))
@@ -115,7 +122,7 @@ def test_preflight_reports_quiver_llm_smtp_and_external_url_checks(monkeypatch) 
         live_proof,
         "inspect_smtp_connection",
         lambda _settings: {
-            "host": "smtp.example.com",
+            "host": settings.smtp_host,
             "port": 587,
             "transport_mode": "starttls",
             "uses_starttls": True,
@@ -158,16 +165,16 @@ def test_preflight_reports_quiver_llm_smtp_and_external_url_checks(monkeypatch) 
     assert llm_calls[0]["tools"][0]["function"]["name"] == "get_live_congress_trading"
     assert llm_calls[0]["parallel_tool_calls"] is False
     assert result["smtp_check"] == {
-        "host": "smtp.example.com",
+        "host": settings.smtp_host,
         "port": 587,
         "transport_mode": "starttls",
         "uses_starttls": True,
     }
-    assert result["external_base_url"] == "https://investor.example.com"
+    assert result["external_base_url"] == settings.external_base_url
     assert result["manual_trigger_url"] == "http://127.0.0.1:8000/runs/trigger"
     assert result["first_blocking_failure"] is None
     assert result["reachability_check"] == {
-        "approval_probe_url": "https://investor.example.com/approval/probe",
+        "approval_probe_url": f"{settings.external_base_url}/approval/probe",
         "status_code": 404,
         "reachable": True,
     }
@@ -206,7 +213,7 @@ def test_preflight_reports_blocking_smtp_status_and_non_blocking_approval_reacha
         live_proof,
         "_check_reachability",
         lambda _settings: {
-            "approval_probe_url": "https://investor.example.com/approval/probe",
+            "approval_probe_url": f"{settings.external_base_url}/approval/probe",
             "status_code": 404,
             "reachable": True,
         },
@@ -263,7 +270,7 @@ def test_preflight_does_not_block_on_unreachable_approval_host(monkeypatch) -> N
         live_proof,
         "_check_reachability",
         lambda _settings: {
-            "approval_probe_url": "https://investor.example.com/approval/probe",
+            "approval_probe_url": f"{settings.external_base_url}/approval/probe",
             "status_code": None,
             "reachable": False,
         },
@@ -307,7 +314,7 @@ def test_preflight_surfaces_smtp_transport_mode_diagnostic(monkeypatch) -> None:
         live_proof,
         "_check_reachability",
         lambda _settings: {
-            "approval_probe_url": "https://investor.example.com/approval/probe",
+            "approval_probe_url": f"{settings.external_base_url}/approval/probe",
             "status_code": 404,
             "reachable": True,
         },

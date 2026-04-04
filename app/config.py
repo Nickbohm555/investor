@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     smtp_from_email: str = "investor@example.com"
     daily_memo_to_email: str = "operator@example.com"
     external_base_url: str = "https://investor.example.com"
+    manual_trigger_url: str = "http://127.0.0.1:8000/runs/trigger"
     schedule_cron_expression: str = "0 7 * * 1-5"
     schedule_timezone: str = "America/New_York"
     schedule_trigger_url: str = "http://127.0.0.1:8000/runs/trigger/scheduled"

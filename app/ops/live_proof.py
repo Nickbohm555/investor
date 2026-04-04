@@ -14,6 +14,7 @@ from app.db.models import (
     StateTransitionRecord,
 )
 from app.db.session import get_session_factory
+from app.ops.readiness import collect_readiness_errors
 from app.services.mail_provider import inspect_smtp_connection
 from app.services.research_llm import HttpResearchLLM
 from app.tools.quiver import QuiverClient
@@ -75,30 +76,14 @@ def _check_reachability(settings) -> dict[str, object]:
 
 
 def _run_preflight(settings):
-    quiver_client = QuiverClient(
-        base_url=settings.quiver_base_url,
-        api_key=settings.quiver_api_key,
-    )
+    readiness_failures = collect_readiness_errors(settings)
     quiver_checks: dict[str, dict[str, object]] = {}
-    for check_name, (path, method_name) in _QUVER_ENDPOINTS.items():
-        records = getattr(quiver_client, method_name)(ticker="NVDA")
-        quiver_checks[check_name] = {
-            "path": path,
-            "status": "ok",
-            "row_count": len(records),
-        }
-
-    llm = HttpResearchLLM(
-        base_url=settings.openai_base_url,
-        api_key=settings.openai_api_key,
-        model=settings.openai_model,
-    )
-    message = llm.complete_with_tools(
-        messages=[{"role": "user", "content": _LLM_MESSAGE}],
-        tools=[_LLM_TOOL],
-        tool_choice="auto",
-        parallel_tool_calls=False,
-    )
+    llm_check: dict[str, object] = {
+        "path": "/chat/completions",
+        "tool_choice": "auto",
+        "parallel_tool_calls": False,
+        "has_tool_calls": False,
+    }
     reachability_check = _check_reachability(settings)
     approval_reachability_ready = bool(reachability_check["reachable"])
     warnings = [] if approval_reachability_ready else ["approval-link-unreachable"]
@@ -116,16 +101,41 @@ def _run_preflight(settings):
         smtp_ready = False
         blocking_failures = ["smtp"]
 
+    if readiness_failures:
+        blocking_failures = readiness_failures
+    else:
+        quiver_client = QuiverClient(
+            base_url=settings.quiver_base_url,
+            api_key=settings.quiver_api_key,
+        )
+        for check_name, (path, method_name) in _QUVER_ENDPOINTS.items():
+            records = getattr(quiver_client, method_name)(ticker="NVDA")
+            quiver_checks[check_name] = {
+                "path": path,
+                "status": "ok",
+                "row_count": len(records),
+            }
+
+        llm = HttpResearchLLM(
+            base_url=settings.openai_base_url,
+            api_key=settings.openai_api_key,
+            model=settings.openai_model,
+        )
+        message = llm.complete_with_tools(
+            messages=[{"role": "user", "content": _LLM_MESSAGE}],
+            tools=[_LLM_TOOL],
+            tool_choice="auto",
+            parallel_tool_calls=False,
+        )
+        llm_check["has_tool_calls"] = bool(message.get("tool_calls"))
+
     return {
         "quiver_checks": quiver_checks,
-        "llm_check": {
-            "path": "/chat/completions",
-            "tool_choice": "auto",
-            "parallel_tool_calls": False,
-            "has_tool_calls": bool(message.get("tool_calls")),
-        },
+        "llm_check": llm_check,
         "smtp_check": smtp_check,
         "external_base_url": settings.external_base_url,
+        "manual_trigger_url": settings.manual_trigger_url,
+        "first_blocking_failure": blocking_failures[0] if blocking_failures else None,
         "reachability_check": reachability_check,
         "smtp_ready": smtp_ready,
         "approval_reachability_ready": approval_reachability_ready,
@@ -142,6 +152,19 @@ def _trigger_scheduled(settings):
     )
     response.raise_for_status()
     return response.json()
+
+
+def _trigger_manual(settings):
+    response = httpx.post(settings.manual_trigger_url, timeout=30)
+    try:
+        payload = response.json()
+    except ValueError:
+        payload = {"body": response.text}
+    return {
+        "status_code": response.status_code,
+        "ok": response.is_success,
+        "payload": payload,
+    }
 
 
 def _inspect_run(settings, run_id):
@@ -175,6 +198,7 @@ def _build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     subparsers.add_parser("preflight")
+    subparsers.add_parser("trigger-manual")
     subparsers.add_parser("trigger-scheduled")
     inspect_run = subparsers.add_parser("inspect-run")
     inspect_run.add_argument("--run-id", required=True)
@@ -189,6 +213,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "preflight":
         payload = _run_preflight(settings)
+    elif args.command == "trigger-manual":
+        payload = _trigger_manual(settings)
     elif args.command == "trigger-scheduled":
         payload = _trigger_scheduled(settings)
     else:
