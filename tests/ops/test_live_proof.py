@@ -35,6 +35,7 @@ def _build_settings(database_url: str = "sqlite+pysqlite:///:memory:") -> Simple
         smtp_from_email="investor@example.com",
         daily_memo_to_email="operator@example.com",
         external_base_url="https://investor.example.com",
+        manual_trigger_url="http://127.0.0.1:8000/runs/trigger",
         schedule_trigger_url="http://127.0.0.1:8000/runs/trigger/scheduled",
         scheduled_trigger_token="scheduled-trigger-token",
     )
@@ -129,6 +130,8 @@ def test_preflight_reports_quiver_llm_smtp_and_external_url_checks(monkeypatch) 
         "llm_check",
         "smtp_check",
         "external_base_url",
+        "manual_trigger_url",
+        "first_blocking_failure",
         "reachability_check",
         "smtp_ready",
         "approval_reachability_ready",
@@ -161,6 +164,8 @@ def test_preflight_reports_quiver_llm_smtp_and_external_url_checks(monkeypatch) 
         "uses_starttls": True,
     }
     assert result["external_base_url"] == "https://investor.example.com"
+    assert result["manual_trigger_url"] == "http://127.0.0.1:8000/runs/trigger"
+    assert result["first_blocking_failure"] is None
     assert result["reachability_check"] == {
         "approval_probe_url": "https://investor.example.com/approval/probe",
         "status_code": 404,
@@ -214,6 +219,8 @@ def test_preflight_reports_blocking_smtp_status_and_non_blocking_approval_reacha
         "llm_check",
         "smtp_check",
         "external_base_url",
+        "manual_trigger_url",
+        "first_blocking_failure",
         "reachability_check",
         "smtp_ready",
         "approval_reachability_ready",
@@ -223,6 +230,7 @@ def test_preflight_reports_blocking_smtp_status_and_non_blocking_approval_reacha
     assert result["smtp_ready"] is True
     assert result["approval_reachability_ready"] is True
     assert result["blocking_failures"] == []
+    assert result["first_blocking_failure"] is None
     assert result["warnings"] == []
 
 
@@ -266,6 +274,7 @@ def test_preflight_does_not_block_on_unreachable_approval_host(monkeypatch) -> N
     assert result["smtp_ready"] is True
     assert result["approval_reachability_ready"] is False
     assert result["blocking_failures"] == []
+    assert result["first_blocking_failure"] is None
     assert result["warnings"] == ["approval-link-unreachable"]
 
 
@@ -310,6 +319,7 @@ def test_preflight_surfaces_smtp_transport_mode_diagnostic(monkeypatch) -> None:
     assert result["smtp_ready"] is False
     assert result["approval_reachability_ready"] is True
     assert result["blocking_failures"] == ["smtp"]
+    assert result["first_blocking_failure"] == "smtp"
     assert result["warnings"] == []
 
 
