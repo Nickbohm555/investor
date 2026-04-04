@@ -1,9 +1,9 @@
 ---
 phase: 20
 slug: direct-post-triggered-research-to-email-run-path
-status: draft
-nyquist_compliant: false
-wave_0_complete: false
+status: complete
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-04-03
 ---
 
@@ -38,9 +38,9 @@ created: 2026-04-03
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 20-01-01 | 01 | 1 | PH20-01 | api/integration | `PYTHONPATH=. pytest tests/api/test_manual_trigger.py tests/integration/test_manual_trigger_email_flow.py -q` | ❌ W0 | ⬜ pending |
-| 20-02-01 | 02 | 1 | PH20-02 | ops/unit | `PYTHONPATH=. pytest tests/ops/test_live_proof.py tests/ops/test_manual_post_proof.py -q` | ❌ W0 | ⬜ pending |
-| 20-03-01 | 03 | 2 | PH20-03 | docs/assertion | `PYTHONPATH=. pytest tests/ops/test_operational_docs.py -q` | ✅ | ⬜ pending |
+| 20-01-01 | 01 | 1 | PH20-01 | api/integration | `PYTHONPATH=. pytest tests/api/test_manual_trigger.py tests/integration/test_manual_trigger_email_flow.py -q` | ✅ | ✅ green |
+| 20-02-01 | 02 | 1 | PH20-02 | ops/unit | `PYTHONPATH=. pytest tests/ops/test_live_proof.py tests/ops/test_manual_post_proof.py -q` | ✅ | ✅ green |
+| 20-03-01 | 03 | 2 | PH20-03 | docs/assertion | `PYTHONPATH=. pytest tests/ops/test_operational_docs.py -q` | ✅ | ✅ green |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -48,10 +48,10 @@ created: 2026-04-03
 
 ## Wave 0 Requirements
 
-- [ ] `tests/api/test_manual_trigger.py` — stubs for PH20-01
-- [ ] `tests/integration/test_manual_trigger_email_flow.py` — stubs for PH20-01
-- [ ] `tests/ops/test_manual_post_proof.py` — stubs for PH20-02
-- [ ] `PYTHONPATH=.` in repo test commands — avoid `ModuleNotFoundError: No module named 'app'`
+- [x] `tests/api/test_manual_trigger.py` — stubs for PH20-01
+- [x] `tests/integration/test_manual_trigger_email_flow.py` — stubs for PH20-01
+- [x] `tests/ops/test_manual_post_proof.py` — stubs for PH20-02
+- [x] `PYTHONPATH=.` in repo test commands — avoid `ModuleNotFoundError: No module named 'app'`
 
 *If none: "Existing infrastructure covers all phase requirements."*
 
@@ -68,11 +68,11 @@ created: 2026-04-03
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 30s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 30s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** complete

@@ -333,6 +333,6 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 20-01-PLAN.md — Lock the direct manual POST route contract, observability, and persisted-run coverage
-- [ ] 20-02-PLAN.md — Extend the live-proof CLI with staged preflight and direct manual trigger commands
-- [ ] 20-03-PLAN.md — Publish the Phase 20 manual proof runbook, result template, and README routing
+- [x] 20-01-PLAN.md — Lock the direct manual POST route contract, observability, and persisted-run coverage
+- [x] 20-02-PLAN.md — Extend the live-proof CLI with staged preflight and direct manual trigger commands
+- [x] 20-03-PLAN.md — Publish the Phase 20 manual proof runbook, result template, and README routing
