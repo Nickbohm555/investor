@@ -327,10 +327,12 @@ Plans:
 
 ### Phase 20: Direct POST-triggered research-to-email run path
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Operator can run one repo-owned direct POST proof path that starts research immediately, delivers one memo email, and surfaces the exact blocking prerequisite when a live run cannot proceed
+**Requirements**: PH20-01, PH20-02, PH20-03
 **Depends on:** Phase 19
-**Plans:** 0 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 20 to break down)
+- [ ] 20-01-PLAN.md — Lock the direct manual POST route contract, observability, and persisted-run coverage
+- [ ] 20-02-PLAN.md — Extend the live-proof CLI with staged preflight and direct manual trigger commands
+- [ ] 20-03-PLAN.md — Publish the Phase 20 manual proof runbook, result template, and README routing
