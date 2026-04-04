@@ -10,6 +10,9 @@ PHASE_15_RESULT = PHASE_15_DIR / "15-LIVE-PROOF-RESULT.md"
 PHASE_19_DIR = PROJECT_ROOT / ".planning/phases/19-prove-real-smtp-memo-delivery-without-approval-link-dependency"
 PHASE_19_RUNBOOK = PHASE_19_DIR / "19-LIVE-PROOF-RUNBOOK.md"
 PHASE_19_RESULT = PHASE_19_DIR / "19-LIVE-PROOF-RESULT.md"
+PHASE_20_DIR = PROJECT_ROOT / ".planning/phases/20-direct-post-triggered-research-to-email-run-path"
+PHASE_20_RUNBOOK = PHASE_20_DIR / "20-LIVE-PROOF-RUNBOOK.md"
+PHASE_20_RESULT = PHASE_20_DIR / "20-LIVE-PROOF-RESULT.md"
 QUIVER_RESEARCH_FLOW_CONTRACT = PROJECT_ROOT / "docs/architecture/quiver-research-flow-contract.md"
 QUIVER_RESEARCH_FLOW_EXCALIDRAW = PROJECT_ROOT / "docs/architecture/quiver-research-flow.excalidraw"
 QUIVER_RESEARCH_FLOW_PNG = PROJECT_ROOT / "docs/architecture/quiver-research-flow.png"
@@ -84,9 +87,9 @@ def test_phase_15_result_template_requires_operator_visible_proof_fields() -> No
 def test_readme_links_phase_19_live_proof_runbook() -> None:
     readme_text = (PROJECT_ROOT / "README.md").read_text()
 
-    assert "See `.planning/phases/19-prove-real-smtp-memo-delivery-without-approval-link-dependency/19-LIVE-PROOF-RUNBOOK.md` for the current SMTP delivery proof workflow." in readme_text
+    assert "See `.planning/phases/20-direct-post-triggered-research-to-email-run-path/20-LIVE-PROOF-RUNBOOK.md` for the current direct POST delivery proof workflow." in readme_text
     assert "python -m app.ops.live_proof preflight" in readme_text
-    assert "python -m app.ops.live_proof trigger-scheduled" in readme_text
+    assert "python -m app.ops.live_proof trigger-manual" in readme_text
     assert "python -m app.ops.live_proof inspect-run --run-id <run_id>" in readme_text
 
 
@@ -121,6 +124,37 @@ def test_phase_19_result_template_records_smtp_proof_without_callback_execution(
     assert "current_step:" in result_text
     assert "approval_status:" in result_text
     assert "final_run_status:" in result_text
+    assert "remaining_manual_steps:" in result_text
+
+
+def test_phase_20_runbook_covers_direct_manual_post_proof() -> None:
+    runbook_text = PHASE_20_RUNBOOK.read_text()
+
+    assert "## Preflight" in runbook_text
+    assert "## Start The Runtime" in runbook_text
+    assert "## Trigger The Direct Run" in runbook_text
+    assert "## Inbox Verification" in runbook_text
+    assert "## Approval Host Verification" in runbook_text
+    assert "## Persisted State Verification" in runbook_text
+    assert "## Observed Logs" in runbook_text
+    assert "## Failure Markers" in runbook_text
+    assert "python -m app.ops.live_proof preflight" in runbook_text
+    assert "python -m app.ops.live_proof trigger-manual" in runbook_text
+    assert "python -m app.ops.live_proof inspect-run --run-id <run_id>" in runbook_text
+    assert "POST /runs/trigger" in runbook_text
+
+
+def test_phase_20_result_template_requires_manual_proof_fields() -> None:
+    result_text = PHASE_20_RESULT.read_text()
+
+    assert "manual_trigger_status_code:" in result_text
+    assert "manual_trigger_ok:" in result_text
+    assert "manual_trigger_run_id:" in result_text
+    assert "first_blocking_failure:" in result_text
+    assert "blocking_failures:" in result_text
+    assert "warnings:" in result_text
+    assert "memo_delivered_to:" in result_text
+    assert "approval_link_host:" in result_text
     assert "remaining_manual_steps:" in result_text
 
 
