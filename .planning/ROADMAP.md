@@ -324,3 +324,13 @@ Plans:
 - [ ] 19-01-PLAN.md — Split the live-proof contract and harden SMTP transport-mode handling with tests
 - [ ] 19-02-PLAN.md — Move docs and proof artifacts to the Phase 19 SMTP-only proof contract
 - [ ] 19-03-PLAN.md — Execute the real SMTP proof, capture evidence, and verify inbox delivery without requiring callback execution
+
+### Phase 20: Direct POST-triggered research-to-email run path
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 19
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 20 to break down)

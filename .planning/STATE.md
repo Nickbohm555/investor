@@ -6,7 +6,7 @@ status: blocked
 stopped_at: Blocked after 19-03-PLAN.md
 last_updated: "2026-04-03T21:15:00.000Z"
 progress:
-  total_phases: 19
+  total_phases: 20
   completed_phases: 14
   total_plans: 48
   completed_plans: 46
@@ -117,6 +117,7 @@ None yet.
 - Phase 17 added: Harden live-run approval, observability, and replay operations
 - Phase 18 added: Restructure research agent around Quiver bearer-auth endpoints and live API validation
 - Phase 19 added: Prove real SMTP memo delivery without approval-link dependency
+- Phase 20 added: Direct POST-triggered research-to-email run path
 
 ### Blockers/Concerns
 
